@@ -1,0 +1,1135 @@
+<!-- Prompt Library Engine v2.0 FINAL - Thumbnail Feature Complete -->
+<!-- Sections: 10 | Presets: 4 | Validators: 6 | Export: Full Parity -->
+<!-- Update Date: 2026-08-14 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Library Engine — Universal Blogger Prompt Library Template</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:#0f1220;color:#e8eaf2;line-height:1.55;padding:22px 14px 90px}
+  .wrap{max-width:960px;margin:0 auto}
+  header{text-align:center;margin-bottom:18px}
+  header h1{font-size:25px;font-weight:800;background:linear-gradient(90deg,#7c9cff,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{color:#9aa3b8;font-size:13px;margin-top:6px}
+
+  /* ---------- Uploader ---------- */
+  .uploader{background:#151932;border:1px solid #262c48;border-radius:16px;padding:18px;margin-bottom:18px}
+  .dropzone{border:2px dashed #3a4470;border-radius:14px;padding:26px 16px;text-align:center;cursor:pointer;transition:.2s}
+  .dropzone:hover,.dropzone.drag{border-color:#7c9cff;background:#12172f}
+  .dropzone .big{font-size:34px}
+  .dropzone .t{font-size:15px;font-weight:600;margin-top:6px}
+  .dropzone .s{font-size:12.5px;color:#9aa3b8;margin-top:4px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center;justify-content:center}
+  .btn{background:#232a4d;color:#cdd5f5;border:1px solid #35406e;border-radius:9px;padding:9px 15px;
+       font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+  .btn:hover{background:#2e3763;border-color:#4a58a0}
+  .btn-main{background:linear-gradient(135deg,#7c9cff,#c084fc);color:#0f1220;border:none}
+  .btn-main:hover{filter:brightness(1.08)}
+  .btn-red{background:#c41d00;border-color:#a01700;color:#fff}
+  .btn-red:hover{background:#a01700}
+  details.paste{margin-top:12px}
+  details.paste summary{cursor:pointer;font-size:13px;color:#8fa0d8;font-weight:600;user-select:none}
+  details.paste textarea{width:100%;height:150px;margin-top:8px;border-radius:10px;border:1px solid #2a2f45;
+       background:#101427;color:#e8eaf2;font-family:ui-monospace,monospace;font-size:12.5px;padding:10px;resize:vertical}
+
+  /* ---------- Notices ---------- */
+  .notice{margin-top:12px;padding:10px 13px;border-radius:10px;font-size:13px;display:none}
+  .notice.warn{background:#3a2a10;border:1px solid #7a5a20;color:#ffcf87;display:block}
+  .notice.err{background:#3a1414;border:1px solid #7a2020;color:#ff9b9b;display:block}
+  .notice ul{margin:6px 0 0 18px}
+
+  /* ---------- Tabs ---------- */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .tab{background:#171b2e;border:1px solid #2a2f45;border-radius:20px;padding:7px 15px;font-size:13px;
+       font-weight:600;cursor:pointer;color:#cdd5f5;transition:.15s;display:flex;align-items:center;gap:7px}
+  .tab:hover{border-color:#4a58a0}
+  .tab.active{background:linear-gradient(135deg,#7c9cff,#c084fc);color:#0f1220;border:none}
+  .tab .x{opacity:.6;font-weight:800}
+  .tab .x:hover{opacity:1}
+  .tab .cnt{font-size:11px;background:rgba(0,0,0,.18);padding:1px 7px;border-radius:10px}
+
+  /* ---------- Toolbar for active category ---------- */
+  .cat-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .cat-title{font-size:19px;font-weight:800}
+  .cat-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+  .searchbar{position:sticky;top:0;z-index:20;background:#0f1220;padding:10px 0;margin-bottom:12px}
+  .searchbar input{width:100%;padding:12px 16px;border-radius:12px;border:1px solid #2a2f45;
+       background:#171b2e;color:#e8eaf2;font-size:15px;outline:none}
+  .searchbar input:focus{border-color:#7c9cff}
+  .count{font-size:12px;color:#9aa3b8;margin-top:6px;text-align:right}
+
+  /* ---------- Cards ---------- */
+  .card{background:#151932;border:1px solid #262c48;border-radius:16px;padding:18px;margin-bottom:20px;
+        box-shadow:0 6px 24px rgba(0,0,0,.25)}
+  .card-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .num{background:linear-gradient(135deg,#7c9cff,#c084fc);color:#0f1220;font-weight:800;font-size:14px;
+       padding:4px 11px;border-radius:20px}
+  .ptitle{font-size:18px;font-weight:700;flex:1;min-width:180px}
+  .sec{background:#101427;border:1px solid #242a44;border-radius:11px;padding:11px 13px;margin-bottom:11px}
+  .sec-body{border-color:#3a4470;background:#12172f}
+  /* Before Image Prompt card — full red highlight */
+  .bip-card{background:#ff2400;border-color:#ff2400}
+  .bip-card .lab{color:#fff}
+  .bip-card .val{color:#fff}
+  .bip-card .cbtn{background:#c41d00;border-color:#a01700;color:#fff}
+  .bip-card .cbtn:hover{background:#a01700;border-color:#801200}
+  .bip-card .cbtn.copied{background:#1e7d54;border-color:#25a06c;color:#fff}
+  .sec-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:7px;flex-wrap:wrap}
+  .lab{font-size:12px;font-weight:700;color:#8fa0d8;letter-spacing:.3px;text-transform:uppercase}
+  .lab em{font-weight:500;text-transform:none;color:#9aa3b8}
+  .cbtn{background:#232a4d;color:#cdd5f5;border:1px solid #35406e;border-radius:9px;
+        padding:7px 12px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s}
+  .cbtn:hover{background:#2e3763;border-color:#4a58a0}
+  .cbtn.copied{background:#1e7d54;border-color:#25a06c;color:#fff}
+  .cbtn-main{background:linear-gradient(135deg,#7c9cff,#c084fc);color:#0f1220;border:none}
+  .cbtn-main:hover{filter:brightness(1.08)}
+  .cbtn-main.copied{background:#1e7d54;color:#fff}
+  .val{font-size:13.5px;color:#d3d9ee;white-space:pre-wrap;word-break:break-word}
+  .val.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#9fe6c1;font-size:13px}
+  .body-block .mini-lab{font-size:11.5px;font-weight:800;color:#c084fc;text-transform:uppercase;margin:9px 0 3px}
+  .body-block .mini-lab:first-child{margin-top:0}
+  /* Thumbnail Alt length warning (SEO max 125 chars) */
+  .alt-warn{color:#ff6b35;font-size:12px;background:#fff3ec;border-left:3px solid #ff6b35;
+       padding:4px 8px;margin-top:4px;border-radius:4px}
+  /* Section 10 style-preset dropdown */
+  .preset-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .preset-row label{font-size:12px;font-weight:700;color:#8fa0d8;letter-spacing:.3px;text-transform:uppercase}
+  .stylePreset{background:#232a4d;color:#cdd5f5;border:1px solid #35406e;border-radius:9px;
+       padding:7px 12px;font-size:12.5px;font-weight:600;cursor:pointer;outline:none;transition:.15s}
+  .stylePreset:hover,.stylePreset:focus{background:#2e3763;border-color:#4a58a0}
+  .howto{margin:2px 0 0 18px;font-size:13px;color:#d3d9ee}
+  .howto li{margin-bottom:3px}
+  .no-result{text-align:center;color:#9aa3b8;padding:40px;display:none}
+  .empty{text-align:center;color:#6c7492;padding:50px 20px}
+  footer{text-align:center;color:#6c7492;font-size:12px;margin-top:30px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+         background:#1e7d54;color:#fff;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:600;
+         opacity:0;pointer-events:none;transition:.25s;z-index:99}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Prompt Library Engine</h1>
+    <p>Upload any prompt-library <b>.md</b> file → copy-ready Blogger cards. Includes upgraded universal template logic for category labels, SEO sequence and (2026) titles.</p>
+  </header>
+
+  <!-- UPLOADER -->
+  <div class="uploader">
+    <div class="dropzone" id="dropzone">
+      <div class="big">📤</div>
+      <div class="t">Drag &amp; drop your .md file here</div>
+      <div class="s">or click to browse — you can add multiple category files</div>
+    </div>
+    <input type="file" id="fileInput" accept=".md,.markdown,.txt" multiple style="display:none">
+    <div class="row">
+      <button class="btn btn-main" id="browseBtn">📁 Choose .md file(s)</button>
+      <button class="btn" id="templateBtn">📄 Download upgraded master template</button>
+      <button class="btn btn-red" id="clearBtn">🗑 Clear all</button>
+    </div>
+    <details class="paste">
+      <summary>📋 …or paste .md content directly (best for sandbox/preview)</summary>
+      <textarea id="pasteArea" placeholder="Paste the full .md content here, then click the button below…"></textarea>
+      <div class="row" style="justify-content:flex-start">
+        <input class="btn" id="pasteName" placeholder="Category name (optional)" style="background:#101427;color:#e8eaf2">
+        <button class="btn btn-main" id="pasteBtn">➕ Load pasted content</button>
+      </div>
+    </details>
+    <div class="notice" id="notice"></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" id="tabs"></div>
+
+  <!-- ACTIVE CATEGORY -->
+  <div id="catArea">
+    <div class="empty" id="emptyState">
+      <div style="font-size:40px">🗂️</div>
+      <p style="margin-top:8px">No library loaded yet. Upload or paste a <b>.md</b> file to begin.</p>
+    </div>
+  </div>
+
+  <footer>Prompt Library Engine · one engine for all your categories · buttons copy exactly the highlighted section.</footer>
+</div>
+
+<div class="toast" id="toast">✓ Copied!</div>
+
+<script>
+(function(){
+"use strict";
+
+/* =====================================================
+   STATE
+===================================================== */
+var libraries=[];      // [{name, prompts:[...]}]
+var activeIdx=-1;
+var lastCopiedBtn=null;
+var srcStore={};       // id -> raw text to copy
+var promptStore={};    // id -> prompt object (for Section 10 preset rebuild)
+var uid=0;
+
+/* =====================================================
+   HELPERS
+===================================================== */
+function el(id){return document.getElementById(id);}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+var toast=el('toast'),toastT;
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(function(){toast.classList.remove('show');},1400);}
+
+function resetBtn(b){
+  if(!b)return;
+  if(b.getAttribute('data-orig')!==null){b.textContent=b.getAttribute('data-orig');}
+  b.classList.remove('copied');
+}
+function doCopy(text,btn){
+  if(btn.getAttribute('data-orig')===null){btn.setAttribute('data-orig',btn.textContent);}
+  function ok(){
+    if(lastCopiedBtn&&lastCopiedBtn!==btn){resetBtn(lastCopiedBtn);}
+    btn.classList.add('copied');btn.textContent='✓ Copied';
+    lastCopiedBtn=btn;showToast('✓ Copied!');
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(ok).catch(function(){fallback(text,ok);});
+  }else{fallback(text,ok);}
+}
+function fallback(text,ok){
+  var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.left='-9999px';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');ok();}catch(e){alert('Copy failed — select manually.');}
+  document.body.removeChild(ta);
+}
+
+/* =====================================================
+   MARKDOWN PARSER
+   Understands the prompt-library section format.
+===================================================== */
+function stripBullets(t){
+  return (t||'').split('\n').map(function(l){
+    return l.replace(/^\s*[-*]\s+/,'').replace(/\*\*/g,'').trim();
+  }).filter(function(l){return l.length;}).join('\n');
+}
+function cleanInline(t){return (t||'').replace(/\*\*/g,'').replace(/`/g,'').trim();}
+
+// Field aliases (case-insensitive) mapped to canonical keys
+var FIELD_MAP=[
+  {k:'title',   re:/prompt\s*title/i},
+  {k:'before',  re:/before\s*image\s*prompt/i},
+  {k:'altAfter',re:/after\s*image.*alt\s*text/i},
+  {k:'altBefore',re:/before\s*image.*alt\s*text/i},
+  {k:'negative',re:/negative\s*prompt/i},        // check before generic "prompt"
+  {k:'howto',   re:/how\s*to\s*use\s*this\s*prompt/i},
+  {k:'labels',  re:/labels/i},
+  {k:'permalink',re:/permalink/i},
+  {k:'search',  re:/search\s*description/i},
+  {k:'prompt',  re:/^prompt\b/i}                 // generic prompt last
+];
+
+function classifyHeading(h){
+  var s=h.replace(/[:*`]/g,'').trim();
+  for(var i=0;i<FIELD_MAP.length;i++){ if(FIELD_MAP[i].re.test(s)) return FIELD_MAP[i].k; }
+  return null;
+}
+
+function parseMarkdown(md){
+  var lines=md.replace(/\r/g,'').split('\n');
+  // Category name from first # heading
+  var catName='Prompt Library';
+  for(var i=0;i<lines.length;i++){
+    var mh=lines[i].match(/^#\s+(.*)/);
+    if(mh){catName=cleanInline(mh[1]);break;}
+  }
+  // Split into prompt blocks by "## Prompt #N" (or any "## " that isn't the title)
+  var prompts=[];
+  var blockRe=/^##\s+Prompt\s*#?\s*(\d+)/i;
+  var idxs=[];
+  for(var j=0;j<lines.length;j++){ if(blockRe.test(lines[j])) idxs.push(j); }
+  if(!idxs.length) return {name:catName,prompts:[],error:'No "## Prompt #N" blocks found.'};
+
+  for(var b=0;b<idxs.length;b++){
+    var start=idxs[b];
+    var end=(b+1<idxs.length)?idxs[b+1]:lines.length;
+    var num=(lines[start].match(blockRe)||[])[1]||String(b+1);
+    var body=lines.slice(start+1,end);
+    var fields={};
+    var curKey=null,buf=[];
+    function flush(){ if(curKey){fields[curKey]=(fields[curKey]?fields[curKey]+'\n':'')+buf.join('\n').trim();} buf=[]; }
+    for(var r=0;r<body.length;r++){
+      var line=body[r];
+      if(/^---\s*$/.test(line)) continue;
+      // A heading line looks like **Something** possibly with trailing colon, OR "### ..." markers
+      var head=null;
+      var m1=line.match(/^\s*\*\*(.+?)\*\*\s*:?\s*$/);      // **Prompt Title:**  or **Prompt**
+      var m2=line.match(/^\s*#{3,}\s*(.+?)\s*$/);            // ### heading (skip settings dividers)
+      if(m1){head=m1[1];}
+      if(head!==null){
+        var key=classifyHeading(head);
+        if(key){ flush(); curKey=key; continue; }
+        // unknown bold heading -> treat as normal text under current key
+      }
+      if(m2){ // section divider like "### BLOGGER SETTINGS" -> ignore as heading, don't add
+        continue;
+      }
+      buf.push(line);
+    }
+    flush();
+    prompts.push({
+      num:num,
+      title:cleanInline(fields.title||''),
+      before:cleanInline(fields.before||''),
+      altAfter:cleanInline(fields.altAfter||''),
+      altBefore:cleanInline(fields.altBefore||''),
+      prompt:cleanInline(fields.prompt||''),
+      negative:cleanInline(fields.negative||''),
+      howto:stripBullets(fields.howto||''),
+      labels:cleanInline(fields.labels||''),
+      permalink:cleanInline((fields.permalink||'').replace(/`/g,'')),
+      search:cleanInline(fields.search||'')
+    });
+  }
+  return {name:catName,prompts:prompts};
+}
+
+/* =====================================================
+   FORMAT CHECKER
+===================================================== */
+function checkLibrary(lib){
+  var problems=[];
+  var need=['title','before','altAfter','altBefore','prompt','negative','howto','labels','permalink','search'];
+  var nice={title:'Prompt Title',before:'Before Image Prompt',altAfter:'After Image Alt text',
+    altBefore:'Before Image Alt text',prompt:'Prompt',negative:'Negative Prompt',howto:'How To Use This Prompt',
+    labels:'Labels',permalink:'Permalink',search:'Search Description'};
+  lib.prompts.forEach(function(p){
+    var miss=need.filter(function(k){return !p[k];});
+    if(miss.length){ problems.push('Prompt #'+p.num+': missing '+miss.map(function(k){return nice[k];}).join(', ')); }
+  });
+  return problems;
+}
+
+/* =====================================================
+   RENDER
+===================================================== */
+function howtoHTML(h){
+  var lines=(h||'').split('\n').filter(function(l){return l.trim();});
+  return '<ul class="howto">'+lines.map(function(l){return '<li>'+esc(l)+'</li>';}).join('')+'</ul>';
+}
+function fullBody(p){
+  return 'Prompt\n'+p.prompt+'\n\nNegative Prompt\n'+p.negative+'\n\nHow To Use This Prompt\n'+p.howto;
+}
+var PRESET_NAMES={studio:'Studio Portrait Style (Default)',split:'Split Arrow Style',
+  minimal:'Minimalist Clean',cinematic:'Cinematic Bold'};
+function allSettings(p){
+  var preset=savedPreset();
+  var bar='═══════════════════════════════════';
+  function sec(head,body){return bar+'\n'+head+'\n'+bar+'\n'+body;}
+  return [
+    sec('📝 TITLE',p.title),
+    sec('🖼 BEFORE IMAGE PROMPT',p.before),
+    sec('📸 THUMBNAIL ALT TEXT',thumbnailAlt(p)),
+    sec('🏷 BEFORE IMAGE ALT TEXT',p.altBefore),
+    sec('🏷 AFTER IMAGE ALT TEXT',p.altAfter),
+    sec('📄 PROMPT + NEGATIVE + HOW TO USE',fullBody(p)),
+    sec('🔖 LABELS',p.labels),
+    sec('🔗 PERMALINK',p.permalink),
+    sec('🔍 SEARCH DESCRIPTION',p.search),
+    sec('🎨 THUMBNAIL IMAGE GENERATOR PROMPT\nImage Specs: 1200×630 · WebP\nStyle Preset: '+(PRESET_NAMES[preset]||PRESET_NAMES.studio),thumbnailPrompt(p,preset))
+  ].join('\n\n');
+}
+/* Section 3 auto-builder: thumbnail alt text from title + first SEO label */
+function thumbnailAlt(p){
+  var primaryLabel=(p.labels||'').split(',').map(function(s){return s.trim();})
+    .filter(function(s){return s.length;})[0]||'';
+  if(primaryLabel){
+    return p.title+' - Before After AI Transformation Thumbnail | '+primaryLabel+' Preview';
+  }else{
+    return p.title+' - Before After AI Transformation Thumbnail | AI Prompt Preview';
+  }
+}
+function altWarnHTML(txt){
+  return (txt||'').length>125
+    ? '<div class="alt-warn">⚠️ Alt text too long (max 125 chars for SEO). Current: '+txt.length+' chars</div>'
+    : '';
+}
+/* Phase 5 validation helpers — inline warnings (reuse .alt-warn style) */
+function warnHTML(message){
+  return '<div class="alt-warn">⚠️ '+message+'</div>';
+}
+function validateTitle(title){
+  if(title&&title.length>60)return warnHTML('Title too long for thumbnail (max 60). Current: '+title.length+' chars');
+  return '';
+}
+function validateAlt(text){
+  if(text&&text.length>125)return warnHTML('Alt text too long (max 125 for SEO). Current: '+text.length+' chars');
+  return '';
+}
+function validateLabels(labels){
+  if(!labels||!labels.trim())return warnHTML('Add labels for better SEO + auto-features');
+  return '';
+}
+function validatePermalink(permalink){
+  if(permalink&&!/^[a-z0-9-]+$/.test(permalink))return warnHTML('Use hyphens only, lowercase (a-z, 0-9, hyphens)');
+  return '';
+}
+function validateSearchDesc(desc){
+  if(desc&&desc.length>150)return warnHTML('Description too long (Google truncates at 150). Current: '+desc.length+' chars');
+  return '';
+}
+/* Section 10 feature extractor: 3 uppercase features from labels, defaults fill the gaps */
+function extractFeatures(labels,howToUse){
+  var feats=(labels||'').split(',').map(function(s){return s.trim();})
+    .filter(function(s){return s.length;})
+    .slice(0,3)
+    .map(function(s){return s.toUpperCase().split(/\s+/).slice(0,3).join(' ');});
+  var defaults=['PRO TIPS','CLEAN & NATURAL','PERFECT RESULTS'];
+  while(feats.length<3){feats.push(defaults[feats.length]);}
+  return feats;
+}
+/* Section 10 auto-builder: thumbnail image generator prompt (4 style presets) */
+var THUMB_TEMPLATES={
+studio:`Create a professional YouTube/blog thumbnail image, EXACT size 1200x630 pixels, WebP format.
+
+TITLE: "{{PROMPT_TITLE}}"
+
+LAYOUT (Left 40% | Right 60% split):
+
+LEFT SIDE (40%):
+- Bold uppercase title "{{PROMPT_TITLE}}" broken into 2-3 lines
+- White color text with YELLOW highlight box behind 1-2 key words
+- Add red brush-stroke badge with white text "(2026)" below title
+- Background: deep black with subtle dot-pattern texture
+
+RIGHT SIDE (60%):
+- Split before/after comparison using the 2 attached images
+- FIRST attached image = BEFORE (place LEFT, red border, red rounded label "BEFORE" at bottom)
+- SECOND attached image = AFTER (place RIGHT, green border, green rounded label "AFTER" at bottom)
+- White vertical divider between them with circular play-button icon in center
+
+BOTTOM BAR (full width, overlapping bottom):
+- Yellow rounded pill bar containing 3 feature highlights separated by vertical lines:
+  • 💡 {{FEATURE_1}}
+  • ✨ {{FEATURE_2}}
+  • 📈 {{FEATURE_3}}
+
+STYLE GUIDELINES:
+- Fonts: Bold sans-serif, high contrast, uppercase
+- Overall vibe: Professional, eye-catching, high CTR
+- Color palette: Black background, white/yellow text, red+green accent labels
+
+NEGATIVE PROMPT:
+blurry text, low contrast, watermarks, extra objects, distorted faces, misspelled words, cluttered composition, small unreadable text
+
+INSTRUCTION: Attach BEFORE image first, AFTER image second when using this prompt.`,
+split:`Create a professional thumbnail image, EXACT size 1200x630 pixels, WebP format.
+
+TITLE: "{{PROMPT_TITLE}}"
+
+LAYOUT (Top title bar + Full-width before/after below):
+
+TOP SECTION:
+- Bold uppercase title "{{PROMPT_TITLE}}" at top center
+- White text with YELLOW highlight boxes behind key words
+- Red rounded badge "2026" at top-right corner
+
+MAIN AREA:
+- Full-width before/after side-by-side using 2 attached images
+- FIRST attached image = BEFORE (LEFT side, blurred realistic background retained)
+- SECOND attached image = AFTER (RIGHT side, clean processed look)
+- White curved arrow pointing from BEFORE to AFTER in center
+- Yellow circular badge in center with text "CLEAN PROFESSIONAL PHOTOS"
+- BEFORE label: black rounded box bottom-left
+- AFTER label: black rounded box bottom-right
+
+BOTTOM BAR:
+- Yellow brush-stroke bar with 3 checkmark features:
+  ✅ {{FEATURE_1}}   ✅ {{FEATURE_2}}   ✅ {{FEATURE_3}}
+
+STYLE:
+- Vibrant, punchy, real-world street-photography vibe
+- Bold sans-serif fonts, high contrast
+
+NEGATIVE PROMPT:
+blurry text, watermarks, distorted faces, misspelled words, low contrast
+
+INSTRUCTION: Attach BEFORE image first, AFTER image second when using this prompt.`,
+minimal:`Create a minimalist professional thumbnail, EXACT size 1200x630 pixels, WebP format.
+
+TITLE: "{{PROMPT_TITLE}}"
+
+LAYOUT:
+- Clean white/off-white background
+- Centered bold title "{{PROMPT_TITLE}}" at top in dark charcoal color
+- Below title: 2 attached images side-by-side with thin black border
+- FIRST attached = BEFORE (small "BEFORE" label below in gray)
+- SECOND attached = AFTER (small "AFTER" label below in green)
+- Thin arrow → between images
+- Small "2026" tag top-right in muted color
+
+BOTTOM (optional subtle bar):
+- Thin gray line separator with 3 minimal features:
+  {{FEATURE_1}}  ·  {{FEATURE_2}}  ·  {{FEATURE_3}}
+
+STYLE:
+- Minimal, editorial, premium feel
+- Sans-serif thin/medium fonts
+- No cluttered elements, lots of whitespace
+
+NEGATIVE PROMPT:
+cluttered, neon colors, gradients, watermarks, distorted, low quality
+
+INSTRUCTION: Attach BEFORE image first, AFTER image second when using this prompt.`,
+cinematic:`Create a cinematic dramatic thumbnail, EXACT size 1200x630 pixels, WebP format.
+
+TITLE: "{{PROMPT_TITLE}}"
+
+LAYOUT:
+- Dark cinematic background with subtle gradient (deep blue/purple)
+- Large bold title "{{PROMPT_TITLE}}" LEFT side with dramatic shadow
+- Glowing yellow/orange highlight on key word
+- RIGHT side: 2 attached images stacked or split
+- FIRST = BEFORE (desaturated, red glow border, "BEFORE" label)
+- SECOND = AFTER (vibrant, green glow border, "AFTER" label)
+- Lens flare effect between images
+- "2026" in metallic gold badge
+
+BOTTOM:
+- Dark bar with 3 feature icons + text:
+  {{FEATURE_1}} | {{FEATURE_2}} | {{FEATURE_3}}
+
+STYLE:
+- Movie-poster vibe, dramatic, high-impact
+- Bold display fonts
+- Cinematic color grading
+
+NEGATIVE PROMPT:
+flat lighting, cartoon style, watermarks, distorted faces, low contrast text
+
+INSTRUCTION: Attach BEFORE image first, AFTER image second when using this prompt.`
+};
+var PRESET_LS_KEY='plEngine_thumbPreset';
+function savedPreset(){
+  try{var v=localStorage.getItem(PRESET_LS_KEY);if(v&&THUMB_TEMPLATES[v])return v;}catch(e){}
+  return 'studio';
+}
+function thumbnailPrompt(p,presetKey){
+  presetKey=presetKey||'studio';  // default fallback
+  var template=THUMB_TEMPLATES[presetKey]||THUMB_TEMPLATES.studio;
+  var features=extractFeatures(p.labels,p.howto);
+  return template
+    .replace(/\{\{PROMPT_TITLE\}\}/g,p.title)
+    .replace(/\{\{FEATURE_1\}\}/g,features[0])
+    .replace(/\{\{FEATURE_2\}\}/g,features[1])
+    .replace(/\{\{FEATURE_3\}\}/g,features[2]);
+}
+function presetOptionsHTML(sel){
+  var opts=[['studio','🎨 Studio Portrait Style (Default)'],['split','🎯 Split Arrow Style'],
+            ['minimal','✨ Minimalist Clean'],['cinematic','🎬 Cinematic Bold']];
+  return opts.map(function(o){
+    return '<option value="'+o[0]+'"'+(o[0]===sel?' selected':'')+'>'+o[1]+'</option>';
+  }).join('');
+}
+function store(text){var id='c'+(uid++);srcStore[id]=text;return id;}
+function storePrompt(p){var id='p'+(uid++);promptStore[id]=p;return id;}
+
+function cardHTML(p){
+  var preset=savedPreset();
+  var thumbAlt=thumbnailAlt(p), thumbPrompt=thumbnailPrompt(p,preset);
+  var idT=store(p.title), idBP=store(p.before), idAA=store(p.altAfter), idBA=store(p.altBefore),
+      idFB=store(fullBody(p)), idLB=store(p.labels), idPL=store(p.permalink), idSD=store(p.search),
+      idALL=store(allSettings(p)), idTA=store(thumbAlt), idTP=store(thumbPrompt), idP=storePrompt(p);
+  var searchKey=esc((p.title+' '+p.labels).toLowerCase());
+  return ''
+  +'<article class="card" data-search="'+searchKey+'">'
+  +'<div class="card-head"><span class="num">#'+esc(p.num)+'</span><h2 class="ptitle">'+esc(p.title)+'</h2>'
+    +'<button class="cbtn cbtn-main" data-copy="'+idALL+'">⚙ Copy All Settings</button></div>'
+
+  +'<div class="sec"><div class="sec-top"><span class="lab">1 · Prompt Title</span>'
+    +'<button class="cbtn" data-copy="'+idT+'">📋 Copy Title</button></div>'
+    +'<div class="val">'+esc(p.title)+'</div>'+validateTitle(p.title)+'</div>'
+
+  +'<div class="sec bip-card"><div class="sec-top"><span class="lab">2 · Before Image Prompt</span>'
+    +'<button class="cbtn" data-copy="'+idBP+'">📋 Copy Before Prompt</button></div>'
+    +'<div class="val">'+esc(p.before)+'</div></div>'
+
+  /* Section 3 — Thumbnail — Alt text (auto-generated: title + primary label) */
+  +'<div class="sec"><div class="sec-top"><span class="lab">3 · Thumbnail — Alt text</span>'
+    +'<button class="cbtn" data-copy="'+idTA+'" title="Copy SEO-friendly alt text for thumbnail image">📋 Copy Thumbnail Alt</button></div>'
+    +'<textarea readonly class="val thumbnailAlt" aria-label="Thumbnail alt text (auto-generated)" style="width:100%;min-height:56px;background:transparent;border:1px dashed #242a44;border-radius:8px;padding:8px;resize:vertical;font:inherit;color:#d3d9ee">'+esc(thumbAlt)+'</textarea>'
+    +altWarnHTML(thumbAlt)+'</div>'
+
+  +'<div class="sec"><div class="sec-top"><span class="lab">4 · Before Image — Alt text</span>'
+    +'<button class="cbtn" data-copy="'+idBA+'">📋 Copy Before Alt</button></div>'
+    +'<div class="val">'+esc(p.altBefore)+'</div>'+validateAlt(p.altBefore)+'</div>'
+
+  +'<div class="sec"><div class="sec-top"><span class="lab">5 · After Image — Alt text</span>'
+    +'<button class="cbtn" data-copy="'+idAA+'">📋 Copy After Alt</button></div>'
+    +'<div class="val">'+esc(p.altAfter)+'</div>'+validateAlt(p.altAfter)+'</div>'
+
+  +'<div class="sec sec-body"><div class="sec-top"><span class="lab">6 · Prompt + Negative Prompt + How To Use <em>(post body)</em></span>'
+    +'<button class="cbtn cbtn-main" data-copy="'+idFB+'">📄 Copy Full Body</button></div>'
+    +'<div class="body-block">'
+    +'<p class="mini-lab">Prompt</p><div class="val">'+esc(p.prompt)+'</div>'
+    +'<p class="mini-lab">Negative Prompt</p><div class="val">'+esc(p.negative)+'</div>'
+    +'<p class="mini-lab">How To Use This Prompt</p>'+howtoHTML(p.howto)
+    +'</div></div>'
+
+  +'<div class="sec"><div class="sec-top"><span class="lab">7 · Labels (SEO)</span>'
+    +'<button class="cbtn" data-copy="'+idLB+'">📋 Copy Labels</button></div>'
+    +'<div class="val">'+esc(p.labels)+'</div>'+validateLabels(p.labels)+'</div>'
+
+  +'<div class="sec"><div class="sec-top"><span class="lab">8 · Permalink</span>'
+    +'<button class="cbtn" data-copy="'+idPL+'">📋 Copy Permalink</button></div>'
+    +'<div class="val mono">'+esc(p.permalink)+'</div>'+validatePermalink(p.permalink)+'</div>'
+
+  +'<div class="sec"><div class="sec-top"><span class="lab">9 · Search Description</span>'
+    +'<button class="cbtn" data-copy="'+idSD+'">📋 Copy Search Desc</button></div>'
+    +'<div class="val">'+esc(p.search)+'</div>'+validateSearchDesc(p.search)+'</div>'
+
+  /* Section 10 — Thumbnail Image Generator Prompt (auto-generated, 4 style presets) */
+  +'<div class="sec"><div class="sec-top"><span class="lab">10 · Thumbnail Image Generator Prompt</span>'
+    +'<button class="cbtn" data-copy="'+idTP+'" title="Copy generated prompt to use in AI image generator">📋 Copy Thumbnail Prompt</button></div>'
+    +'<div class="preset-row"><label>Style Preset:</label>'
+    +'<select class="stylePreset" data-prompt="'+idP+'" data-target="'+idTP+'" data-all="'+idALL+'" title="Choose thumbnail design style" aria-label="Thumbnail style preset">'+presetOptionsHTML(preset)+'</select></div>'
+    +'<textarea readonly class="val thumbnailPrompt" aria-label="Thumbnail image generator prompt (auto-generated)" style="width:100%;min-height:300px;overflow:auto;background:transparent;border:1px dashed #242a44;border-radius:8px;padding:8px;resize:vertical;font:inherit;color:#d3d9ee">'+esc(thumbPrompt)+'</textarea></div>'
+  +'</article>';
+}
+
+function renderTabs(){
+  var t=el('tabs');t.innerHTML='';
+  libraries.forEach(function(lib,i){
+    var b=document.createElement('div');
+    b.className='tab'+(i===activeIdx?' active':'');
+    b.innerHTML='<span class="tname">'+esc(lib.name)+'</span><span class="cnt">'+lib.prompts.length+'</span><span class="x" title="Remove">✕</span>';
+    b.querySelector('.tname').onclick=function(){activeIdx=i;render();};
+    b.querySelector('.cnt').onclick=function(){activeIdx=i;render();};
+    b.querySelector('.x').onclick=function(ev){ev.stopPropagation();libraries.splice(i,1);
+      if(activeIdx>=libraries.length)activeIdx=libraries.length-1;render();};
+    t.appendChild(b);
+  });
+}
+
+function render(){
+  lastCopiedBtn=null;srcStore={};promptStore={};uid=0;
+  renderTabs();
+  var area=el('catArea');
+  if(activeIdx<0||!libraries[activeIdx]){
+    area.innerHTML='<div class="empty" id="emptyState"><div style="font-size:40px">🗂️</div>'
+      +'<p style="margin-top:8px">No library loaded yet. Upload or paste a <b>.md</b> file to begin.</p></div>';
+    return;
+  }
+  var lib=libraries[activeIdx];
+  var html='<div class="cat-bar"><div class="cat-title">'+esc(lib.name)+'</div>'
+    +'<div class="cat-actions">'
+    +'<button class="btn btn-main" id="dlHtmlBtn">💾 Download this category as HTML</button>'
+    +'</div></div>'
+    +'<div class="searchbar"><input type="text" id="search" placeholder="🔍 Search by title or label…">'
+    +'<div class="count" id="count">Showing '+lib.prompts.length+' of '+lib.prompts.length+' prompts</div></div>';
+  html+=lib.prompts.map(cardHTML).join('');
+  html+='<div class="no-result" id="noResult">No prompts match your search.</div>';
+  area.innerHTML=html;
+
+  // search
+  var search=el('search'),cards=area.querySelectorAll('.card'),count=el('count'),noRes=el('noResult');
+  search.addEventListener('input',function(){
+    var q=this.value.trim().toLowerCase(),shown=0;
+    cards.forEach(function(c){var ok=!q||c.getAttribute('data-search').indexOf(q)!==-1;
+      c.style.display=ok?'':'none';if(ok)shown++;});
+    count.textContent='Showing '+shown+' of '+cards.length+' prompts';
+    noRes.style.display=shown?'none':'block';
+  });
+  el('dlHtmlBtn').addEventListener('click',function(){downloadCategoryHTML(lib);});
+}
+
+/* =====================================================
+   COPY (event delegation)
+===================================================== */
+document.addEventListener('click',function(e){
+  var btn=e.target.closest('.cbtn');if(!btn)return;
+  var id=btn.getAttribute('data-copy');
+  if(srcStore[id]!==undefined){doCopy((srcStore[id]||'').trim(),btn);}
+});
+
+/* =====================================================
+   STYLE PRESET DROPDOWN (event delegation, per-card)
+===================================================== */
+document.addEventListener('change',function(e){
+  var sel=e.target.closest('.stylePreset');if(!sel)return;
+  var p=promptStore[sel.getAttribute('data-prompt')];if(!p)return;
+  var preset=sel.value;
+  try{localStorage.setItem(PRESET_LS_KEY,preset);}catch(err){}
+  var fresh=thumbnailPrompt(p,preset);
+  // update THIS card's textarea + its copy source
+  var card=sel.closest('.card');
+  var ta=card?card.querySelector('.thumbnailPrompt'):null;
+  if(ta)ta.value=fresh;
+  srcStore[sel.getAttribute('data-target')]=fresh;
+  // keep this card's "Copy All Settings" in sync with the new preset
+  var allId=sel.getAttribute('data-all');
+  if(allId&&srcStore[allId]!==undefined){srcStore[allId]=allSettings(p);}
+});
+
+/* =====================================================
+   LOAD / ADD LIBRARIES
+===================================================== */
+function showNotice(kind,msgHTML){var n=el('notice');n.className='notice '+kind;n.innerHTML=msgHTML;
+  if(kind==='ok'){setTimeout(function(){n.className='notice';n.innerHTML='';},4000);}}
+function clearNotice(){el('notice').className='notice';el('notice').innerHTML='';}
+
+function addLibrary(md,fallbackName){
+  var parsed=parseMarkdown(md);
+  if(parsed.error||!parsed.prompts.length){
+    showNotice('err','⚠ Could not read that file. '+esc(parsed.error||'No prompts found.')
+      +' Make sure it uses the "## Prompt #N" format (download the upgraded master template).');
+    return;
+  }
+  if(fallbackName && (parsed.name==='Prompt Library'||!parsed.name)) parsed.name=fallbackName;
+  libraries.push(parsed);
+  activeIdx=libraries.length-1;
+  var problems=checkLibrary(parsed);
+  if(problems.length){
+    showNotice('warn','✅ Loaded <b>'+esc(parsed.name)+'</b> ('+parsed.prompts.length+' prompts) — but some sections are missing:'
+      +'<ul>'+problems.slice(0,12).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')
+      +(problems.length>12?'<li>…and '+(problems.length-12)+' more</li>':'')+'</ul>');
+  }else{ clearNotice(); }
+  render();
+}
+
+function readFiles(fileList){
+  Array.prototype.forEach.call(fileList,function(f){
+    var r=new FileReader();
+    r.onload=function(){addLibrary(r.result, f.name.replace(/\.(md|markdown|txt)$/i,''));};
+    r.onerror=function(){showNotice('err','⚠ Failed to read '+esc(f.name));};
+    r.readAsText(f);
+  });
+}
+
+/* =====================================================
+   DOWNLOAD: blank template + standalone category HTML
+===================================================== */
+function download(filename,content,type){
+  var blob=new Blob([content],{type:type||'text/plain;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(a.href);},1500);
+}
+
+var TEMPLATE=`# [Main Category Name] — Professional Prompt Library
+
+**Category:** [Main Category Name]
+**Total Prompts:** 50
+**Primary Blogger Label:** [Choose one exact blog category label]
+**Use:** AI image editors &amp; generators (ChatGPT/DALL·E, Flux, Gemini, Midjourney, Leonardo AI, Ideogram, Adobe Firefly)
+
+&gt; This is the SEO-optimized universal template v2.1 for Motion Graphics Studio blog prompt libraries.
+&gt; Every field is optimized for Google rankings, image search, and social media sharing.
+
+---
+
+## 📏 SEO CHARACTER LIMITS (CRITICAL!)
+
+| Field | Optimal Length | Max Length | Reason |
+|-------|---------------|------------|--------|
+| Prompt Title | 40-55 chars | 60 chars | Google SERP display |
+| Before/After Alt | 80-125 chars | 125 chars | Image search + accessibility |
+| Thumbnail Alt | 80-125 chars | 125 chars | Auto-generated by engine |
+| Prompt Text | 60-120 words | 200 words | AI tool compatibility |
+| Negative Prompt | 30-60 words | 100 words | AI tool compatibility |
+| Labels Count | 6-10 labels | 20 labels | Blogger limit + SEO |
+| Permalink | 3-5 words | 60 chars | URL best practice |
+| Search Description | 140-155 chars | 160 chars | Google SERP display |
+
+---
+
+## BLOGGER CATEGORY LABEL LOGIC
+
+Use only matching labels. Do not add random category labels.
+
+**Main Rules:**
+1. Every post must contain the primary category label for the library.
+2. Add extra Blogger category labels only when the prompt genuinely matches that category.
+3. Keep existing SEO/niche labels after the main Blogger category labels.
+4. Every Prompt Title must end with **(2026)**.
+5. Permalink should be lowercase, SEO-friendly, and should not include (2026).
+6. Labels: NO trailing comma (Blogger parser issue).
+7. Primary keyword should be FIRST in Title, Alt text, and Search Description.
+
+**Approved Blogger Category Labels:**
+Photo Retouch, Photo Cleaning, Color Grading, Wedding Edit, HD Enhance, Background Change, ChatGPT Prompt, Midjourney Prompt, Video Prompt, Thumbnail Prompt, Text Animation, Shake Effect, Logo Reveal, Cinematic FX, Beat Sync, Velocity Edit, Overlay Pack, Reels Motion, Smoke PNG, Light PNG, Explosion PNG, Rain PNG, Frame PNG, Wedding Card, Birthday Card, Haldi Invite, Reception Card, Naming Ceremony, Marathi Card, Video Invite, Digital Invite, Green Screen, Transition, Cinematic LUT, Sound FX, Blur Effect, Flash Effect, Reels FX, Fire Overlay, Studio Background, Wedding Background, Festival Background, Nature Background, AI Background, Blur Background, Dark Background, Light Rays BG, Gold Text, Fire Text, Neon Text, 3D Text, Marathi Text, Birthday Text, Cinematic Text, Logo Text
+
+**Label Examples (No trailing comma!):**
+- Skin cleanup portrait → Photo Retouch, Photo Cleaning, Midjourney Prompt, skin-retouch, portrait-editing, natural-skin
+- Wedding cinematic edit → Wedding Edit, Photo Retouch, Color Grading, wedding-photography, cinematic-tone
+- Product white background → Photo Retouch, Background Change, AI Background, product-photography, white-bg
+- Portrait bokeh → Photo Retouch, Blur Effect, Blur Background, portrait, bokeh-effect
+
+---
+
+## REQUIRED SECTION ORDER (10 Sections)
+
+1. Prompt Title → 2. Before Image Prompt → 3. Thumbnail Alt (auto) → 4. Before Alt → 5. After Alt → 6. Prompt + Negative + How To Use → 7. Labels → 8. Permalink → 9. Search Description → 10. Thumbnail Generator Prompt (auto)
+
+---
+
+## Prompt #1
+
+**Prompt Title:** (Max 60 chars, primary keyword FIRST)
+Skin Retouch Portrait Prompt (2026)
+
+&gt; Format: [Primary Keyword] [Descriptor] Prompt (2026)
+&gt; Include "Prompt" keyword — high search volume
+
+**Before Image Prompt:** (60-80 words, end with 3:2 aspect ratio)
+Close-up smartphone portrait of a young woman under flat overhead indoor lighting, visible acne and blotchy redness around the cheeks and nose, uneven oily skin tone, dark under-eye circles, stray facial hairs, plain cluttered bedroom background, raw unedited candid photo, photorealistic, 3:2 aspect ratio.
+
+**Before Image — Alt text:** (80-125 chars, specific problem + keyword)
+Acne and uneven skin tone before AI skin retouching prompt - original portrait photo with blemishes and dull complexion
+
+**After Image — Alt text:** (80-125 chars, specific result + keyword)
+Clean natural skin after AI skin retouching prompt - professional portrait with even tone and preserved texture
+
+**Prompt** (80-120 words for optimal AI results)
+Retouch this portrait with high-end commercial skin retouching using a frequency-separation workflow. Even out skin tone, remove blemishes, redness, and stray hairs while preserving natural skin texture, pores, and fine detail. Balance highlights and shadows on the face, soften under-eye shadows subtly, and add a clean dodge-and-burn pass to sculpt the cheekbones, jawline, and nose bridge. Keep colors true to life with neutral white balance, gentle micro-contrast, and a soft beauty-dish lighting feel. Deliver a polished, magazine-ready result that still looks like a real human being.
+
+**Negative Prompt** (Category-specific for Portrait/Skin)
+plastic skin, over-smoothed face, waxy texture, blurred pores, airbrushed look, distorted features, fake symmetry, oversaturation, banding, halos, artifacts, cartoonish, AI sheen, doll-like appearance, uneven eyes
+
+**How To Use This Prompt**
+
+### 💼 Best For
+Studio portraits, professional headshots, LinkedIn profiles, magazine-quality shots, wedding portraits
+
+### 📸 Before (Common Problems)
+Uneven skin tone, visible blemishes, blotchy redness, distracting shadows, raw smartphone photos
+
+### ✨ After (Expected Professional Result)
+Clean, even, naturally textured skin with sculpted magazine-quality lighting
+
+### 💡 Pro Tips
+1. Always preserve pores — request "natural skin texture" to avoid the plastic effect
+2. Start with a high-resolution source (min 2000px width)
+3. Use 75-85% prompt strength for natural results
+
+### 🤖 Recommended AI Tools
+- **Best Results:** Flux (frequency separation), Midjourney v6
+- **Good Alternatives:** ChatGPT/DALL-E, Gemini, Leonardo AI
+- **Free Options:** Adobe Firefly, Leonardo AI (free tier)
+
+### ⚠️ Common Mistakes to Avoid
+- Don't over-smooth — removing all texture makes skin look fake
+- Don't over-saturate — keep colors true to life
+- Don't ignore the negative prompt — it prevents plastic look
+
+## Frequently Asked Questions
+
+**Q1: Which AI tool gives the most natural skin texture?**
+A: Flux and Midjourney v6 produce the most natural, pore-preserving results. ChatGPT/DALL-E works well for quick edits.
+
+**Q2: Can I use this prompt for commercial photography?**
+A: Yes, all prompts in our library are royalty-free for both personal and commercial use.
+
+**Q3: What's the minimum image resolution needed?**
+A: Minimum 1024x1024 pixels. For best results, use 2000x2000 or higher resolution source images.
+
+**Q4: Why does my result look plastic?**
+A: Reduce prompt strength to 70-80% and ensure the negative prompt includes "plastic skin, over-smoothed" terms.
+
+**Labels:** (6-10 labels, primary Blogger category FIRST, no trailing comma)
+Photo Retouch, Photo Cleaning, Midjourney Prompt, skin-retouch-portrait, professional-headshot, natural-skin-texture, ai-portrait-editing, beauty-retouch
+
+**Permalink:** (Under 60 chars, 3-5 words, hyphens only, no year)
+skin-retouch-portrait-prompt
+
+**Search Description:** (140-155 chars with CTA and keyword)
+Transform portraits with AI skin retouching prompt. Get magazine-quality results with natural texture preserved. Try free in 2026!
+
+**Related Prompts:** (Internal linking - 2-3 links)
+- Wedding Portrait Retouch Prompt
+- HD Skin Enhancement Prompt
+- Natural Beauty Glow Prompt
+
+---
+
+## Prompt #2
+
+**Prompt Title:** (Max 60 chars)
+[Second SEO Prompt Title Here] (2026)
+
+**Before Image Prompt:** (60-80 words with 3:2 aspect ratio)
+[Describe a different before image problem for this category. Keep it specific and visual so AI tools can understand the starting point. Include: subject, visible problem, lighting, background, image quality. End with: photorealistic, 3:2 aspect ratio.]
+
+**Before Image — Alt text:** (80-125 chars, specific problem)
+[Specific problem] before [prompt topic] - original [image type] with [key issues]
+
+**After Image — Alt text:** (80-125 chars, specific result)
+[Specific result] after [prompt topic] - professional [image type] with [improvements]
+
+**Prompt** (80-120 words)
+[Write the complete prompt. Match the category purpose, add exact editing instructions, preserve realism, and mention final quality.]
+
+**Negative Prompt** (Category-specific!)
+[Use appropriate negative prompts based on category]
+
+**How To Use This Prompt**
+
+### 💼 Best For
+[Specific use cases]
+
+### 📸 Before (Common Problems)
+[What's wrong in original]
+
+### ✨ After (Expected Result)
+[What you'll achieve]
+
+### 💡 Pro Tips
+1. [Practical tip 1]
+2. [Practical tip 2]
+3. [Practical tip 3]
+
+### 🤖 Recommended AI Tools
+[Best AI tools for this prompt]
+
+### ⚠️ Avoid These Mistakes
+[Common mistakes to avoid]
+
+## Frequently Asked Questions
+
+**Q1: [Common question]?**
+A: [Detailed answer]
+
+**Q2: [Common question]?**
+A: [Detailed answer]
+
+**Q3: [Common question]?**
+A: [Detailed answer]
+
+**Labels:** (6-10 labels, no trailing comma)
+[Primary Blogger Label], [Matching Blogger Categories], [long-tail-keyword-1], [long-tail-keyword-2], [niche-label]
+
+**Permalink:** (Under 60 chars)
+[seo-friendly-permalink-here]
+
+**Search Description:** (140-155 chars with CTA)
+[Transform/Create/Get] [benefit] with [primary keyword]. [Value proposition]. [CTA] in 2026!
+
+**Related Prompts:**
+- [Related Prompt 1]
+- [Related Prompt 2]
+- [Related Prompt 3]
+
+---
+
+## 🎯 CATEGORY-SPECIFIC NEGATIVE PROMPTS
+
+### Portrait / Skin Retouch:
+plastic skin, over-smoothed face, waxy texture, doll-like appearance, distorted features, uneven eyes, missing pores, airbrushed look, artificial glow, oversaturated colors
+
+### Wedding Photography:
+oversaturated colors, HDR look, plastic skin, unnatural poses, distorted background, missing details, blurry faces, harsh shadows, cartoonish
+
+### Background Change:
+halo edges, poor masking, color spill, jagged edges, missing hair strands, unnatural lighting on subject, floating subject, incorrect shadows
+
+### Product Photography:
+distorted product shape, wrong colors, missing labels, plastic look, fake shadows, unrealistic reflections, blurred edges, incorrect proportions
+
+### Color Grading:
+oversaturated, muddy shadows, blown highlights, unnatural skin tones, banding, artifacts, over-processed, HDR halo
+
+### HD Enhancement:
+artifacts, noise, over-sharpening, halos, unnatural textures, plastic surfaces, loss of detail, upscaling artifacts
+
+### Text Effects:
+unreadable text, distorted letters, wrong fonts, misaligned characters, blurry text, missing letters, incorrect spacing
+
+---
+
+## 📋 PRODUCTION CHECKLIST BEFORE BLOGGER UPLOAD
+
+### Content Quality:
+- [ ] Total prompts count is correct (50 per library)
+- [ ] Every Prompt Title ends with (2026)
+- [ ] Every prompt follows the required 10-section order
+- [ ] Every Title is under 60 characters
+- [ ] Every Before/After Alt is specific (not generic)
+- [ ] Every Search Description has a CTA
+- [ ] Every Search Description is 140-155 characters
+- [ ] Every Permalink is under 60 characters
+
+### SEO Structure:
+- [ ] Primary keyword FIRST in every Title
+- [ ] Primary keyword in every Alt text
+- [ ] Primary keyword in Search Description
+- [ ] Category-specific Negative Prompts used
+- [ ] FAQ section included (3-4 questions)
+- [ ] Related Prompts linked (2-3 internal links)
+
+### Labels:
+- [ ] 6-10 labels per prompt (not more, not less)
+- [ ] Primary Blogger category FIRST
+- [ ] No trailing comma at end of labels
+- [ ] Mix of broad categories + long-tail keywords
+- [ ] All hyphenated labels lowercase
+
+### Technical:
+- [ ] Permalink is lowercase and hyphen-separated
+- [ ] No underscores in permalink
+- [ ] No spaces or special characters
+- [ ] No year (2026) in permalink
+- [ ] No stop words (the, and, with, for) in permalink
+
+### Thumbnail (Auto-generated by Engine):
+- [ ] Thumbnail Alt text auto-populated (Section 3)
+- [ ] Thumbnail Generator Prompt auto-created (Section 10)
+- [ ] Preset selected (Studio/Split/Minimal/Cinematic)
+
+---
+
+## 🎨 QUICK EXAMPLES BY CATEGORY
+
+### Portrait Retouch:
+Title: "Skin Retouch Portrait Prompt (2026)"
+Permalink: "skin-retouch-portrait-prompt"
+Search Desc: "Transform portraits with AI skin retouching prompt. Get magazine-quality results with natural texture preserved. Try free in 2026!"
+
+### Wedding Edit:
+Title: "Wedding Photo Color Grading Prompt (2026)"
+Permalink: "wedding-color-grading-prompt"
+Search Desc: "Create cinematic wedding photos with our AI color grading prompt. Professional warm tones for stunning results. Download free 2026!"
+
+### Background Change:
+Title: "White Background Product Prompt (2026)"
+Permalink: "white-background-product-prompt"
+Search Desc: "Remove backgrounds instantly with AI prompt. Perfect for products, portraits &amp; e-commerce. Ready-to-use in Midjourney &amp; Flux!"
+
+### PNG Assets:
+Title: "Smoke Overlay PNG Pack (2026)"
+Permalink: "smoke-overlay-png-pack"
+Search Desc: "Free smoke overlay PNG pack for videos &amp; photos. High-quality transparent files ready to use in Premiere &amp; Photoshop. Download 2026!"
+
+---
+
+## 📈 SEO IMPACT NOTES
+
+Following this template will help:
+- ✅ Better Google rankings (primary keyword optimization)
+- ✅ Image search traffic (proper alt text)
+- ✅ Social media shares (compelling descriptions)
+- ✅ Featured snippets eligibility (FAQ format)
+- ✅ Rich results potential (structured data)
+- ✅ Internal linking benefits (related prompts)
+- ✅ User engagement (clear structure)
+- ✅ Mobile SEO (concise titles/URLs)
+`;
+
+// Build a standalone HTML file for one category (self-contained, same look & copy behaviour)
+function downloadCategoryHTML(lib){
+  var head=document.querySelector('style').outerHTML;
+  var cardsHtml=lib.prompts.map(function(p){
+    // inline copy sources via data-copytext to keep file self-contained
+    function sec(lab,txt,btn,cls,mono,warn){
+      return '<div class="sec'+(cls?' '+cls:'')+'"><div class="sec-top"><span class="lab">'+lab+'</span>'
+        +'<button class="cbtn'+(btn.main?' cbtn-main':'')+'" data-copytext="'+esc(txt)+'">'+btn.label+'</button></div>'
+        +'<div class="val'+(mono?' mono':'')+'">'+esc(txt)+'</div>'+(warn||'')+'</div>';
+    }
+    // Sections 3 & 10 — auto-generated, copy-enabled (same builders as main renderer)
+    var expPreset=savedPreset();
+    var thumbAlt=thumbnailAlt(p), thumbPrompt=thumbnailPrompt(p,expPreset);
+    var thumbAltSec='<div class="sec"><div class="sec-top"><span class="lab">3 · Thumbnail — Alt text</span>'
+      +'<button class="cbtn" data-copytext="'+esc(thumbAlt)+'" title="Copy SEO-friendly alt text for thumbnail image">📋 Copy Thumbnail Alt</button></div>'
+      +'<textarea readonly class="val thumbnailAlt" aria-label="Thumbnail alt text (auto-generated)" style="width:100%;min-height:56px;background:transparent;border:1px dashed #242a44;border-radius:8px;padding:8px;resize:vertical;font:inherit;color:#d3d9ee">'+esc(thumbAlt)+'</textarea>'
+      +altWarnHTML(thumbAlt)+'</div>';
+    var thumbPromptSec='<div class="sec"><div class="sec-top"><span class="lab">10 · Thumbnail Image Generator Prompt</span>'
+      +'<button class="cbtn" data-copytext="'+esc(thumbPrompt)+'" title="Copy generated prompt to use in AI image generator">📋 Copy Thumbnail Prompt</button></div>'
+      +'<div class="preset-row"><label>Style Preset:</label>'
+      +'<select class="stylePreset" data-title="'+esc(p.title)+'" data-labels="'+esc(p.labels)+'" title="Choose thumbnail design style" aria-label="Thumbnail style preset">'+presetOptionsHTML(expPreset)+'</select></div>'
+      +'<textarea readonly class="val thumbnailPrompt" aria-label="Thumbnail image generator prompt (auto-generated)" style="width:100%;min-height:300px;overflow:auto;background:transparent;border:1px dashed #242a44;border-radius:8px;padding:8px;resize:vertical;font:inherit;color:#d3d9ee">'+esc(thumbPrompt)+'</textarea></div>';
+    var body='<div class="sec sec-body"><div class="sec-top"><span class="lab">6 · Prompt + Negative Prompt + How To Use <em>(post body)</em></span>'
+      +'<button class="cbtn cbtn-main" data-copytext="'+esc(fullBody(p))+'">📄 Copy Full Body</button></div>'
+      +'<div class="body-block"><p class="mini-lab">Prompt</p><div class="val">'+esc(p.prompt)+'</div>'
+      +'<p class="mini-lab">Negative Prompt</p><div class="val">'+esc(p.negative)+'</div>'
+      +'<p class="mini-lab">How To Use This Prompt</p>'+howtoHTML(p.howto)+'</div></div>';
+    return '<article class="card" data-search="'+esc((p.title+' '+p.labels).toLowerCase())+'">'
+      +'<div class="card-head"><span class="num">#'+esc(p.num)+'</span><h2 class="ptitle">'+esc(p.title)+'</h2>'
+        +'<button class="cbtn cbtn-main" data-copytext="'+esc(allSettings(p))+'">⚙ Copy All Settings</button></div>'
+      +sec('1 · Prompt Title',p.title,{label:'📋 Copy Title'},null,false,validateTitle(p.title))
+      +sec('2 · Before Image Prompt',p.before,{label:'📋 Copy Before Prompt'},'bip-card')
+      +thumbAltSec
+      +sec('4 · Before Image — Alt text',p.altBefore,{label:'📋 Copy Before Alt'},null,false,validateAlt(p.altBefore))
+      +sec('5 · After Image — Alt text',p.altAfter,{label:'📋 Copy After Alt'},null,false,validateAlt(p.altAfter))
+      +body
+      +sec('7 · Labels (SEO)',p.labels,{label:'📋 Copy Labels'},null,false,validateLabels(p.labels))
+      +sec('8 · Permalink',p.permalink,{label:'📋 Copy Permalink'},null,true,validatePermalink(p.permalink))
+      +sec('9 · Search Description',p.search,{label:'📋 Copy Search Desc'},null,false,validateSearchDesc(p.search))
+      +thumbPromptSec
+      +'</article>';
+  }).join('\n');
+
+  var js='<script>(function(){var last=null,toast=document.getElementById("toast"),tt;'
+    +'function st(m){toast.textContent=m;toast.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove("show");},1400);}'
+    +'function rb(b){if(!b)return;if(b.getAttribute("data-orig")!==null)b.textContent=b.getAttribute("data-orig");b.classList.remove("copied");}'
+    +'function cp(t,b){if(b.getAttribute("data-orig")===null)b.setAttribute("data-orig",b.textContent);'
+    +'function ok(){if(last&&last!==b)rb(last);b.classList.add("copied");b.textContent="\\u2713 Copied";last=b;st("\\u2713 Copied!");}'
+    +'if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok).catch(function(){fb(t,ok);});}else{fb(t,ok);}}'
+    +'function fb(t,ok){var a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.left="-9999px";document.body.appendChild(a);a.select();try{document.execCommand("copy");ok();}catch(e){alert("Copy failed");}document.body.removeChild(a);}'
+    +'document.addEventListener("click",function(e){var b=e.target.closest(".cbtn");if(!b)return;var t=b.getAttribute("data-copytext");if(t!==null)cp(t,b);});'
+    +'var s=document.getElementById("search"),cs=document.querySelectorAll(".card"),c=document.getElementById("count"),nr=document.getElementById("noResult");'
+    +'if(s)s.addEventListener("input",function(){var q=this.value.trim().toLowerCase(),n=0;cs.forEach(function(x){var m=!q||x.getAttribute("data-search").indexOf(q)!==-1;x.style.display=m?"":"none";if(m)n++;});c.textContent="Showing "+n+" of "+cs.length+" prompts";nr.style.display=n?"none":"block";});'
+    // Section 10 style presets (same 4 templates + change handler + localStorage)
+    +'var TT='+JSON.stringify(THUMB_TEMPLATES)+';var LSK="'+PRESET_LS_KEY+'";'
+    +'function xf(l){var f=(l||"").split(",").map(function(x){return x.trim();}).filter(function(x){return x.length;}).slice(0,3).map(function(x){return x.toUpperCase().split(/\\s+/).slice(0,3).join(" ");});var d=["PRO TIPS","CLEAN & NATURAL","PERFECT RESULTS"];while(f.length<3){f.push(d[f.length]);}return f;}'
+    +'function tp(ti,l,k){var t=TT[k]||TT.studio;var f=xf(l);return t.replace(/\\{\\{PROMPT_TITLE\\}\\}/g,ti).replace(/\\{\\{FEATURE_1\\}\\}/g,f[0]).replace(/\\{\\{FEATURE_2\\}\\}/g,f[1]).replace(/\\{\\{FEATURE_3\\}\\}/g,f[2]);}'
+    +'document.addEventListener("change",function(e){var sel=e.target.closest(".stylePreset");if(!sel)return;'
+    +'try{localStorage.setItem(LSK,sel.value);}catch(err){}'
+    +'var fresh=tp(sel.getAttribute("data-title"),sel.getAttribute("data-labels"),sel.value);'
+    +'var sec=sel.closest(".sec");var ta=sec.querySelector(".thumbnailPrompt");if(ta)ta.value=fresh;'
+    +'var b=sec.querySelector(".cbtn");if(b)b.setAttribute("data-copytext",fresh);});'
+    +'try{var sv=localStorage.getItem(LSK);if(sv&&TT[sv]){document.querySelectorAll(".stylePreset").forEach(function(sel){if(sel.value!==sv){sel.value=sv;sel.dispatchEvent(new Event("change",{bubbles:true}));}});}}catch(err){}'
+    +'})();<\/script>';
+
+  var doc='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'
+    +'<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>'+esc(lib.name)+'</title>'
+    +head+'</head><body><div class="wrap">'
+    +'<header><h1>'+esc(lib.name)+'</h1><p>'+lib.prompts.length+' prompts · 10 copy buttons each</p></header>'
+    +'<div class="searchbar"><input type="text" id="search" placeholder="🔍 Search by title or label…">'
+    +'<div class="count" id="count">Showing '+lib.prompts.length+' of '+lib.prompts.length+' prompts</div></div>'
+    +cardsHtml
+    +'<div class="no-result" id="noResult">No prompts match your search.</div>'
+    +'<footer>Generated by Prompt Library Engine.</footer></div>'
+    +'<div class="toast" id="toast">✓ Copied!</div>'+js+'</body></html>';
+
+  var fname=lib.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'prompt-library';
+  download(fname+'.html',doc,'text/html;charset=utf-8');
+}
+
+/* =====================================================
+   WIRE UP UI
+===================================================== */
+var dz=el('dropzone'),fi=el('fileInput');
+el('browseBtn').addEventListener('click',function(){fi.click();});
+dz.addEventListener('click',function(){fi.click();});
+fi.addEventListener('change',function(){if(fi.files.length){readFiles(fi.files);fi.value='';}});
+['dragenter','dragover'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.add('drag');});});
+['dragleave','drop'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.remove('drag');});});
+dz.addEventListener('drop',function(e){if(e.dataTransfer.files.length)readFiles(e.dataTransfer.files);});
+
+el('pasteBtn').addEventListener('click',function(){
+  var txt=el('pasteArea').value.trim();
+  if(!txt){showNotice('err','⚠ Paste some .md content first.');return;}
+  addLibrary(txt, el('pasteName').value.trim()||null);
+  el('pasteArea').value='';el('pasteName').value='';
+});
+el('templateBtn').addEventListener('click',function(){download('prompt-library-template.md',TEMPLATE);});
+el('clearBtn').addEventListener('click',function(){libraries=[];activeIdx=-1;clearNotice();render();});
+
+render();
+})();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2c7984b4cff69ae',t:'MTc4Njk1ODM0Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
