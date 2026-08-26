@@ -1,6 +1,10 @@
 <!-- Prompt Library Engine v2.0 FINAL - Thumbnail Feature Complete -->
 <!-- Sections: 10 | Presets: 4 | Validators: 6 | Export: Full Parity -->
 <!-- Update Date: 2026-08-14 -->
+<!-- ===== v2.2 UPDATE (2026-08-25) ===== -->
+<!-- CHANGE 1: Added "🎯 Copy Prompt + Negative" button + copyPromptNegativeOnly() in Section 6 -->
+<!-- CHANGE 2: Full Body output → Introduction → PROMPT: → NEGATIVE PROMPT: → COMPATIBLE AI TOOLS: → HOW TO USE THIS PROMPT: → EXPECTED OUTPUT: → TIPS & VARIATIONS: -->
+<!-- CHANGE 3: Parser recognizes new template headings "2 · INTRODUCTION", "8 · COMPATIBLE AI TOOLS", expanded "9 · HOW TO USE THIS PROMPT" (How to Use / Expected Output / Tips & Variations) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -208,6 +212,60 @@ function fallback(text,ok){
 }
 
 /* =====================================================
+   CHANGE 1 — SECTION 6: COPY PROMPT + NEGATIVE ONLY
+   Exposed on window because the engine runs inside an IIFE
+   and the 🎯 button calls it via inline onclick.
+   ACTUAL selectors used (see cardHTML Section 6 .body-block):
+     prompt text   → <div class="val" data-field="prompt">
+     negative text → <div class="val" data-field="negative">
+   Scoped to the clicked card (btn.closest('.card')) so pages
+   with many prompt cards always copy the right one.
+===================================================== */
+window.copyPromptNegativeOnly=function copyPromptNegativeOnly(btn){
+  btn=btn||((window.event&&window.event.target)?window.event.target:null);
+  var scope=(btn&&btn.closest)?(btn.closest('.card')||document):document;
+  // Get prompt text — engine's actual element: .body-block div.val[data-field="prompt"]
+  var promptEl=scope.querySelector('[data-field="prompt"], .prompt-text, #prompt-output');
+  // Get negative prompt text — engine's actual element: .body-block div.val[data-field="negative"]
+  var negativeEl=scope.querySelector('[data-field="negative"], .negative-text, #negative-output');
+
+  var promptText=promptEl?promptEl.innerText.trim():'';
+  var negativeText=negativeEl?negativeEl.innerText.trim():'';
+
+  var combined='';
+  if(promptText)combined+=promptText;
+  if(negativeText)combined+='\n\nNEGATIVE PROMPT:\n'+negativeText;
+
+  if(!combined.trim()){
+    alert('No prompt text found!');
+    return;
+  }
+
+  function showSuccess(){
+    if(btn){
+      // Show success feedback
+      var original=btn.getAttribute('data-orig-label');
+      if(original===null){original=btn.innerHTML;btn.setAttribute('data-orig-label',original);}
+      btn.innerHTML='✅ Copied!';
+      btn.style.background='#059669';
+      setTimeout(function(){
+        btn.innerHTML=original;
+        btn.style.background='';
+      },2000);
+    }
+    showToast('✓ Prompt + Negative copied!');
+  }
+
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(combined)
+      .then(showSuccess)
+      .catch(function(){fallback(combined,showSuccess);}); // engine's existing textarea fallback
+  }else{
+    fallback(combined,showSuccess); // textarea + execCommand fallback
+  }
+};
+
+/* =====================================================
    MARKDOWN PARSER
    Understands the prompt-library section format.
 ===================================================== */
@@ -220,16 +278,39 @@ function cleanInline(t){return (t||'').replace(/\*\*/g,'').replace(/`/g,'').trim
 
 // Field aliases (case-insensitive) mapped to canonical keys
 var FIELD_MAP=[
-  {k:'title',   re:/prompt\s*title/i},
+  {k:'title',   re:/^(\d+\s*[·.\-–—)]*\s*)?prompt\s*title/i},
+  /* ---- v3.0 FIX 1: POST TITLE aliases (added only, existing alias untouched) ---- */
+  {k:'title',   re:/\b1\s*[·.]\s*POST\s*TITLE\b/i},       // "**1 · POST TITLE**" / "**1. POST TITLE**"
+  {k:'title',   re:/\bPOST\s+TITLE\b/i},                  // "**POST TITLE**"
   {k:'before',  re:/before\s*image\s*prompt/i},
+  /* ---- v3.0 FIX 2: NEW field altThumb (template Section 4) — CASE B ---- */
+  {k:'altThumb',re:/\b4\s*[·.]\s*ALT\s*TEXT.*THUMBNAIL/i}, // "**4 · ALT TEXT — THUMBNAIL IMAGE**"
+  {k:'altThumb',re:/ALT\s*TEXT.*THUMBNAIL(\s*IMAGE)?/i},
+  {k:'altThumb',re:/\bALT.*THUMB/i},
+  /* ---- v3.0 FIX 3: Section 5 combined alt block — entry-point alias (CASE A);
+         inline "Before Image Alt:" / "After Image Alt:" sub-lines are mapped in the parse loop ---- */
+  {k:'altpair', re:/\b5\s*[·.]\s*ALT\s*TEXT.*BEFORE/i},    // "**5 · ALT TEXT — BEFORE / AFTER IMAGES**"
+  {k:'altpair', re:/ALT\s*TEXT.*BEFORE.*AFTER/i},
   {k:'altAfter',re:/after\s*image.*alt\s*text/i},
   {k:'altBefore',re:/before\s*image.*alt\s*text/i},
   {k:'negative',re:/negative\s*prompt/i},        // check before generic "prompt"
   {k:'howto',   re:/how\s*to\s*use\s*this\s*prompt/i},
+  /* ---- CHANGE 3 (v2.2 template): new + expanded section headings ---- */
+  {k:'intro',   re:/introduction/i},                                  // NEW 2 · INTRODUCTION
+  {k:'tools',   re:/compatible\s+ai\s+tools/i},                       // NEW 8 · COMPATIBLE AI TOOLS
+  {k:'tools',   re:/recommended\s+ai\s+tools/i},                      // legacy alias: v2.1 "### 🤖 Recommended AI Tools"
+  {k:'expected',re:/^(\d+\s*[·.\-–—)]*\s*)?expected\s+(output|result)/i}, // NEW 9 sub-heading: Expected Output
+  {k:'tips',    re:/tips?\s*(&|and)\s*variations?/i},                 // NEW 9 sub-heading: Tips & Variations
+  {k:'howto',   re:/^(\d+\s*[·.\-–—)]*\s*)?how\s*to\s*use\b/i},       // NEW 9 sub-heading: How to Use
+  /* ----------------------------------------------------------------- */
   {k:'labels',  re:/labels/i},
   {k:'permalink',re:/permalink/i},
   {k:'search',  re:/search\s*description/i},
-  {k:'prompt',  re:/^prompt\b/i}                 // generic prompt last
+  /* ---- v3.0 FIX 4: NEW field thumb (template Section 10) — CASE B; checked before generic "prompt" ---- */
+  {k:'thumb',   re:/\b10\s*[·.]\s*THUMBNAIL.*PROMPT/i},   // "**10 · THUMBNAIL IMAGE GENERATOR PROMPT**"
+  {k:'thumb',   re:/THUMBNAIL.*GENERATOR.*PROMPT/i},
+  {k:'thumb',   re:/THUMBNAIL.*IMAGE.*GENERATOR/i},
+  {k:'prompt',  re:/^(\d+\s*[·.\-–—)]*\s*)?prompt\b/i} // generic prompt last (tolerates numbered "6 · PROMPT" headings)
 ];
 
 function classifyHeading(h){
@@ -263,7 +344,17 @@ function parseMarkdown(md){
     function flush(){ if(curKey){fields[curKey]=(fields[curKey]?fields[curKey]+'\n':'')+buf.join('\n').trim();} buf=[]; }
     for(var r=0;r<body.length;r++){
       var line=body[r];
+      // v3.0 FIX 5: skip pure divider lines (━━━ / === / --- separators) BEFORE any heading detection —
+      // only lines made ENTIRELY of separator chars are skipped; text+separator lines are kept.
+      if(/^[━=\-]{3,}\s*$/.test(line.trim())) continue;
       if(/^---\s*$/.test(line)) continue;
+      // "## Frequently Asked Questions" always belongs to the How To Use body (legacy behaviour)
+      if(/^\s*##\s+(frequently asked questions|faq)/i.test(line)){ flush(); curKey='howto'; buf.push(line); continue; }
+      // v3.0 FIX 3: Section 5 inline sub-lines — map directly onto the existing altBefore/altAfter fields
+      var mAltB=line.match(/^\s*Before\s+Image\s+Alt\s*:\s*(.*)$/i);
+      if(mAltB){ flush(); curKey='altBefore'; if(mAltB[1].trim())buf.push(mAltB[1].trim()); continue; }
+      var mAltA=line.match(/^\s*After\s+Image\s+Alt\s*:\s*(.*)$/i);
+      if(mAltA){ flush(); curKey='altAfter'; if(mAltA[1].trim())buf.push(mAltA[1].trim()); continue; }
       // A heading line looks like **Something** possibly with trailing colon, OR "### ..." markers
       var head=null;
       var m1=line.match(/^\s*\*\*(.+?)\*\*\s*:?\s*$/);      // **Prompt Title:**  or **Prompt**
@@ -274,8 +365,11 @@ function parseMarkdown(md){
         if(key){ flush(); curKey=key; continue; }
         // unknown bold heading -> treat as normal text under current key
       }
-      if(m2){ // section divider like "### BLOGGER SETTINGS" -> ignore as heading, don't add
-        continue;
+      if(m2){ // ### sub-heading — CHANGE 3: recognize known sub-headings (e.g. "### Expected Output", "### 🤖 Recommended AI Tools")
+        var subKey=classifyHeading(m2[1]);
+        if(subKey){ flush(); curKey=subKey; }
+        else if(curKey==='tools'||curKey==='expected'||curKey==='tips'){ flush(); curKey='howto'; } // unknown sub-block (e.g. "### ⚠️ Common Mistakes") returns to parent How To Use
+        continue; // unknown ### divider (e.g. "### BLOGGER SETTINGS") -> skip line, unchanged legacy behaviour
       }
       buf.push(line);
     }
@@ -283,12 +377,18 @@ function parseMarkdown(md){
     prompts.push({
       num:num,
       title:cleanInline(fields.title||''),
+      intro:cleanInline(fields.intro||''),        // CHANGE 3 — template 2 · INTRODUCTION
       before:cleanInline(fields.before||''),
+      altThumb:cleanInline(fields.altThumb||''),  // v3.0 FIX 2 — template 4 · ALT TEXT — THUMBNAIL IMAGE
       altAfter:cleanInline(fields.altAfter||''),
       altBefore:cleanInline(fields.altBefore||''),
       prompt:cleanInline(fields.prompt||''),
       negative:cleanInline(fields.negative||''),
+      tools:stripBullets(fields.tools||''),       // CHANGE 3 — template 8 · COMPATIBLE AI TOOLS
       howto:stripBullets(fields.howto||''),
+      expected:stripBullets(fields.expected||''), // CHANGE 3 — template 9 sub: Expected Output
+      tips:stripBullets(fields.tips||''),         // CHANGE 3 — template 9 sub: Tips & Variations
+      thumb:cleanInline(fields.thumb||''),        // v3.0 FIX 4 — template 10 · THUMBNAIL IMAGE GENERATOR PROMPT
       labels:cleanInline(fields.labels||''),
       permalink:cleanInline((fields.permalink||'').replace(/`/g,'')),
       search:cleanInline(fields.search||'')
@@ -302,10 +402,10 @@ function parseMarkdown(md){
 ===================================================== */
 function checkLibrary(lib){
   var problems=[];
-  var need=['title','before','altAfter','altBefore','prompt','negative','howto','labels','permalink','search'];
-  var nice={title:'Prompt Title',before:'Before Image Prompt',altAfter:'After Image Alt text',
-    altBefore:'Before Image Alt text',prompt:'Prompt',negative:'Negative Prompt',howto:'How To Use This Prompt',
-    labels:'Labels',permalink:'Permalink',search:'Search Description'};
+  var need=['title','intro','before','altAfter','altBefore','prompt','negative','tools','howto','labels','permalink','search'];
+  var nice={title:'Prompt Title',intro:'Introduction',before:'Before Image Prompt',altAfter:'After Image Alt text',
+    altBefore:'Before Image Alt text',prompt:'Prompt',negative:'Negative Prompt',tools:'Compatible AI Tools',
+    howto:'How To Use This Prompt',labels:'Labels',permalink:'Permalink',search:'Search Description'};
   lib.prompts.forEach(function(p){
     var miss=need.filter(function(k){return !p[k];});
     if(miss.length){ problems.push('Prompt #'+p.num+': missing '+miss.map(function(k){return nice[k];}).join(', ')); }
@@ -320,8 +420,24 @@ function howtoHTML(h){
   var lines=(h||'').split('\n').filter(function(l){return l.trim();});
   return '<ul class="howto">'+lines.map(function(l){return '<li>'+esc(l)+'</li>';}).join('')+'</ul>';
 }
+/* CHANGE 2 — Blogger "Full Body" post structure (v2.2 template §2 + §6-§9).
+   Every part carries a clear ALL-CAPS heading so Blogger Compose view shows
+   proper formatting when pasted. Optional parts are included only when found,
+   so old (v2.1) libraries still produce a clean body. */
 function fullBody(p){
-  return 'Prompt\n'+p.prompt+'\n\nNegative Prompt\n'+p.negative+'\n\nHow To Use This Prompt\n'+p.howto;
+  var parts=[];
+  if(p.intro)parts.push(p.intro);                             // [INTRODUCTION TEXT] — template 2 · INTRODUCTION
+  parts.push('PROMPT:\n'+p.prompt);                           // PROMPT:
+  parts.push('NEGATIVE PROMPT:\n'+p.negative);                // NEGATIVE PROMPT:
+  if(p.tools)parts.push('COMPATIBLE AI TOOLS:\n'+p.tools);    // COMPATIBLE AI TOOLS: — template 8
+  if(p.howto)parts.push('HOW TO USE THIS PROMPT:\n'+p.howto); // HOW TO USE THIS PROMPT: — template 9
+  if(p.expected)parts.push('EXPECTED OUTPUT:\n'+p.expected);  // EXPECTED OUTPUT: — template 9 sub-heading
+  if(p.tips)parts.push('TIPS & VARIATIONS:\n'+p.tips);        // TIPS & VARIATIONS: — template 9 sub-heading
+  return parts.join('\n\n');
+}
+/* CHANGE 1 — Prompt + Negative Prompt only (for After Image generation) */
+function promptNegativeBody(p){
+  return (p.prompt||'')+(p.negative?'\n\nNEGATIVE PROMPT:\n'+p.negative:'');
 }
 var PRESET_NAMES={studio:'Studio Portrait Style (Default)',split:'Split Arrow Style',
   minimal:'Minimalist Clean',cinematic:'Cinematic Bold'};
@@ -332,7 +448,7 @@ function allSettings(p){
   return [
     sec('📝 TITLE',p.title),
     sec('🖼 BEFORE IMAGE PROMPT',p.before),
-    sec('📸 THUMBNAIL ALT TEXT',thumbnailAlt(p)),
+    sec('📸 THUMBNAIL ALT TEXT',thumbnailAltValue(p)),
     sec('🏷 BEFORE IMAGE ALT TEXT',p.altBefore),
     sec('🏷 AFTER IMAGE ALT TEXT',p.altAfter),
     sec('📄 PROMPT + NEGATIVE + HOW TO USE',fullBody(p)),
@@ -352,6 +468,9 @@ function thumbnailAlt(p){
     return p.title+' - Before After AI Transformation Thumbnail | AI Prompt Preview';
   }
 }
+/* v3.0 FIX 2 render helper: prefer the file's own Section 4 thumbnail alt;
+   fall back to the auto-generated one when the library doesn't provide it. */
+function thumbnailAltValue(p){return (p.altThumb&&p.altThumb.trim())?p.altThumb:thumbnailAlt(p);}
 function altWarnHTML(txt){
   return (txt||'').length>125
     ? '<div class="alt-warn">⚠️ Alt text too long (max 125 chars for SEO). Current: '+txt.length+' chars</div>'
@@ -539,7 +658,7 @@ function storePrompt(p){var id='p'+(uid++);promptStore[id]=p;return id;}
 
 function cardHTML(p){
   var preset=savedPreset();
-  var thumbAlt=thumbnailAlt(p), thumbPrompt=thumbnailPrompt(p,preset);
+  var thumbAlt=thumbnailAltValue(p), thumbPrompt=thumbnailPrompt(p,preset);
   var idT=store(p.title), idBP=store(p.before), idAA=store(p.altAfter), idBA=store(p.altBefore),
       idFB=store(fullBody(p)), idLB=store(p.labels), idPL=store(p.permalink), idSD=store(p.search),
       idALL=store(allSettings(p)), idTA=store(thumbAlt), idTP=store(thumbPrompt), idP=storePrompt(p);
@@ -572,11 +691,18 @@ function cardHTML(p){
     +'<div class="val">'+esc(p.altAfter)+'</div>'+validateAlt(p.altAfter)+'</div>'
 
   +'<div class="sec sec-body"><div class="sec-top"><span class="lab">6 · Prompt + Negative Prompt + How To Use <em>(post body)</em></span>'
+    /* CHANGE 1 — new button placed BEFORE "📄 Copy Full Body", same .cbtn class as existing copy buttons */
+    +'<button onclick="copyPromptNegativeOnly(this)" class="cbtn" title="Copy Prompt + Negative Prompt only (for After Image generation)">🎯 Copy Prompt + Negative</button>'
     +'<button class="cbtn cbtn-main" data-copy="'+idFB+'">📄 Copy Full Body</button></div>'
     +'<div class="body-block">'
-    +'<p class="mini-lab">Prompt</p><div class="val">'+esc(p.prompt)+'</div>'
-    +'<p class="mini-lab">Negative Prompt</p><div class="val">'+esc(p.negative)+'</div>'
-    +'<p class="mini-lab">How To Use This Prompt</p>'+howtoHTML(p.howto)
+    /* CHANGE 2 — displayed content now mirrors the v2.2 template (§2 Intro, §8 Tools, §9 Expected/Tips) */
+    +(p.intro?'<p class="mini-lab">Introduction</p><div class="val">'+esc(p.intro)+'</div>':'')
+    +'<p class="mini-lab">Prompt</p><div class="val" data-field="prompt">'+esc(p.prompt)+'</div>'
+    +'<p class="mini-lab">Negative Prompt</p><div class="val" data-field="negative">'+esc(p.negative)+'</div>'
+    +(p.tools?'<p class="mini-lab">Compatible AI Tools</p><div class="val">'+esc(p.tools)+'</div>':'')
+    +(p.howto?'<p class="mini-lab">How To Use This Prompt</p>'+howtoHTML(p.howto):'')
+    +(p.expected?'<p class="mini-lab">Expected Output</p><div class="val">'+esc(p.expected)+'</div>':'')
+    +(p.tips?'<p class="mini-lab">Tips &amp; Variations</p><div class="val">'+esc(p.tips)+'</div>':'')
     +'</div></div>'
 
   +'<div class="sec"><div class="sec-top"><span class="lab">7 · Labels (SEO)</span>'
@@ -719,312 +845,196 @@ function download(filename,content,type){
   setTimeout(function(){URL.revokeObjectURL(a.href);},1500);
 }
 
-var TEMPLATE=`# [Main Category Name] — Professional Prompt Library
-
-**Category:** [Main Category Name]
-**Total Prompts:** 50
-**Primary Blogger Label:** [Choose one exact blog category label]
-**Use:** AI image editors &amp; generators (ChatGPT/DALL·E, Flux, Gemini, Midjourney, Leonardo AI, Ideogram, Adobe Firefly)
-
-&gt; This is the SEO-optimized universal template v2.1 for Motion Graphics Studio blog prompt libraries.
-&gt; Every field is optimized for Google rankings, image search, and social media sharing.
-
----
-
-## 📏 SEO CHARACTER LIMITS (CRITICAL!)
-
-| Field | Optimal Length | Max Length | Reason |
-|-------|---------------|------------|--------|
-| Prompt Title | 40-55 chars | 60 chars | Google SERP display |
-| Before/After Alt | 80-125 chars | 125 chars | Image search + accessibility |
-| Thumbnail Alt | 80-125 chars | 125 chars | Auto-generated by engine |
-| Prompt Text | 60-120 words | 200 words | AI tool compatibility |
-| Negative Prompt | 30-60 words | 100 words | AI tool compatibility |
-| Labels Count | 6-10 labels | 20 labels | Blogger limit + SEO |
-| Permalink | 3-5 words | 60 chars | URL best practice |
-| Search Description | 140-155 chars | 160 chars | Google SERP display |
-
----
-
-## BLOGGER CATEGORY LABEL LOGIC
-
-Use only matching labels. Do not add random category labels.
-
-**Main Rules:**
-1. Every post must contain the primary category label for the library.
-2. Add extra Blogger category labels only when the prompt genuinely matches that category.
-3. Keep existing SEO/niche labels after the main Blogger category labels.
-4. Every Prompt Title must end with **(2026)**.
-5. Permalink should be lowercase, SEO-friendly, and should not include (2026).
-6. Labels: NO trailing comma (Blogger parser issue).
-7. Primary keyword should be FIRST in Title, Alt text, and Search Description.
-
-**Approved Blogger Category Labels:**
-Photo Retouch, Photo Cleaning, Color Grading, Wedding Edit, HD Enhance, Background Change, ChatGPT Prompt, Midjourney Prompt, Video Prompt, Thumbnail Prompt, Text Animation, Shake Effect, Logo Reveal, Cinematic FX, Beat Sync, Velocity Edit, Overlay Pack, Reels Motion, Smoke PNG, Light PNG, Explosion PNG, Rain PNG, Frame PNG, Wedding Card, Birthday Card, Haldi Invite, Reception Card, Naming Ceremony, Marathi Card, Video Invite, Digital Invite, Green Screen, Transition, Cinematic LUT, Sound FX, Blur Effect, Flash Effect, Reels FX, Fire Overlay, Studio Background, Wedding Background, Festival Background, Nature Background, AI Background, Blur Background, Dark Background, Light Rays BG, Gold Text, Fire Text, Neon Text, 3D Text, Marathi Text, Birthday Text, Cinematic Text, Logo Text
-
-**Label Examples (No trailing comma!):**
-- Skin cleanup portrait → Photo Retouch, Photo Cleaning, Midjourney Prompt, skin-retouch, portrait-editing, natural-skin
-- Wedding cinematic edit → Wedding Edit, Photo Retouch, Color Grading, wedding-photography, cinematic-tone
-- Product white background → Photo Retouch, Background Change, AI Background, product-photography, white-bg
-- Portrait bokeh → Photo Retouch, Blur Effect, Blur Background, portrait, bokeh-effect
-
----
-
-## REQUIRED SECTION ORDER (10 Sections)
-
-1. Prompt Title → 2. Before Image Prompt → 3. Thumbnail Alt (auto) → 4. Before Alt → 5. After Alt → 6. Prompt + Negative + How To Use → 7. Labels → 8. Permalink → 9. Search Description → 10. Thumbnail Generator Prompt (auto)
-
----
-
-## Prompt #1
-
-**Prompt Title:** (Max 60 chars, primary keyword FIRST)
-Skin Retouch Portrait Prompt (2026)
-
-&gt; Format: [Primary Keyword] [Descriptor] Prompt (2026)
-&gt; Include "Prompt" keyword — high search volume
-
-**Before Image Prompt:** (60-80 words, end with 3:2 aspect ratio)
-Close-up smartphone portrait of a young woman under flat overhead indoor lighting, visible acne and blotchy redness around the cheeks and nose, uneven oily skin tone, dark under-eye circles, stray facial hairs, plain cluttered bedroom background, raw unedited candid photo, photorealistic, 3:2 aspect ratio.
-
-**Before Image — Alt text:** (80-125 chars, specific problem + keyword)
-Acne and uneven skin tone before AI skin retouching prompt - original portrait photo with blemishes and dull complexion
-
-**After Image — Alt text:** (80-125 chars, specific result + keyword)
-Clean natural skin after AI skin retouching prompt - professional portrait with even tone and preserved texture
-
-**Prompt** (80-120 words for optimal AI results)
-Retouch this portrait with high-end commercial skin retouching using a frequency-separation workflow. Even out skin tone, remove blemishes, redness, and stray hairs while preserving natural skin texture, pores, and fine detail. Balance highlights and shadows on the face, soften under-eye shadows subtly, and add a clean dodge-and-burn pass to sculpt the cheekbones, jawline, and nose bridge. Keep colors true to life with neutral white balance, gentle micro-contrast, and a soft beauty-dish lighting feel. Deliver a polished, magazine-ready result that still looks like a real human being.
-
-**Negative Prompt** (Category-specific for Portrait/Skin)
-plastic skin, over-smoothed face, waxy texture, blurred pores, airbrushed look, distorted features, fake symmetry, oversaturation, banding, halos, artifacts, cartoonish, AI sheen, doll-like appearance, uneven eyes
-
-**How To Use This Prompt**
-
-### 💼 Best For
-Studio portraits, professional headshots, LinkedIn profiles, magazine-quality shots, wedding portraits
-
-### 📸 Before (Common Problems)
-Uneven skin tone, visible blemishes, blotchy redness, distracting shadows, raw smartphone photos
-
-### ✨ After (Expected Professional Result)
-Clean, even, naturally textured skin with sculpted magazine-quality lighting
-
-### 💡 Pro Tips
-1. Always preserve pores — request "natural skin texture" to avoid the plastic effect
-2. Start with a high-resolution source (min 2000px width)
-3. Use 75-85% prompt strength for natural results
-
-### 🤖 Recommended AI Tools
-- **Best Results:** Flux (frequency separation), Midjourney v6
-- **Good Alternatives:** ChatGPT/DALL-E, Gemini, Leonardo AI
-- **Free Options:** Adobe Firefly, Leonardo AI (free tier)
-
-### ⚠️ Common Mistakes to Avoid
-- Don't over-smooth — removing all texture makes skin look fake
-- Don't over-saturate — keep colors true to life
-- Don't ignore the negative prompt — it prevents plastic look
-
-## Frequently Asked Questions
-
-**Q1: Which AI tool gives the most natural skin texture?**
-A: Flux and Midjourney v6 produce the most natural, pore-preserving results. ChatGPT/DALL-E works well for quick edits.
-
-**Q2: Can I use this prompt for commercial photography?**
-A: Yes, all prompts in our library are royalty-free for both personal and commercial use.
-
-**Q3: What's the minimum image resolution needed?**
-A: Minimum 1024x1024 pixels. For best results, use 2000x2000 or higher resolution source images.
-
-**Q4: Why does my result look plastic?**
-A: Reduce prompt strength to 70-80% and ensure the negative prompt includes "plastic skin, over-smoothed" terms.
-
-**Labels:** (6-10 labels, primary Blogger category FIRST, no trailing comma)
-Photo Retouch, Photo Cleaning, Midjourney Prompt, skin-retouch-portrait, professional-headshot, natural-skin-texture, ai-portrait-editing, beauty-retouch
-
-**Permalink:** (Under 60 chars, 3-5 words, hyphens only, no year)
-skin-retouch-portrait-prompt
-
-**Search Description:** (140-155 chars with CTA and keyword)
-Transform portraits with AI skin retouching prompt. Get magazine-quality results with natural texture preserved. Try free in 2026!
-
-**Related Prompts:** (Internal linking - 2-3 links)
-- Wedding Portrait Retouch Prompt
-- HD Skin Enhancement Prompt
-- Natural Beauty Glow Prompt
-
----
-
-## Prompt #2
-
-**Prompt Title:** (Max 60 chars)
-[Second SEO Prompt Title Here] (2026)
-
-**Before Image Prompt:** (60-80 words with 3:2 aspect ratio)
-[Describe a different before image problem for this category. Keep it specific and visual so AI tools can understand the starting point. Include: subject, visible problem, lighting, background, image quality. End with: photorealistic, 3:2 aspect ratio.]
-
-**Before Image — Alt text:** (80-125 chars, specific problem)
-[Specific problem] before [prompt topic] - original [image type] with [key issues]
-
-**After Image — Alt text:** (80-125 chars, specific result)
-[Specific result] after [prompt topic] - professional [image type] with [improvements]
-
-**Prompt** (80-120 words)
-[Write the complete prompt. Match the category purpose, add exact editing instructions, preserve realism, and mention final quality.]
-
-**Negative Prompt** (Category-specific!)
-[Use appropriate negative prompts based on category]
-
-**How To Use This Prompt**
-
-### 💼 Best For
-[Specific use cases]
-
-### 📸 Before (Common Problems)
-[What's wrong in original]
-
-### ✨ After (Expected Result)
-[What you'll achieve]
-
-### 💡 Pro Tips
-1. [Practical tip 1]
-2. [Practical tip 2]
-3. [Practical tip 3]
-
-### 🤖 Recommended AI Tools
-[Best AI tools for this prompt]
-
-### ⚠️ Avoid These Mistakes
-[Common mistakes to avoid]
-
-## Frequently Asked Questions
-
-**Q1: [Common question]?**
-A: [Detailed answer]
-
-**Q2: [Common question]?**
-A: [Detailed answer]
-
-**Q3: [Common question]?**
-A: [Detailed answer]
-
-**Labels:** (6-10 labels, no trailing comma)
-[Primary Blogger Label], [Matching Blogger Categories], [long-tail-keyword-1], [long-tail-keyword-2], [niche-label]
-
-**Permalink:** (Under 60 chars)
-[seo-friendly-permalink-here]
-
-**Search Description:** (140-155 chars with CTA)
-[Transform/Create/Get] [benefit] with [primary keyword]. [Value proposition]. [CTA] in 2026!
-
-**Related Prompts:**
-- [Related Prompt 1]
-- [Related Prompt 2]
-- [Related Prompt 3]
-
----
-
-## 🎯 CATEGORY-SPECIFIC NEGATIVE PROMPTS
-
-### Portrait / Skin Retouch:
-plastic skin, over-smoothed face, waxy texture, doll-like appearance, distorted features, uneven eyes, missing pores, airbrushed look, artificial glow, oversaturated colors
-
-### Wedding Photography:
-oversaturated colors, HDR look, plastic skin, unnatural poses, distorted background, missing details, blurry faces, harsh shadows, cartoonish
-
-### Background Change:
-halo edges, poor masking, color spill, jagged edges, missing hair strands, unnatural lighting on subject, floating subject, incorrect shadows
-
-### Product Photography:
-distorted product shape, wrong colors, missing labels, plastic look, fake shadows, unrealistic reflections, blurred edges, incorrect proportions
-
-### Color Grading:
-oversaturated, muddy shadows, blown highlights, unnatural skin tones, banding, artifacts, over-processed, HDR halo
-
-### HD Enhancement:
-artifacts, noise, over-sharpening, halos, unnatural textures, plastic surfaces, loss of detail, upscaling artifacts
-
-### Text Effects:
-unreadable text, distorted letters, wrong fonts, misaligned characters, blurry text, missing letters, incorrect spacing
-
----
-
-## 📋 PRODUCTION CHECKLIST BEFORE BLOGGER UPLOAD
-
-### Content Quality:
-- [ ] Total prompts count is correct (50 per library)
-- [ ] Every Prompt Title ends with (2026)
-- [ ] Every prompt follows the required 10-section order
-- [ ] Every Title is under 60 characters
-- [ ] Every Before/After Alt is specific (not generic)
-- [ ] Every Search Description has a CTA
-- [ ] Every Search Description is 140-155 characters
-- [ ] Every Permalink is under 60 characters
-
-### SEO Structure:
-- [ ] Primary keyword FIRST in every Title
-- [ ] Primary keyword in every Alt text
-- [ ] Primary keyword in Search Description
-- [ ] Category-specific Negative Prompts used
-- [ ] FAQ section included (3-4 questions)
-- [ ] Related Prompts linked (2-3 internal links)
-
-### Labels:
-- [ ] 6-10 labels per prompt (not more, not less)
-- [ ] Primary Blogger category FIRST
-- [ ] No trailing comma at end of labels
-- [ ] Mix of broad categories + long-tail keywords
-- [ ] All hyphenated labels lowercase
-
-### Technical:
-- [ ] Permalink is lowercase and hyphen-separated
-- [ ] No underscores in permalink
-- [ ] No spaces or special characters
-- [ ] No year (2026) in permalink
-- [ ] No stop words (the, and, with, for) in permalink
-
-### Thumbnail (Auto-generated by Engine):
-- [ ] Thumbnail Alt text auto-populated (Section 3)
-- [ ] Thumbnail Generator Prompt auto-created (Section 10)
-- [ ] Preset selected (Studio/Split/Minimal/Cinematic)
-
----
-
-## 🎨 QUICK EXAMPLES BY CATEGORY
-
-### Portrait Retouch:
-Title: "Skin Retouch Portrait Prompt (2026)"
-Permalink: "skin-retouch-portrait-prompt"
-Search Desc: "Transform portraits with AI skin retouching prompt. Get magazine-quality results with natural texture preserved. Try free in 2026!"
-
-### Wedding Edit:
-Title: "Wedding Photo Color Grading Prompt (2026)"
-Permalink: "wedding-color-grading-prompt"
-Search Desc: "Create cinematic wedding photos with our AI color grading prompt. Professional warm tones for stunning results. Download free 2026!"
-
-### Background Change:
-Title: "White Background Product Prompt (2026)"
-Permalink: "white-background-product-prompt"
-Search Desc: "Remove backgrounds instantly with AI prompt. Perfect for products, portraits &amp; e-commerce. Ready-to-use in Midjourney &amp; Flux!"
-
-### PNG Assets:
-Title: "Smoke Overlay PNG Pack (2026)"
-Permalink: "smoke-overlay-png-pack"
-Search Desc: "Free smoke overlay PNG pack for videos &amp; photos. High-quality transparent files ready to use in Premiere &amp; Photoshop. Download 2026!"
-
----
-
-## 📈 SEO IMPACT NOTES
-
-Following this template will help:
-- ✅ Better Google rankings (primary keyword optimization)
-- ✅ Image search traffic (proper alt text)
-- ✅ Social media shares (compelling descriptions)
-- ✅ Featured snippets eligibility (FAQ format)
-- ✅ Rich results potential (structured data)
-- ✅ Internal linking benefits (related prompts)
-- ✅ User engagement (clear structure)
-- ✅ Mobile SEO (concise titles/URLs)
+var TEMPLATE=`=======================================================
+MOTION GRAPHICS STUDIO — MASTER PROMPT TEMPLATE v3.0
+=======================================================
+
+INSTRUCTIONS FOR AI:
+Generate ALL fields below for ONE AI prompt post.
+Fill every section completely.
+Do NOT skip any section.
+Target: 500+ words total (sections 2 + 9 combined).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**1 · POST TITLE**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[SEO optimized title, 50-60 characters max.
+Must include main keyword + current year.
+Example: Portrait Background Blur and Bokeh Cleanup (2026)]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**2 · INTRODUCTION**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Write 2-3 sentences (40-60 words).
+Describe WHAT this prompt does, WHO it is for,
+and WHAT result they will get.
+Must be compelling and keyword-rich.
+This text appears as the card tagline on the blog.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**3 · BEFORE IMAGE PROMPT**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Prompt to generate the reference "before" image.
+This is the unedited/original state image.
+Should be realistic, simple, and clear.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**4 · ALT TEXT — THUMBNAIL IMAGE**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[SEO alt text for the thumbnail/cover image.
+Include main keyword naturally.
+Max 125 characters.
+Example: AI prompt for portrait background blur
+and bokeh effect — before and after comparison]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**5 · ALT TEXT — BEFORE / AFTER IMAGES**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Before Image Alt: [descriptive alt text for before image]
+After Image Alt: [descriptive alt text for after image]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**6 · PROMPT**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Main AI prompt — detailed, specific, optimized.
+Include: subject, style, lighting, mood, technical params.
+This is the primary prompt users will copy and use.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**7 · NEGATIVE PROMPT**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Negative prompt — what to avoid in the output.
+Include common artifacts, unwanted styles,
+quality issues specific to this prompt type.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**8 · COMPATIBLE AI TOOLS**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[List which AI tools work best with this prompt.
+Use checkmark format. Include only genuinely
+compatible tools for this specific prompt type.]
+
+✅ Midjourney v6
+✅ DALL-E 3 (ChatGPT Plus)
+✅ Adobe Firefly 3
+✅ Stable Diffusion XL
+✅ Canva AI Image Generator
+[Add or remove tools based on actual compatibility]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**9 · HOW TO USE THIS PROMPT**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**How to Use:**
+[Write step-by-step instructions (5-6 steps).
+Be specific to this prompt type.
+Include variable customization tips.
+100-150 words.]
+
+Step 1: Copy the prompt from Section 6 above
+Step 2: Open your preferred AI tool
+Step 3: Paste prompt in the input field
+Step 4: Customize these variables:
+  → [variable 1] = [what to replace it with]
+  → [variable 2] = [what to replace it with]
+Step 5: Generate and review the result
+Step 6: Refine using the negative prompt if needed
+
+**Expected Output:**
+[Describe what the user will get as output.
+4-5 bullet points. Be specific and visual.
+50-80 words.]
+
+→ [Expected result 1]
+→ [Expected result 2]
+→ [Expected result 3]
+→ [Expected result 4]
+→ [Expected result 5]
+
+**Tips & Variations:**
+
+For best results:
+• [Tip 1 — specific and actionable]
+• [Tip 2 — specific and actionable]
+• [Tip 3 — specific and actionable]
+
+Variations to try:
+• Variation 1: Add "[keyword]" for [specific effect]
+• Variation 2: Replace "[x]" with "[y]" for [different look]
+• Variation 3: Combine with "[related prompt type]"
+
+Tool-specific tips:
+• Midjourney: Add --ar 4:5 --quality 2 --stylize 750
+• DALL-E 3: Use "photorealistic, high detail" modifier
+• Stable Diffusion: CFG scale 7-8, DPM++ 2M Karras sampler
+• Adobe Firefly: Use "Photo" content type for realism
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**10 · THUMBNAIL IMAGE GENERATOR PROMPT**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Prompt to generate 1200x630 thumbnail.
+Use the before + after images as reference.
+Include: split-screen or comparison layout,
+blog branding elements, dark background,
+purple accent colors (#7c3aed).]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**11 · LABELS (SEO)**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Maximum 5 labels. Use EXACT case as below.
+Choose only the most relevant ones.]
+
+Available labels (use exactly as written):
+Photo Editing, AI Prompt, Motion Graphics,
+Video FX, PNG Assets, Background,
+Text Effect, Invitation
+
+Your labels for this post:
+[Label 1], [Label 2], [Label 3]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**12 · PERMALINK**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[lowercase-hyphenated-url-slug-2026
+No special characters. No spaces.
+Include main keyword + year.
+Max 60 characters.
+Example: portrait-background-blur-bokeh-cleanup-2026]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**13 · SEARCH DESCRIPTION**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[120-150 characters ONLY.
+Start with main keyword.
+Include a clear benefit/action.
+Example: Enhance portrait background blur with
+this AI prompt. Create stunning bokeh effects
+in Midjourney and DALL-E. Free to use.]
+
+=======================================================
+WORD COUNT TARGET:
+Section 2 (Introduction): 40-60 words
+Section 9 (How To Use full): 250-350 words
+TOTAL POST BODY: 500+ words ✅
+=======================================================
+
+QUALITY CHECKLIST (AI must verify before output):
+☐ Title is 50-60 chars with year
+☐ Introduction is 40-60 words
+☐ Prompt is detailed and specific
+☐ Negative prompt covers common issues
+☐ Compatible tools are genuinely compatible
+☐ How to Use has 5-6 clear steps
+☐ Expected Output has 4-5 specific results
+☐ Tips has 3 actionable points
+☐ Variations has 3 different approaches
+☐ Tool tips cover 4 major tools
+☐ Labels use EXACT case from available list
+☐ Permalink is lowercase-hyphenated
+☐ Search description is 120-150 chars
+☐ Total word count is 500+
+
+=======================================================
 `;
 
 // Build a standalone HTML file for one category (self-contained, same look & copy behaviour)
@@ -1039,7 +1049,7 @@ function downloadCategoryHTML(lib){
     }
     // Sections 3 & 10 — auto-generated, copy-enabled (same builders as main renderer)
     var expPreset=savedPreset();
-    var thumbAlt=thumbnailAlt(p), thumbPrompt=thumbnailPrompt(p,expPreset);
+    var thumbAlt=thumbnailAltValue(p), thumbPrompt=thumbnailPrompt(p,expPreset);
     var thumbAltSec='<div class="sec"><div class="sec-top"><span class="lab">3 · Thumbnail — Alt text</span>'
       +'<button class="cbtn" data-copytext="'+esc(thumbAlt)+'" title="Copy SEO-friendly alt text for thumbnail image">📋 Copy Thumbnail Alt</button></div>'
       +'<textarea readonly class="val thumbnailAlt" aria-label="Thumbnail alt text (auto-generated)" style="width:100%;min-height:56px;background:transparent;border:1px dashed #242a44;border-radius:8px;padding:8px;resize:vertical;font:inherit;color:#d3d9ee">'+esc(thumbAlt)+'</textarea>'
@@ -1050,10 +1060,19 @@ function downloadCategoryHTML(lib){
       +'<select class="stylePreset" data-title="'+esc(p.title)+'" data-labels="'+esc(p.labels)+'" title="Choose thumbnail design style" aria-label="Thumbnail style preset">'+presetOptionsHTML(expPreset)+'</select></div>'
       +'<textarea readonly class="val thumbnailPrompt" aria-label="Thumbnail image generator prompt (auto-generated)" style="width:100%;min-height:300px;overflow:auto;background:transparent;border:1px dashed #242a44;border-radius:8px;padding:8px;resize:vertical;font:inherit;color:#d3d9ee">'+esc(thumbPrompt)+'</textarea></div>';
     var body='<div class="sec sec-body"><div class="sec-top"><span class="lab">6 · Prompt + Negative Prompt + How To Use <em>(post body)</em></span>'
+      /* CHANGE 1 — same new button in exported files (baked-in text via data-copytext keeps the export self-contained) */
+      +'<button class="cbtn" data-copytext="'+esc(promptNegativeBody(p))+'" title="Copy Prompt + Negative Prompt only (for After Image generation)">🎯 Copy Prompt + Negative</button>'
       +'<button class="cbtn cbtn-main" data-copytext="'+esc(fullBody(p))+'">📄 Copy Full Body</button></div>'
-      +'<div class="body-block"><p class="mini-lab">Prompt</p><div class="val">'+esc(p.prompt)+'</div>'
-      +'<p class="mini-lab">Negative Prompt</p><div class="val">'+esc(p.negative)+'</div>'
-      +'<p class="mini-lab">How To Use This Prompt</p>'+howtoHTML(p.howto)+'</div></div>';
+      /* CHANGE 2 — exported display mirrors the v2.2 template structure */
+      +'<div class="body-block">'
+      +(p.intro?'<p class="mini-lab">Introduction</p><div class="val">'+esc(p.intro)+'</div>':'')
+      +'<p class="mini-lab">Prompt</p><div class="val" data-field="prompt">'+esc(p.prompt)+'</div>'
+      +'<p class="mini-lab">Negative Prompt</p><div class="val" data-field="negative">'+esc(p.negative)+'</div>'
+      +(p.tools?'<p class="mini-lab">Compatible AI Tools</p><div class="val">'+esc(p.tools)+'</div>':'')
+      +(p.howto?'<p class="mini-lab">How To Use This Prompt</p>'+howtoHTML(p.howto):'')
+      +(p.expected?'<p class="mini-lab">Expected Output</p><div class="val">'+esc(p.expected)+'</div>':'')
+      +(p.tips?'<p class="mini-lab">Tips &amp; Variations</p><div class="val">'+esc(p.tips)+'</div>':'')
+      +'</div></div>';
     return '<article class="card" data-search="'+esc((p.title+' '+p.labels).toLowerCase())+'">'
       +'<div class="card-head"><span class="num">#'+esc(p.num)+'</span><h2 class="ptitle">'+esc(p.title)+'</h2>'
         +'<button class="cbtn cbtn-main" data-copytext="'+esc(allSettings(p))+'">⚙ Copy All Settings</button></div>'
@@ -1095,7 +1114,7 @@ function downloadCategoryHTML(lib){
   var doc='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'
     +'<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>'+esc(lib.name)+'</title>'
     +head+'</head><body><div class="wrap">'
-    +'<header><h1>'+esc(lib.name)+'</h1><p>'+lib.prompts.length+' prompts · 10 copy buttons each</p></header>'
+    +'<header><h1>'+esc(lib.name)+'</h1><p>'+lib.prompts.length+' prompts · 11 copy buttons each</p></header>'
     +'<div class="searchbar"><input type="text" id="search" placeholder="🔍 Search by title or label…">'
     +'<div class="count" id="count">Showing '+lib.prompts.length+' of '+lib.prompts.length+' prompts</div></div>'
     +cardsHtml
@@ -1124,7 +1143,7 @@ el('pasteBtn').addEventListener('click',function(){
   addLibrary(txt, el('pasteName').value.trim()||null);
   el('pasteArea').value='';el('pasteName').value='';
 });
-el('templateBtn').addEventListener('click',function(){download('prompt-library-template.md',TEMPLATE);});
+el('templateBtn').addEventListener('click',function(){download('prompt-master-template-v3.0.md',TEMPLATE);});
 el('clearBtn').addEventListener('click',function(){libraries=[];activeIdx=-1;clearNotice();render();});
 
 render();
