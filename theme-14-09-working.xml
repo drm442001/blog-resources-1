@@ -5972,22 +5972,24 @@ padding:9px 12px;
 }
 
 /* =========================
+
 /* =========================
-   MGS-UP-01: CUSTOMIZE PROMPT POPUP FRAMEWORK
-   Public popup shell - no Before Image Prompt
-   Single reusable instance - dark glass language
-   STEP-10: Mobile Responsive + Accessibility — fits 360/375/390/414/768/desktop, no horiz scroll, prompt scrolling, buttons accessible, dropdowns usable, close visible, long prompts/vars handled, touch 44px, focus-visible, aria-modal
+   MGS-UP-13: CUSTOMIZE PROMPT POPUP — ENTERPRISE v2.0
+   Premium glassmorphism editor — production ready
+   Desktop 1280 preferred, 92vw max, 960px min, 92vh max
+   Single scrollbar, no nested scrollbars, auto-height editors
+   Mobile bottom sheet 100vw 92vh, sticky header/footer
 ========================= */
 .mgs-customize-overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.62);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   z-index:100010;
   opacity:0;
   visibility:hidden;
-  transition:opacity .28s ease, visibility .28s ease;
+  transition:opacity .32s ease, visibility .32s ease;
   pointer-events:none;
 }
 .mgs-customize-overlay[data-open="true"]{
@@ -6002,12 +6004,12 @@ padding:9px 12px;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:18px;
+  padding:24px;
   opacity:0;
   visibility:hidden;
   pointer-events:none;
-  transition:opacity .28s ease, visibility .28s ease;
-  overflow-x:hidden;
+  transition:opacity .32s ease, visibility .32s ease;
+  overflow:hidden;
   box-sizing:border-box;
 }
 .mgs-customize-modal[data-open="true"]{
@@ -6018,247 +6020,260 @@ padding:9px 12px;
 .mgs-customize-content{
   position:relative;
   width:100%;
-  max-width:720px;
-  max-height:min(88vh, 820px);
+  max-width:min(1280px, 92vw);
+  min-width:960px;
+  max-height:92vh;
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  overflow-x:hidden;
   border-radius:20px;
-  background:rgba(18,18,18,.96);
-  border:1px solid rgba(255,255,255,.12);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
+  background:linear-gradient(180deg, rgba(17,17,17,.96), rgba(8,8,8,.98));
+  border:1px solid rgba(0,234,255,.12);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
   box-shadow:
-    0 24px 60px rgba(0,0,0,.55),
+    0 24px 80px rgba(0,0,0,.65),
     0 0 0 1px rgba(255,255,255,.04) inset,
     0 1px 0 rgba(255,255,255,.08) inset,
-    0 0 28px rgba(0,234,255,.08);
-  transform:translateY(14px) scale(.98);
-  transition:transform .34s cubic-bezier(.2,.8,.2,1), opacity .28s ease;
+    0 0 40px rgba(0,234,255,.06);
+  transform:translateY(18px) scale(.97);
+  transition:transform .42s cubic-bezier(.2,.8,.2,1), opacity .32s ease;
   opacity:0;
   box-sizing:border-box;
-  min-width:0;
-  max-width:100%;
+  animation:none;
 }
 .mgs-customize-modal[data-open="true"] .mgs-customize-content{
   transform:translateY(0) scale(1);
   opacity:1;
 }
-.mgs-customize-modal:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  padding:1px;
-  border-radius:20px;
-  background:linear-gradient(135deg, rgba(0,234,255,.55), rgba(255,255,255,.06), rgba(196,77,255,.18));
-  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-  opacity:.45;
-  pointer-events:none;
+@media (prefers-reduced-motion: no-preference){
+  .mgs-customize-modal[data-open="true"] .mgs-customize-content{
+    animation:mgsCustomizeFadeScale .42s cubic-bezier(.2,.8,.2,1);
+  }
+}
+@keyframes mgsCustomizeFadeScale{
+  from{transform:translateY(18px) scale(.97); opacity:0;}
+  to{transform:translateY(0) scale(1); opacity:1;}
 }
 .mgs-customize-header{
-  position:relative;
+  position:sticky;
+  top:0;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
-  padding:16px 18px 14px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  background:linear-gradient(135deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+  gap:16px;
+  padding:20px 28px;
+  background:rgba(8,8,8,.96);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.06);
   flex-shrink:0;
-  z-index:2;
-  min-width:0;
-  max-width:100%;
+  z-index:10;
   box-sizing:border-box;
+}
+.mgs-customize-header-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+  flex:1;
+}
+.mgs-customize-header-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:linear-gradient(135deg, rgba(0,234,255,.14), rgba(196,125,255,.10));
+  border:1px solid rgba(0,234,255,.18);
+  color:#00eaff;
+  flex:0 0 auto;
+  box-shadow:0 4px 16px rgba(0,234,255,.10);
+}
+.mgs-customize-header-text{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
 }
 .mgs-customize-title{
   display:flex;
   align-items:center;
   gap:10px;
   font-family:var(--font-heading, Inter, sans-serif);
-  font-size:16px;
-  font-weight:900;
-  letter-spacing:-.2px;
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:-.4px;
   color:#f8fafc;
-  line-height:1.2;
-  min-width:0;
-  overflow-wrap:break-word;
-  word-break:break-word;
+  line-height:1.15;
+  margin:0;
 }
-.mgs-customize-title-icon{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  background:linear-gradient(135deg, rgba(0,234,255,.18), rgba(196,77,255,.12));
-  border:1px solid rgba(0,234,255,.22);
-  color:#00eaff;
-  box-shadow:0 6px 18px rgba(0,234,255,.12);
-  flex:0 0 auto;
+.mgs-customize-subtitle{
+  font-size:14px;
+  font-weight:500;
+  color:#94a3b8;
+  line-height:1.4;
+  margin:0;
 }
 .mgs-customize-close{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:34px;
-  height:34px;
-  min-width:34px;
-  min-height:34px;
+  width:48px;
+  height:48px;
+  min-width:48px;
+  min-height:48px;
   border-radius:50%;
-  border:1px solid rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.10);
   background:rgba(255,255,255,.06);
   color:#e2e8f0;
-  font-size:20px;
+  font-size:22px;
   line-height:1;
   cursor:pointer;
-  transition:background .2s ease, border-color .2s ease, transform .2s ease, color .2s ease, box-shadow .2s ease;
+  transition:all .22s ease;
   flex:0 0 auto;
 }
-/* Accessibility: visible focus state */
+.mgs-customize-close:hover{
+  background:rgba(255,255,255,.10);
+  border-color:rgba(255,255,255,.18);
+  color:#fff;
+  transform:rotate(90deg);
+}
+.mgs-customize-close:active{transform:rotate(90deg) scale(.96);}
 .mgs-customize-close:focus-visible{
   outline:2px solid #00eaff;
   outline-offset:2px;
   box-shadow:0 0 0 4px rgba(0,234,255,.18);
-  border-color:rgba(0,234,255,.42);
 }
-.mgs-customize-close:hover{
-  background:rgba(255,255,255,.10);
-  border-color:rgba(255,255,255,.22);
-  color:#fff;
-  transform:rotate(90deg) scale(1.05);
-}
-.mgs-customize-close:active{transform:rotate(90deg) scale(.96);}
+/* SINGLE SCROLLBAR — ONLY BODY SCROLLS */
 .mgs-customize-body{
   position:relative;
-  padding:16px 18px 18px;
+  flex:1;
   overflow-y:auto;
   overflow-x:hidden;
   display:flex;
   flex-direction:column;
-  gap:16px;
+  gap:0;
   scrollbar-width:thin;
-  scrollbar-color:#00c7de #111;
+  scrollbar-color:rgba(0,234,255,.22) transparent;
   z-index:1;
-  min-width:0;
-  max-width:100%;
   box-sizing:border-box;
-  overflow-wrap:break-word;
   -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
 }
-.mgs-customize-body::-webkit-scrollbar{width:8px}
-.mgs-customize-body::-webkit-scrollbar-track{background:#111;border-radius:20px}
+.mgs-customize-body::-webkit-scrollbar{width:6px; height:6px;}
+.mgs-customize-body::-webkit-scrollbar-track{background:transparent;}
 .mgs-customize-body::-webkit-scrollbar-thumb{
-  background:linear-gradient(180deg,#00c7de,#0094ff);
+  background:rgba(0,234,255,.22);
   border-radius:20px;
-  border:1px solid rgba(255,255,255,.08);
+  border:1px solid transparent;
+  background-clip:content-box;
 }
+.mgs-customize-body::-webkit-scrollbar-thumb:hover{background:rgba(0,234,255,.32); background-clip:content-box;}
+/* SECTIONS — NO NESTED SCROLLBARS */
 .mgs-customize-section{
-  background:rgba(0,0,0,.26);
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:14px;
-  padding:12px 12px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-  min-width:0;
-  max-width:100%;
+  padding:28px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  background:transparent;
   box-sizing:border-box;
-  overflow-wrap:break-word;
-  overflow-x:hidden;
+  min-width:0;
 }
+.mgs-customize-section:last-child{border-bottom:none;}
 .mgs-customize-section-label{
   display:flex;
   align-items:center;
-  gap:8px;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.7px;
-  text-transform:uppercase;
-  color:#00eaff;
-  margin:0 0 8px;
-  min-width:0;
-  overflow-wrap:break-word;
+  gap:10px;
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:-.2px;
+  color:#f1f5f9;
+  margin:0 0 14px;
+  line-height:1.3;
 }
-.mgs-customize-section-label.is-negative{color:#ffc800}
-.mgs-customize-section-label.is-variables{color:#c47dff}
-.mgs-customize-section-label.is-preview{color:#4ade80}
+.mgs-customize-section-label svg{flex:0 0 auto; color:#00eaff;}
+.mgs-customize-section-label.is-negative svg{color:#ffc800;}
+.mgs-customize-section-label.is-variables svg{color:#c47dff;}
+.mgs-customize-section-label.is-preview svg{color:#4ade80;}
+.mgs-customize-section-hint{
+  font-size:12px;
+  font-weight:500;
+  color:#94a3b8;
+  line-height:1.5;
+  margin:0 0 12px;
+}
+/* MAIN PROMPT EDITOR — LARGE, AUTO-HEIGHT, NO INTERNAL SCROLLBAR */
 .mgs-customize-textarea{
   width:100%;
-  min-height:84px;
-  max-height:160px;
-  resize:vertical;
-  background:rgba(0,0,0,.32);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:10px;
-  padding:10px 12px;
-  color:#f5f5f5;
+  min-height:320px;
+  height:auto;
+  resize:none;
+  overflow:hidden;
+  background:rgba(0,0,0,.28);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  padding:16px 18px;
+  color:#f1f5f9;
   font-family:var(--font-body, Inter, sans-serif);
-  font-size:13px;
-  line-height:1.6;
-  outline:none;
-  transition:border-color .2s ease, box-shadow .2s ease;
-  user-select:text;
-  -webkit-user-select:text;
-  -moz-user-select:text;
-  -ms-user-select:text;
-  max-width:100%;
-  box-sizing:border-box;
-  overflow-wrap:anywhere;
-  word-break:break-word;
-}
-.mgs-customize-textarea:focus{
-  border-color:rgba(0,234,255,.32);
-  box-shadow:0 0 0 3px rgba(0,234,255,.12);
-}
-.mgs-customize-textarea:focus-visible{
-  outline:2px solid #00eaff;
-  outline-offset:2px;
-  box-shadow:0 0 0 4px rgba(0,234,255,.18);
-}
-.mgs-customize-textarea.is-negative:focus{
-  border-color:rgba(255,200,0,.32);
-  box-shadow:0 0 0 3px rgba(255,200,0,.12);
-}
-.mgs-customize-textarea.is-negative:focus-visible{
-  outline:2px solid #ffc800;
-  outline-offset:2px;
-  box-shadow:0 0 0 4px rgba(255,200,0,.18);
-}
-.mgs-customize-textarea.is-main-editor{
-  min-height:120px;
-  max-height:320px;
-  background:rgba(0,0,0,.38);
-  border:1px solid rgba(0,234,255,.14);
-  font-size:14px;
+  font-size:15px;
   line-height:1.7;
-  padding:12px 14px;
+  outline:none;
+  transition:border-color .22s ease, box-shadow .22s ease, background .22s ease;
+  box-sizing:border-box;
   white-space:pre-wrap;
   word-break:break-word;
-  overflow-wrap:break-word;
   overflow-wrap:anywhere;
-  user-select:text !important;
-  -webkit-user-select:text !important;
+}
+.mgs-customize-textarea::placeholder{color:#64748b;}
+.mgs-customize-textarea:focus{
+  border-color:rgba(0,234,255,.28);
+  box-shadow:0 0 0 3px rgba(0,234,255,.10);
+  background:rgba(0,0,0,.36);
+}
+.mgs-customize-textarea.is-main-editor{
+  min-height:320px;
+  font-size:16px;
+  line-height:1.7;
+  background:rgba(0,0,0,.22);
+  border:1px solid rgba(255,255,255,.06);
 }
 .mgs-customize-textarea.is-main-editor:focus{
-  border-color:rgba(0,234,255,.36);
-  box-shadow:0 0 0 3px rgba(0,234,255,.14), inset 0 1px 0 rgba(255,255,255,.04);
-  background:rgba(0,0,0,.44);
+  border-color:rgba(0,234,255,.32);
+  box-shadow:0 0 0 4px rgba(0,234,255,.10), inset 0 1px 0 rgba(255,255,255,.04);
+  background:rgba(0,0,0,.32);
 }
 .mgs-customize-textarea.is-main-editor.is-edited{
-  border-color:rgba(0,234,255,.38);
-  background:rgba(0,234,255,.04);
-  box-shadow:0 0 0 3px rgba(0,234,255,.10), inset 0 1px 0 rgba(255,255,255,.05);
+  border-color:rgba(0,234,255,.22);
+  background:rgba(0,234,255,.03);
+}
+/* NEGATIVE PROMPT — YELLOW ACCENT, COMPACT */
+.mgs-customize-textarea.is-negative-editor{
+  min-height:170px;
+  font-size:15px;
+  line-height:1.7;
+  background:rgba(0,0,0,.18);
+  border:1px solid rgba(255,200,0,.10);
+}
+.mgs-customize-textarea.is-negative-editor:focus{
+  border-color:rgba(255,200,0,.28);
+  box-shadow:0 0 0 4px rgba(255,200,0,.08), inset 0 1px 0 rgba(255,255,255,.03);
+  background:rgba(0,0,0,.26);
+}
+.mgs-customize-textarea.is-negative-editor.is-edited{
+  border-color:rgba(255,200,0,.20);
+  background:rgba(255,200,0,.03);
+}
+.mgs-customize-textarea.is-negative-editor.is-empty{
+  border-style:dashed;
+  border-color:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.01);
 }
 .mgs-customize-section-header-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
-  margin:0 0 8px;
-  min-width:0;
-  max-width:100%;
+  gap:12px;
+  margin:0 0 14px;
   flex-wrap:wrap;
 }
 .mgs-customize-section-actions{
@@ -6266,834 +6281,592 @@ padding:9px 12px;
   align-items:center;
   gap:8px;
   margin-left:auto;
-  flex-wrap:wrap;
 }
 .mgs-customize-reset-btn{
   display:inline-flex;
   align-items:center;
-  gap:5px;
-  padding:5px 10px;
+  gap:6px;
+  padding:6px 12px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
   color:#94a3b8;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.2px;
+  font-size:12px;
+  font-weight:600;
   cursor:pointer;
   transition:all .2s ease;
-  white-space:nowrap;
   min-height:32px;
-  box-sizing:border-box;
 }
-.mgs-customize-reset-btn:hover{
-  background:rgba(255,255,255,.10);
-  border-color:rgba(255,255,255,.18);
-  color:#e2e8f0;
-  transform:translateY(-1px);
-}
-.mgs-customize-reset-btn:active{transform:translateY(0) scale(.97)}
-.mgs-customize-reset-btn:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  transform:none !important;
-}
+.mgs-customize-reset-btn:hover{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.14); color:#e2e8f0;}
+.mgs-customize-reset-btn:disabled{opacity:.42; cursor:not-allowed;}
 .mgs-customize-reset-btn.is-visible{
-  border-color:rgba(0,234,255,.22);
-  background:linear-gradient(135deg, rgba(0,234,255,.12), rgba(255,255,255,.04));
+  border-color:rgba(0,234,255,.18);
+  background:rgba(0,234,255,.08);
   color:#00eaff;
-}
-.mgs-customize-reset-btn:focus-visible{
-  outline:2px solid #00eaff;
-  outline-offset:2px;
-  box-shadow:0 0 0 4px rgba(0,234,255,.18);
 }
 .mgs-customize-edited-badge{
   display:none;
   align-items:center;
-  gap:4px;
-  padding:3px 8px;
+  padding:4px 10px;
   border-radius:999px;
-  background:rgba(0,234,255,.12);
-  border:1px solid rgba(0,234,255,.20);
+  background:rgba(0,234,255,.10);
+  border:1px solid rgba(0,234,255,.18);
   color:#00eaff;
-  font-size:9px;
-  font-weight:900;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-}
-.mgs-customize-edited-badge.is-visible{display:inline-flex}
-.mgs-customize-char-count{
   font-size:10px;
-  color:#64748b;
-  font-weight:600;
-  letter-spacing:.2px;
-  margin-top:6px;
-  text-align:right;
-  max-width:100%;
-  overflow-wrap:break-word;
+  font-weight:700;
+  letter-spacing:.3px;
 }
-.mgs-customize-char-count.is-edited{color:#00eaff}
-.mgs-customize-textarea.is-negative-editor{
-  min-height:90px;
-  max-height:240px;
-  background:rgba(0,0,0,.34);
-  border:1px solid rgba(255,200,0,.14);
-  font-size:13px;
-  line-height:1.65;
-  padding:11px 13px;
-  white-space:pre-wrap;
-  word-break:break-word;
-  overflow-wrap:break-word;
-  overflow-wrap:anywhere;
-  user-select:text !important;
-  -webkit-user-select:text !important;
-}
-.mgs-customize-textarea.is-negative-editor:focus{
-  border-color:rgba(255,200,0,.36);
-  box-shadow:0 0 0 3px rgba(255,200,0,.14), inset 0 1px 0 rgba(255,255,255,.04);
-  background:rgba(0,0,0,.40);
-}
-.mgs-customize-textarea.is-negative-editor.is-edited{
-  border-color:rgba(255,200,0,.38);
-  background:rgba(255,200,0,.06);
-  box-shadow:0 0 0 3px rgba(255,200,0,.10), inset 0 1px 0 rgba(255,255,255,.05);
-}
-.mgs-customize-textarea.is-negative-editor.is-empty{
-  border-style:dashed;
-  border-color:rgba(255,255,255,.10);
-  background:rgba(255,255,255,.02);
-}
-.mgs-customize-edited-badge.is-negative{
-  background:rgba(255,200,0,.12);
-  border-color:rgba(255,200,0,.20);
-  color:#ffc800;
-}
-.mgs-customize-reset-btn.is-visible.is-negative{
-  border-color:rgba(255,200,0,.22);
-  background:linear-gradient(135deg, rgba(255,200,0,.12), rgba(255,255,255,.04));
-  color:#ffc800;
-}
-.mgs-customize-char-count.is-edited.is-negative{color:#ffc800}
-.mgs-customize-empty-hint{
-  font-size:11px;
-  color:#64748b;
-  font-style:italic;
-  margin-top:6px;
-  padding:6px 10px;
-  background:rgba(255,255,255,.02);
-  border:1px dashed rgba(255,255,255,.08);
-  border-radius:8px;
-  text-align:center;
-  max-width:100%;
-  box-sizing:border-box;
-  overflow-wrap:break-word;
-}
-.mgs-customize-empty-hint.is-visible{display:block}
-.mgs-customize-empty-hint:not(.is-visible){display:none}
-.mgs-customize-variables-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  max-height:320px;
-  overflow-y:auto;
-  overflow-x:hidden;
-  scrollbar-width:thin;
-  scrollbar-color:#c47dff #111;
-  padding-right:2px;
-  min-width:0;
-  max-width:100%;
-  box-sizing:border-box;
-  -webkit-overflow-scrolling:touch;
-}
-.mgs-customize-variables-list::-webkit-scrollbar{width:6px}
-.mgs-customize-variables-list::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#c47dff,#7c3aed);border-radius:20px}
-.mgs-customize-variable-item{
-  background:rgba(0,0,0,.30);
-  border:1px solid rgba(196,77,255,.14);
-  border-radius:10px;
-  padding:9px 10px;
-  transition:all .2s ease;
-  min-width:0;
-  max-width:100%;
-  box-sizing:border-box;
-  overflow-wrap:break-word;
-  overflow-x:hidden;
-}
-.mgs-customize-variable-item:hover{
-  border-color:rgba(196,77,255,.22);
-  background:rgba(0,0,0,.36);
-}
-.mgs-customize-variable-header{
+.mgs-customize-edited-badge.is-visible{display:inline-flex;}
+.mgs-customize-edited-badge.is-negative{background:rgba(255,200,0,.10); border-color:rgba(255,200,0,.18); color:#ffc800;}
+.mgs-customize-char-count{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:6px;
+  gap:12px;
+  margin-top:10px;
+  font-size:11px;
+  color:#64748b;
+  font-weight:500;
+}
+.mgs-customize-char-count.is-edited{color:#00eaff;}
+.mgs-customize-char-count.is-edited.is-negative{color:#ffc800;}
+.mgs-customize-word-count{color:#94a3b8;}
+.mgs-customize-empty-hint{
+  margin-top:10px;
+  padding:10px 14px;
+  background:rgba(255,255,255,.02);
+  border:1px dashed rgba(255,255,255,.06);
+  border-radius:10px;
+  font-size:12px;
+  color:#64748b;
+  text-align:center;
+  display:none;
+}
+.mgs-customize-empty-hint.is-visible{display:block;}
+/* VARIABLES — 2-COL GRID DESKTOP, 1-COL MOBILE, GLASS CARDS */
+.mgs-customize-variables-list{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
   min-width:0;
   max-width:100%;
+  box-sizing:border-box;
+}
+.mgs-customize-placeholder{
+  grid-column:1 / -1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:32px 20px;
+  border:1px dashed rgba(255,255,255,.08);
+  border-radius:14px;
+  background:rgba(255,255,255,.01);
+  color:#94a3b8;
+  font-size:13px;
+  text-align:center;
+  line-height:1.6;
+}
+.mgs-customize-variable-item{
+  background:linear-gradient(180deg, rgba(18,18,18,.72), rgba(12,12,12,.84));
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  padding:16px;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  transition:all .22s ease;
+  box-sizing:border-box;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  animation:mgsCustomizeFadeUp .36s ease both;
+}
+@keyframes mgsCustomizeFadeUp{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+@media (prefers-reduced-motion: reduce){
+  .mgs-customize-variable-item{animation:none;}
+}
+.mgs-customize-variable-item:hover{
+  border-color:rgba(0,234,255,.14);
+  background:linear-gradient(180deg, rgba(20,20,20,.84), rgba(14,14,14,.92));
+  transform:translateY(-1px);
+  box-shadow:0 8px 24px rgba(0,0,0,.22), 0 0 0 1px rgba(255,255,255,.02) inset;
+}
+.mgs-customize-variable-item.is-edited{
+  border-color:rgba(196,125,255,.22);
+  background:linear-gradient(180deg, rgba(22,16,32,.72), rgba(16,12,24,.84));
+}
+.mgs-customize-variable-item.has-error{
+  border-color:rgba(239,68,68,.24);
+  background:linear-gradient(180deg, rgba(32,14,14,.72), rgba(24,10,10,.84));
+}
+.mgs-customize-variable-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
   flex-wrap:wrap;
 }
 .mgs-customize-variable-name{
-  font-size:11px;
-  font-weight:900;
-  color:#d8b4fe;
-  background:rgba(196,77,255,.12);
-  border:1px solid rgba(196,77,255,.18);
-  padding:2px 7px;
+  font-size:12px;
+  font-weight:700;
+  color:#e2e8f0;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  padding:4px 10px;
   border-radius:999px;
+  line-height:1.2;
   max-width:100%;
   overflow-wrap:break-word;
-  word-break:break-word;
 }
 .mgs-customize-variable-meta{
   display:flex;
   align-items:center;
-  gap:5px;
-  margin-left:auto;
+  gap:6px;
   flex-wrap:wrap;
-  min-width:0;
+  margin-left:auto;
 }
 .mgs-customize-variable-count{
-  font-size:9px;
-  font-weight:800;
-  color:#c4b5fd;
-  background:rgba(124,58,237,.14);
-  border:1px solid rgba(124,58,237,.22);
-  padding:1px 5px;
+  font-size:10px;
+  font-weight:700;
+  color:#a5b4fc;
+  background:rgba(99,102,241,.12);
+  border:1px solid rgba(99,102,241,.18);
+  padding:3px 8px;
   border-radius:999px;
 }
 .mgs-customize-variable-source{
-  font-size:8px;
-  font-weight:800;
-  letter-spacing:.4px;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.3px;
   text-transform:uppercase;
-  padding:1px 5px;
+  padding:3px 8px;
   border-radius:999px;
   border:1px solid;
 }
-.mgs-customize-variable-source.is-main{
-  color:#00eaff;
-  background:rgba(0,234,255,.10);
-  border-color:rgba(0,234,255,.18);
-}
-.mgs-customize-variable-source.is-negative{
-  color:#ffc800;
-  background:rgba(255,200,0,.10);
-  border-color:rgba(255,200,0,.18);
-}
-.mgs-customize-variable-source.is-both{
-  color:#4ade80;
-  background:rgba(74,222,128,.10);
-  border-color:rgba(74,222,128,.18);
-}
-.mgs-customize-variable-details{
-  display:flex;
-  gap:6px;
-  margin-top:6px;
-  flex-wrap:wrap;
+.mgs-customize-variable-source.is-main{color:#00eaff; background:rgba(0,234,255,.08); border-color:rgba(0,234,255,.14);}
+.mgs-customize-variable-source.is-negative{color:#ffc800; background:rgba(255,200,0,.08); border-color:rgba(255,200,0,.14);}
+.mgs-customize-variable-source.is-both{color:#4ade80; background:rgba(74,222,128,.08); border-color:rgba(74,222,128,.14);}
+.mgs-customize-variable-source.is-unknown{color:#94a3b8; background:rgba(148,163,184,.08); border-color:rgba(148,163,184,.14);}
+.mgs-customize-variable-type{
   font-size:9px;
-  color:#64748b;
-}
-.mgs-customize-variable-detail{
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.06);
-  padding:2px 6px;
+  font-weight:700;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+  padding:3px 8px;
   border-radius:999px;
-  max-width:100%;
-  overflow-wrap:break-word;
+  border:1px solid;
 }
-.mgs-customize-variables-debug{
-  margin-top:8px;
-  background:#0a0a0a;
-  border:1px solid rgba(196,77,255,.14);
-  border-radius:10px;
-  padding:10px;
-  font-family:ui-monospace, monospace;
-  font-size:10px;
-  color:#c4b5fd;
-  max-height:140px;
-  overflow:auto;
-  white-space:pre-wrap;
-  word-break:break-word;
-  max-width:100%;
-  box-sizing:border-box;
-}
-.mgs-customize-edited-badge.is-variables{
-  background:rgba(196,77,255,.12);
-  border-color:rgba(196,77,255,.20);
-  color:#c47dff;
-}
-.mgs-customize-reset-btn.is-variables{
-  border-color:rgba(196,77,255,.18);
-  background:rgba(196,77,255,.06);
-  color:#c47dff;
-}
-.mgs-customize-reset-btn.is-variables.is-visible{
-  border-color:rgba(196,77,255,.26);
-  background:linear-gradient(135deg, rgba(196,77,255,.14), rgba(255,255,255,.04));
-  color:#d8b4fe;
-}
+.mgs-customize-variable-type.is-dropdown{color:#00eaff; background:rgba(0,234,255,.08); border-color:rgba(0,234,255,.14);}
+.mgs-customize-variable-type.is-input{color:#ffc800; background:rgba(255,200,0,.08); border-color:rgba(255,200,0,.14);}
 .mgs-customize-variable-control{
-  margin-top:8px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
   min-width:0;
-  max-width:100%;
+}
+/* SEARCHABLE DROPDOWN — PREMIUM */
+.mgs-customize-searchable-select{
+  position:relative;
+  width:100%;
 }
 .mgs-customize-variable-select{
   width:100%;
-  min-height:40px;
-  background:rgba(0,0,0,.40);
-  border:1px solid rgba(196,77,255,.22);
-  border-radius:9px;
-  padding:8px 32px 8px 10px;
+  min-height:44px;
+  background:rgba(0,0,0,.36);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  padding:10px 36px 10px 12px;
   color:#e2e8f0;
-  font-size:13px;
-  font-weight:600;
+  font-size:14px;
+  font-weight:500;
   cursor:pointer;
   outline:none;
   transition:all .2s ease;
   appearance:none;
-  background-image:linear-gradient(45deg, transparent 50%, #c47dff 50%), linear-gradient(135deg, #c47dff 50%, transparent 50%);
+  background-image:linear-gradient(45deg, transparent 50%, #94a3b8 50%), linear-gradient(135deg, #94a3b8 50%, transparent 50%);
   background-position:calc(100% - 16px) calc(50% - 2px), calc(100% - 11px) calc(50% - 2px);
   background-size:5px 5px, 5px 5px;
   background-repeat:no-repeat;
-  max-width:100%;
   box-sizing:border-box;
-  overflow-wrap:break-word;
 }
-.mgs-customize-variable-select:hover{
-  border-color:rgba(196,77,255,.32);
-  background-color:rgba(0,0,0,.50);
+.mgs-customize-variable-select:hover{border-color:rgba(255,255,255,.14); background-color:rgba(0,0,0,.44);}
+.mgs-customize-variable-select:focus{border-color:rgba(0,234,255,.26); box-shadow:0 0 0 3px rgba(0,234,255,.10);}
+.mgs-customize-variable-select:focus-visible{outline:2px solid #00eaff; outline-offset:2px;}
+.mgs-customize-searchable-dropdown{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  right:0;
+  max-height:220px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:rgba(18,18,18,.98);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:12px;
+  box-shadow:0 16px 40px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.04) inset;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  z-index:20;
+  display:none;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,234,255,.22) transparent;
+  animation:mgsCustomizeSlideDown .22s ease;
 }
-.mgs-customize-variable-select:focus{
-  border-color:rgba(196,77,255,.42);
-  box-shadow:0 0 0 3px rgba(196,77,255,.14);
+@keyframes mgsCustomizeSlideDown{
+  from{opacity:0; transform:translateY(-6px);}
+  to{opacity:1; transform:translateY(0);}
 }
-.mgs-customize-variable-select:focus-visible{
-  outline:2px solid #c47dff;
-  outline-offset:2px;
-  box-shadow:0 0 0 4px rgba(196,77,255,.18);
+.mgs-customize-searchable-dropdown.is-open{display:block;}
+.mgs-customize-searchable-dropdown::-webkit-scrollbar{width:6px;}
+.mgs-customize-searchable-dropdown::-webkit-scrollbar-thumb{background:rgba(0,234,255,.22); border-radius:20px;}
+.mgs-customize-searchable-search{
+  position:sticky;
+  top:0;
+  padding:8px;
+  background:rgba(18,18,18,.98);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  z-index:1;
 }
-.mgs-customize-variable-select option{
-  background:#121212;
-  color:#e2e8f0;
-}
-.mgs-customize-variable-input{
+.mgs-customize-searchable-search-input{
   width:100%;
-  min-height:40px;
-  background:rgba(0,0,0,.40);
-  border:1px solid rgba(255,200,0,.22);
-  border-radius:9px;
-  padding:8px 10px;
-  color:#f5f5f5;
-  font-size:13px;
-  font-weight:600;
-  outline:none;
-  transition:all .2s ease;
-  max-width:100%;
-  box-sizing:border-box;
-  overflow-wrap:break-word;
-}
-.mgs-customize-variable-input::placeholder{
-  color:#64748b;
-}
-.mgs-customize-variable-input:hover{
-  border-color:rgba(255,200,0,.32);
-  background:rgba(0,0,0,.50);
-}
-.mgs-customize-variable-input:focus{
-  border-color:rgba(255,200,0,.42);
-  box-shadow:0 0 0 3px rgba(255,200,0,.14);
-}
-.mgs-customize-variable-input:focus-visible{
-  outline:2px solid #ffc800;
-  outline-offset:2px;
-  box-shadow:0 0 0 4px rgba(255,200,0,.18);
-}
-.mgs-customize-variable-current{
-  margin-top:8px;
-  font-size:11px;
-  font-weight:600;
-  color:#c4b5fd;
-  background:rgba(196,77,255,.06);
-  border:1px solid rgba(196,77,255,.12);
+  min-height:36px;
+  background:rgba(0,0,0,.36);
+  border:1px solid rgba(255,255,255,.08);
   border-radius:8px;
-  padding:6px 8px;
+  padding:8px 10px 8px 32px;
+  color:#e2e8f0;
+  font-size:13px;
+  outline:none;
+  box-sizing:border-box;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:10px center;
+}
+.mgs-customize-searchable-search-input:focus{border-color:rgba(0,234,255,.22); box-shadow:0 0 0 2px rgba(0,234,255,.08);}
+.mgs-customize-searchable-option{
+  padding:10px 12px;
+  font-size:13px;
+  font-weight:500;
+  color:#cbd5e1;
+  cursor:pointer;
+  transition:all .15s ease;
   display:flex;
   align-items:center;
-  gap:6px;
-  flex-wrap:wrap;
-  min-width:0;
-  max-width:100%;
-  overflow-wrap:break-word;
+  justify-content:space-between;
+  gap:8px;
 }
-.mgs-customize-variable-current-value{
-  font-weight:800;
-  color:#d8b4fe;
-  background:rgba(196,77,255,.12);
-  border:1px solid rgba(196,77,255,.18);
-  padding:2px 6px;
-  border-radius:999px;
-  font-size:11px;
-  word-break:break-word;
-  overflow-wrap:anywhere;
-  max-width:100%;
-}
-.mgs-customize-variable-type{
-  font-size:8px;
-  font-weight:800;
-  letter-spacing:.4px;
-  text-transform:uppercase;
-  padding:2px 5px;
-  border-radius:999px;
-  border:1px solid;
-}
-.mgs-customize-variable-type.is-dropdown{
-  color:#00eaff;
-  background:rgba(0,234,255,.10);
-  border-color:rgba(0,234,255,.18);
-}
-.mgs-customize-variable-type.is-input{
-  color:#ffc800;
-  background:rgba(255,200,0,.10);
-  border-color:rgba(255,200,0,.18);
-}
-.mgs-customize-variable-fallback-hint{
-  margin-top:6px;
-  font-size:10px;
-  color:#94a3b8;
-  font-style:italic;
-}
-.mgs-customize-variable-item.is-edited{
-  border-color:rgba(196,77,255,.32);
-  background:rgba(196,77,255,.10);
-  box-shadow:0 0 0 1px rgba(196,77,255,.10) inset;
-}
-.mgs-customize-variable-other-container{
-  margin-top:8px;
-  padding:8px;
-  background:rgba(0,0,0,.24);
-  border:1px solid rgba(196,77,255,.18);
-  border-radius:9px;
-  min-width:0;
-  max-width:100%;
+.mgs-customize-searchable-option:hover{background:rgba(255,255,255,.06); color:#f1f5f9;}
+.mgs-customize-searchable-option.is-selected{background:rgba(0,234,255,.10); color:#00eaff; border-left:2px solid #00eaff;}
+.mgs-customize-searchable-option.is-highlighted{background:rgba(255,255,255,.08); color:#fff;}
+.mgs-customize-searchable-option.is-hidden{display:none;}
+.mgs-customize-variable-input{
+  width:100%;
+  min-height:44px;
+  background:rgba(0,0,0,.36);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  padding:10px 12px;
+  color:#f1f5f9;
+  font-size:14px;
+  font-weight:500;
+  outline:none;
+  transition:all .2s ease;
   box-sizing:border-box;
+}
+.mgs-customize-variable-input::placeholder{color:#64748b;}
+.mgs-customize-variable-input:focus{border-color:rgba(0,234,255,.26); box-shadow:0 0 0 3px rgba(0,234,255,.10);}
+.mgs-customize-variable-other-container{
+  margin-top:4px;
+  padding:12px;
+  background:rgba(0,0,0,.20);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;
+  box-sizing:border-box;
+  overflow:hidden;
+  transition:all .28s cubic-bezier(.2,.8,.2,1);
+  max-height:0;
+  opacity:0;
+  padding-top:0;
+  padding-bottom:0;
+  border-width:0;
+  margin-top:0;
+}
+.mgs-customize-variable-other-container.is-visible{
+  max-height:120px;
+  opacity:1;
+  padding:12px;
+  border-width:1px;
+  margin-top:8px;
 }
 .mgs-customize-variable-other-label{
   display:block;
   font-size:10px;
-  font-weight:800;
+  font-weight:700;
   letter-spacing:.4px;
   text-transform:uppercase;
-  color:#d8b4fe;
-  margin-bottom:6px;
-  max-width:100%;
-  overflow-wrap:break-word;
+  color:#94a3b8;
+  margin-bottom:8px;
 }
 .mgs-customize-variable-other-input{
   width:100%;
-  min-height:40px;
-  background:rgba(0,0,0,.40);
-  border:1px solid rgba(196,77,255,.24);
-  border-radius:8px;
-  padding:8px 10px;
-  color:#f5f5f5;
-  font-size:13px;
-  font-weight:600;
+  min-height:44px;
+  background:rgba(0,0,0,.36);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  padding:10px 12px;
+  color:#f1f5f9;
+  font-size:14px;
+  font-weight:500;
   outline:none;
   transition:all .2s ease;
-  max-width:100%;
   box-sizing:border-box;
-  overflow-wrap:break-word;
 }
-.mgs-customize-variable-other-input::placeholder{
-  color:#64748b;
-}
-.mgs-customize-variable-other-input:hover{
-  border-color:rgba(196,77,255,.34);
-  background:rgba(0,0,0,.50);
-}
-.mgs-customize-variable-other-input:focus{
-  border-color:rgba(196,77,255,.44);
-  box-shadow:0 0 0 3px rgba(196,77,255,.14);
-}
-.mgs-customize-variable-other-input:focus-visible{
-  outline:2px solid #c47dff;
-  outline-offset:2px;
-  box-shadow:0 0 0 4px rgba(196,77,255,.18);
-}
+.mgs-customize-variable-other-input::placeholder{color:#64748b;}
+.mgs-customize-variable-other-input:focus{border-color:rgba(196,125,255,.26); box-shadow:0 0 0 3px rgba(196,125,255,.10);}
 .mgs-customize-variable-validation{
-  margin-top:6px;
-  padding:6px 8px;
-  background:rgba(239,68,68,.10);
-  border:1px solid rgba(239,68,68,.22);
-  border-radius:7px;
+  margin-top:8px;
+  padding:8px 10px;
+  background:rgba(239,68,68,.08);
+  border:1px solid rgba(239,68,68,.14);
+  border-radius:8px;
   color:#fca5a5;
-  font-size:10px;
-  font-weight:600;
+  font-size:11px;
+  font-weight:500;
   line-height:1.4;
   display:none;
+}
+.mgs-customize-variable-validation.is-visible{display:block;}
+.mgs-customize-variable-current{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  font-size:11px;
+  color:#94a3b8;
+  font-weight:500;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.04);
+  border-radius:999px;
+  padding:6px 10px;
+  align-self:flex-start;
+}
+.mgs-customize-variable-current-value{
+  font-weight:600;
+  color:#e2e8f0;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:11px;
   max-width:100%;
-  box-sizing:border-box;
-  overflow-wrap:break-word;
+  overflow-wrap:anywhere;
 }
-.mgs-customize-variable-validation.is-visible{
-  display:block;
-}
-.mgs-customize-variable-item.has-error{
-  border-color:rgba(239,68,68,.32);
-  background:rgba(239,68,68,.06);
-  box-shadow:0 0 0 1px rgba(239,68,68,.10) inset;
-}
-.mgs-customize-variable-item.has-error .mgs-customize-variable-select,
-.mgs-customize-variable-item.has-error .mgs-customize-variable-input,
-.mgs-customize-variable-item.has-error .mgs-customize-variable-other-input{
-  border-color:rgba(239,68,68,.32);
-}
-.mgs-customize-variable-item.has-error .mgs-customize-variable-select:focus,
-.mgs-customize-variable-item.has-error .mgs-customize-variable-input:focus,
-.mgs-customize-variable-item.has-error .mgs-customize-variable-other-input:focus{
-  box-shadow:0 0 0 2px rgba(239,68,68,.12);
-}
-/* Live Preview */
+/* LIVE PREVIEW — SINGLE SYSTEM, TABS, COPY ICON INSIDE */
 .mgs-customize-preview-container{
   display:flex;
   flex-direction:column;
-  gap:10px;
-  min-width:0;
-  max-width:100%;
+  gap:16px;
+}
+.mgs-customize-preview-tabs{
+  display:flex;
+  gap:8px;
+  padding:4px;
+  background:rgba(0,0,0,.24);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:999px;
+  align-self:flex-start;
+}
+.mgs-customize-preview-tab{
+  padding:8px 16px;
+  border-radius:999px;
+  border:1px solid transparent;
+  background:transparent;
+  color:#94a3b8;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .2s ease;
+  white-space:nowrap;
+}
+.mgs-customize-preview-tab:hover{background:rgba(255,255,255,.06); color:#e2e8f0;}
+.mgs-customize-preview-tab.is-active{
+  background:rgba(0,234,255,.12);
+  border-color:rgba(0,234,255,.18);
+  color:#00eaff;
+  box-shadow:0 2px 8px rgba(0,234,255,.10);
+}
+.mgs-customize-preview-tab.is-active.is-negative{
+  background:rgba(255,200,0,.12);
+  border-color:rgba(255,200,0,.18);
+  color:#ffc800;
+  box-shadow:0 2px 8px rgba(255,200,0,.10);
 }
 .mgs-customize-preview-box{
-  background:rgba(0,0,0,.28);
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:10px;
-  padding:8px 10px;
-  transition:border-color .2s ease;
-  min-width:0;
-  max-width:100%;
-  box-sizing:border-box;
-  overflow-x:hidden;
+  position:relative;
+  background:rgba(0,0,0,.24);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  padding:0;
+  overflow:hidden;
+  min-height:220px;
+  display:flex;
+  flex-direction:column;
 }
-.mgs-customize-preview-box.is-main{
-  border-color:rgba(0,234,255,.14);
-  background:rgba(0,0,0,.32);
-}
-.mgs-customize-preview-box.is-negative{
-  border-color:rgba(255,200,0,.14);
-  background:rgba(0,0,0,.26);
-}
-.mgs-customize-preview-box:hover{
-  border-color:rgba(255,255,255,.12);
-}
-.mgs-customize-preview-box.is-main:hover{
-  border-color:rgba(0,234,255,.22);
-}
-.mgs-customize-preview-box.is-negative:hover{
-  border-color:rgba(255,200,0,.22);
+.mgs-customize-preview-box-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 16px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  background:rgba(0,0,0,.18);
+  flex-shrink:0;
 }
 .mgs-customize-preview-label{
   display:flex;
   align-items:center;
-  gap:6px;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-  color:#00eaff;
-  margin-bottom:6px;
-  min-width:0;
-  max-width:100%;
-  overflow-wrap:break-word;
-}
-.mgs-customize-preview-label.is-negative{
-  color:#ffc800;
-}
-.mgs-customize-preview-text{
-  background:rgba(0,0,0,.32);
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:8px;
-  padding:8px 10px;
-  color:#f5f5f5;
+  gap:8px;
   font-size:12px;
-  line-height:1.6;
+  font-weight:600;
+  color:#94a3b8;
+  margin:0;
+}
+.mgs-customize-preview-label svg{flex:0 0 auto;}
+.mgs-customize-preview-copy{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+  color:#94a3b8;
+  cursor:pointer;
+  transition:all .2s ease;
+  flex:0 0 auto;
+}
+.mgs-customize-preview-copy:hover{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.14); color:#e2e8f0;}
+.mgs-customize-preview-copy.is-copied{background:rgba(74,222,128,.14); border-color:rgba(74,222,128,.22); color:#4ade80;}
+.mgs-customize-preview-text{
+  flex:1;
+  padding:16px 18px;
+  color:#e2e8f0;
+  font-size:14px;
+  line-height:1.7;
   white-space:pre-wrap;
   word-break:break-word;
   overflow-wrap:anywhere;
-  min-height:48px;
-  max-height:180px;
-  overflow-y:auto;
-  overflow-x:hidden;
-  scrollbar-width:thin;
-  scrollbar-color:#00eaff #111;
+  min-height:220px;
   user-select:text;
-  max-width:100%;
-  box-sizing:border-box;
-  -webkit-overflow-scrolling:touch;
-}
-.mgs-customize-preview-text.is-negative{
-  border-color:rgba(255,200,0,.08);
-  font-size:11px;
-  min-height:36px;
-  max-height:120px;
-}
-.mgs-customize-preview-text::-webkit-scrollbar{width:6px}
-.mgs-customize-preview-text::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#00eaff,#7c3aed);border-radius:20px}
-.mgs-customize-preview-meta{
-  font-size:9px;
-  color:#64748b;
-  font-weight:600;
-  margin-top:4px;
-  text-align:right;
-  max-width:100%;
-  overflow-wrap:break-word;
-}
-.mgs-customize-preview-meta.has-error{
-  color:#fca5a5;
-}
-.mgs-customize-preview-debug{
-  margin-top:8px;
-  background:#0a0a0a;
-  border:1px solid rgba(74,222,128,.14);
-  border-radius:10px;
-  padding:10px;
-  font-family:ui-monospace, monospace;
-  font-size:10px;
-  color:#86efac;
-  max-height:180px;
-  overflow:auto;
-  white-space:pre-wrap;
-  word-break:break-word;
-  max-width:100%;
   box-sizing:border-box;
 }
-.mgs-customize-edited-badge.is-preview{
-  background:rgba(74,222,128,.12);
-  border-color:rgba(74,222,128,.20);
-  color:#4ade80;
-}
-.mgs-customize-copy-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:4px;
-  max-width:100%;
-}
-.mgs-customize-btn.is-copy-main{
-  border-color:rgba(0,234,255,.32);
-  background:linear-gradient(135deg, rgba(0,234,255,.20), rgba(255,255,255,.06));
+.mgs-customize-preview-text .mgs-var-highlight{
+  background:rgba(0,234,255,.10);
+  border:1px solid rgba(0,234,255,.18);
+  padding:1px 6px;
+  border-radius:6px;
   color:#00eaff;
-}
-.mgs-customize-btn.is-copy-main:hover{
-  border-color:rgba(0,234,255,.42);
-  background:linear-gradient(135deg, rgba(0,234,255,.26), rgba(255,255,255,.08));
-  box-shadow:0 0 12px rgba(0,234,255,.18);
-}
-.mgs-customize-btn.is-copy-main:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  box-shadow:none;
-}
-.mgs-customize-btn.is-secondary{
-  border-color:rgba(255,200,0,.22);
-  background:rgba(255,200,0,.06);
-  color:#ffc800;
-}
-.mgs-customize-btn.is-secondary:hover{
-  border-color:rgba(255,200,0,.32);
-  background:linear-gradient(135deg, rgba(255,200,0,.14), rgba(255,255,255,.04));
-  box-shadow:0 0 12px rgba(255,200,0,.14);
-}
-.mgs-customize-btn.is-secondary:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  box-shadow:none;
-}
-.mgs-customize-btn.is-copy-negative{
-  border-color:rgba(255,200,0,.22);
-  background:rgba(255,200,0,.06);
-  color:#ffc800;
-}
-.mgs-customize-btn.is-copy-negative:hover{
-  border-color:rgba(255,200,0,.32);
-  background:linear-gradient(135deg, rgba(255,200,0,.14), rgba(255,255,255,.04));
-}
-.mgs-customize-btn.is-copied{
-  background:linear-gradient(135deg,#4ade80,#22c55e) !important;
-  border-color:rgba(74,222,128,.32) !important;
-  color:#000 !important;
-  box-shadow:0 0 16px rgba(74,222,128,.35) !important;
-}
-.mgs-customize-copy-hint{
-  margin-top:8px;
-  font-size:10px;
-  color:#94a3b8;
-  line-height:1.4;
-  padding:6px 8px;
-  background:rgba(255,255,255,.02);
-  border:1px dashed rgba(255,255,255,.08);
-  border-radius:7px;
-  max-width:100%;
-  box-sizing:border-box;
-  overflow-wrap:break-word;
-}
-.mgs-customize-placeholder{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:18px 12px;
-  border:1px dashed rgba(255,255,255,.12);
-  border-radius:10px;
-  background:rgba(255,255,255,.02);
-  color:#94a3b8;
-  font-size:12px;
   font-weight:600;
-  text-align:center;
-  line-height:1.5;
-  max-width:100%;
-  box-sizing:border-box;
-  overflow-wrap:break-word;
+  font-size:13px;
 }
-.mgs-customize-placeholder svg{opacity:.7}
-.mgs-customize-footer{
+.mgs-customize-preview-meta{
+  padding:10px 16px;
+  border-top:1px solid rgba(255,255,255,.04);
+  background:rgba(0,0,0,.12);
+  font-size:11px;
+  color:#64748b;
+  font-weight:500;
   display:flex;
-  flex-wrap:wrap;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
-  padding:12px 18px 14px;
-  border-top:1px solid rgba(255,255,255,.08);
-  background:linear-gradient(135deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+  gap:12px;
   flex-shrink:0;
-  min-width:0;
-  max-width:100%;
-  box-sizing:border-box;
 }
-.mgs-customize-footer-hint{
-  font-size:11px;
-  color:#94a3b8;
-  font-weight:600;
-  letter-spacing:.2px;
-  max-width:100%;
-  min-width:0;
-  overflow-wrap:break-word;
-  flex:1 1 200px;
-}
-.mgs-customize-footer-actions{
+/* FOOTER — STICKY, ALWAYS VISIBLE */
+.mgs-customize-footer{
+  position:sticky;
+  bottom:0;
   display:flex;
   align-items:center;
-  gap:8px;
-  margin-left:auto;
+  gap:12px;
+  padding:16px 28px;
+  background:rgba(8,8,8,.98);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,.06);
+  flex-shrink:0;
+  z-index:10;
+  box-sizing:border-box;
   flex-wrap:wrap;
-  min-width:0;
-  max-width:100%;
 }
+.mgs-customize-footer-spacer{flex:1;}
 .mgs-customize-btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:7px;
-  padding:10px 14px;
-  min-height:40px;
+  gap:8px;
+  padding:12px 18px;
+  min-height:44px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.10);
   background:rgba(255,255,255,.06);
   color:#e2e8f0;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.2px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.1px;
   cursor:pointer;
-  transition:background .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  transition:all .22s ease;
   white-space:nowrap;
-  max-width:100%;
   box-sizing:border-box;
-  overflow-wrap:break-word;
   user-select:none;
   -webkit-user-select:none;
+  touch-action:manipulation;
 }
-.mgs-customize-btn:hover{
-  background:rgba(255,255,255,.10);
-  border-color:rgba(255,255,255,.20);
-  transform:translateY(-1px);
-}
-.mgs-customize-btn:active{transform:translateY(0) scale(.98)}
-.mgs-customize-btn:focus-visible{
-  outline:2px solid #00eaff;
-  outline-offset:2px;
-  box-shadow:0 0 0 4px rgba(0,234,255,.18);
-  border-color:rgba(0,234,255,.42);
-}
+.mgs-customize-btn:hover{background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.16); transform:translateY(-1px);}
+.mgs-customize-btn:active{transform:translateY(0) scale(.98);}
+.mgs-customize-btn:disabled{opacity:.42; cursor:not-allowed; transform:none !important;}
+.mgs-customize-btn:focus-visible{outline:2px solid #00eaff; outline-offset:2px; box-shadow:0 0 0 4px rgba(0,234,255,.18);}
 .mgs-customize-btn.is-primary{
-  border-color:rgba(0,234,255,.32);
-  background:linear-gradient(135deg, rgba(0,234,255,.20), rgba(255,255,255,.06));
+  background:linear-gradient(135deg, rgba(0,234,255,.18), rgba(0,180,255,.14));
+  border-color:rgba(0,234,255,.26);
   color:#00eaff;
-  box-shadow:0 8px 20px rgba(0,234,255,.14);
+  box-shadow:0 4px 16px rgba(0,234,255,.12);
 }
 .mgs-customize-btn.is-primary:hover{
-  border-color:rgba(0,234,255,.52);
-  background:linear-gradient(135deg, rgba(0,234,255,.28), rgba(255,255,255,.08));
-  box-shadow:0 10px 24px rgba(0,234,255,.20);
+  background:linear-gradient(135deg, rgba(0,234,255,.24), rgba(0,180,255,.20));
+  border-color:rgba(0,234,255,.32);
+  box-shadow:0 6px 20px rgba(0,234,255,.18);
+  color:#fff;
 }
-.mgs-customize-btn.is-primary:focus-visible{
-  outline-color:#00eaff;
-}
-.mgs-customize-btn.is-yellow{
-  border-color:rgba(255,200,0,.28);
-  background:linear-gradient(135deg, rgba(255,200,0,.16), rgba(255,255,255,.04));
+.mgs-customize-btn.is-secondary{
+  background:rgba(255,200,0,.08);
+  border-color:rgba(255,200,0,.18);
   color:#ffc800;
 }
-.mgs-customize-btn.is-yellow:hover{
-  border-color:rgba(255,200,0,.48);
-  background:linear-gradient(135deg, rgba(255,200,0,.24), rgba(255,255,255,.06));
+.mgs-customize-btn.is-secondary:hover{
+  background:rgba(255,200,0,.12);
+  border-color:rgba(255,200,0,.24);
+  color:#fff;
 }
-.mgs-customize-btn.is-yellow:focus-visible{
-  outline-color:#ffc800;
+.mgs-customize-btn.is-ghost{
+  background:transparent;
+  border-color:rgba(255,255,255,.08);
+  color:#94a3b8;
 }
-.mgs-customize-btn#mgsCustomizeResetAll{
-  border-color:rgba(255,255,255,.14);
-  background:rgba(255,255,255,.04);
-  color:#cbd5e1;
+.mgs-customize-btn.is-ghost:hover{background:rgba(255,255,255,.06); color:#e2e8f0;}
+.mgs-customize-btn.is-copied{
+  background:linear-gradient(135deg,#4ade80,#22c55e) !important;
+  border-color:rgba(74,222,128,.32) !important;
+  color:#000 !important;
+  box-shadow:0 0 20px rgba(74,222,128,.32) !important;
 }
-.mgs-customize-btn#mgsCustomizeResetAll:hover{
-  border-color:rgba(255,255,255,.24);
-  background:rgba(255,255,255,.08);
-  color:#e2e8f0;
-}
-.mgs-customize-btn#mgsCustomizeResetAll:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  transform:none;
-  box-shadow:none;
-}
-.mgs-customize-btn#mgsCustomizeResetAll.is-visible{
-  border-color:rgba(255,100,100,.22);
-  background:linear-gradient(135deg, rgba(255,100,100,.10), rgba(255,255,255,.04));
-  color:#fca5a5;
-}
-.mgs-customize-btn#mgsCustomizeResetAll.is-visible:hover{
-  border-color:rgba(255,100,100,.32);
-  background:linear-gradient(135deg, rgba(255,100,100,.16), rgba(255,255,255,.06));
-  color:#fecaca;
-}
-.mgs-customize-btn#mgsCustomizeResetAll:focus-visible{
-  outline-color:#fca5a5;
-}
-.mgs-customize-badge-soon{
-  display:inline-flex;
-  align-items:center;
-  padding:3px 8px;
-  border-radius:999px;
-  background:rgba(255,200,0,.14);
-  border:1px solid rgba(255,200,0,.22);
-  color:#ffc800;
-  font-size:9px;
-  font-weight:900;
-  letter-spacing:.6px;
-  text-transform:uppercase;
-  margin-left:8px;
-  max-width:100%;
-  overflow-wrap:break-word;
-}
+/* TYPOGRAPHY */
 .mgs-customize-visually-hidden{
   position:absolute !important;
   width:1px !important;
@@ -7105,245 +6878,90 @@ padding:9px 12px;
   white-space:nowrap !important;
   border:0 !important;
 }
-/* STEP-10: Accessibility — focus-visible for all interactive, semantic buttons already, logical tab order via DOM */
-.mgs-customize-variable-select:focus-visible,
-.mgs-customize-variable-input:focus-visible,
-.mgs-customize-variable-other-input:focus-visible{
-  outline-offset:2px;
-}
-
-/* STEP-10: Mobile Responsive — 768px tablet */
-@media(max-width:768px){
-  .mgs-customize-modal{padding:10px;align-items:flex-end;overflow-x:hidden}
-  .mgs-customize-content{
-    max-width:100%;
-    width:100%;
-    max-height:min(92vh, 760px);
-    border-radius:18px 18px 16px 16px;
-    box-sizing:border-box;
-  }
-  .mgs-customize-header{padding:14px 14px 12px}
-  .mgs-customize-title{font-size:15px}
-  .mgs-customize-body{padding:12px 12px 14px;gap:12px}
-  .mgs-customize-footer{padding:10px 12px 12px;flex-direction:column;align-items:stretch}
-  .mgs-customize-footer-hint{display:none}
-  .mgs-customize-footer-actions{width:100%;justify-content:stretch;margin-left:0}
-  .mgs-customize-footer-actions .mgs-customize-btn{flex:1 1 120px;min-height:44px}
-  .mgs-customize-textarea.is-main-editor{min-height:140px;max-height:50vh;font-size:13px;padding:10px 12px}
-  .mgs-customize-textarea.is-negative-editor{min-height:110px;max-height:40vh;font-size:12px;padding:10px 12px}
-  .mgs-customize-variables-list{max-height:min(40vh, 320px)}
-  .mgs-customize-preview-text{max-height:150px}
-  .mgs-customize-preview-text.is-negative{max-height:100px}
-  .mgs-customize-close{width:40px;height:40px;min-width:40px;min-height:40px;font-size:22px}
-  .mgs-customize-reset-btn{min-height:40px;padding:8px 12px;font-size:12px}
-  .mgs-customize-variable-select,
-  .mgs-customize-variable-input,
-  .mgs-customize-variable-other-input{min-height:44px;font-size:16px}
-  .mgs-customize-btn{min-height:44px;padding:10px 16px;font-size:12px}
-}
-/* STEP-10: 414px — iPhone XR, 11, 12 Pro Max width */
-@media(max-width:414px){
-  .mgs-customize-modal{padding:8px}
-  .mgs-customize-content{max-width:100%;width:100%;max-height:94vh;border-radius:16px 16px 0 0}
-  .mgs-customize-header{padding:12px 12px 10px;gap:8px}
-  .mgs-customize-title{font-size:14px;gap:8px}
-  .mgs-customize-title-icon{width:28px;height:28px;border-radius:8px}
-  .mgs-customize-body{padding:10px 10px 12px;gap:10px}
-  .mgs-customize-section{padding:10px 10px;border-radius:12px}
-  .mgs-customize-section-label{font-size:10px}
-  .mgs-customize-textarea{font-size:16px}
-  .mgs-customize-textarea.is-main-editor{font-size:16px;min-height:130px;max-height:45vh}
-  .mgs-customize-textarea.is-negative-editor{font-size:15px;min-height:100px;max-height:35vh}
-  .mgs-customize-variables-list{max-height:38vh;gap:8px}
-  .mgs-customize-variable-item{padding:10px 10px}
-  .mgs-customize-footer{padding:10px 10px 12px}
-  .mgs-customize-footer-actions{gap:8px}
-  .mgs-customize-footer-actions .mgs-customize-btn{flex:1 1 100%;min-height:44px}
-  .mgs-customize-copy-actions{flex-direction:column}
-  .mgs-customize-copy-actions .mgs-customize-btn{width:100%;justify-content:center;min-height:44px}
-  .mgs-customize-close{width:44px;height:44px;min-width:44px;min-height:44px}
-}
-/* STEP-10: 390px — iPhone 12, 13, 14 */
-@media(max-width:390px){
-  .mgs-customize-modal{padding:6px}
-  .mgs-customize-content{border-radius:14px 14px 0 0;max-height:95vh}
-  .mgs-customize-header{padding:10px 10px 8px}
-  .mgs-customize-title{font-size:13px}
-  .mgs-customize-body{padding:8px 8px 10px;gap:8px}
-  .mgs-customize-section{padding:8px 8px}
-  .mgs-customize-textarea.is-main-editor{min-height:120px;max-height:42vh}
-  .mgs-customize-textarea.is-negative-editor{min-height:90px;max-height:32vh}
-  .mgs-customize-variables-list{max-height:36vh}
-  .mgs-customize-preview-text{max-height:130px;font-size:12px}
-  .mgs-customize-preview-text.is-negative{max-height:90px;font-size:11px}
-  .mgs-customize-footer-actions .mgs-customize-btn{font-size:11px;padding:10px 12px}
-}
-/* STEP-10: 375px — iPhone SE, 8, X, 11 Pro */
-@media(max-width:375px){
-  .mgs-customize-content{max-height:96vh;border-radius:12px 12px 0 0}
-  .mgs-customize-header{padding:10px 10px 8px}
-  .mgs-customize-title{font-size:13px}
-  .mgs-customize-title-icon{width:26px;height:26px}
-  .mgs-customize-body{padding:8px 8px 10px}
-  .mgs-customize-section-header-row{flex-wrap:wrap;gap:6px}
-  .mgs-customize-section-actions{margin-left:0;width:100%;justify-content:flex-end}
-  .mgs-customize-textarea{padding:10px 10px}
-  .mgs-customize-variable-select,
-  .mgs-customize-variable-input,
-  .mgs-customize-variable-other-input{font-size:16px;min-height:44px}
-  .mgs-customize-footer{padding:8px 8px 10px}
-}
-/* STEP-10: 360px — smallest common mobile */
-@media(max-width:360px){
-  .mgs-customize-modal{padding:4px}
-  .mgs-customize-content{width:100%;max-width:100%;max-height:98vh;border-radius:10px 10px 0 0;min-width:0}
-  .mgs-customize-header{padding:8px 8px 6px;gap:6px}
-  .mgs-customize-title{font-size:12px;letter-spacing:-.1px}
-  .mgs-customize-title-icon{width:24px;height:24px;border-radius:6px}
-  .mgs-customize-badge-soon{font-size:8px;padding:2px 5px;margin-left:4px}
-  .mgs-customize-close{width:44px;height:44px;min-width:44px;min-height:44px;font-size:20px}
-  .mgs-customize-body{padding:6px 6px 8px;gap:8px}
-  .mgs-customize-section{padding:8px 6px;border-radius:10px}
-  .mgs-customize-section-label{font-size:9px;letter-spacing:.5px}
-  .mgs-customize-textarea{font-size:16px;min-height:80px}
-  .mgs-customize-textarea.is-main-editor{min-height:110px;max-height:40vh;font-size:15px;padding:10px 10px}
-  .mgs-customize-textarea.is-negative-editor{min-height:80px;max-height:30vh;font-size:14px;padding:8px 10px}
-  .mgs-customize-variables-list{max-height:34vh;gap:6px;padding-right:0}
-  .mgs-customize-variable-item{padding:8px 8px;border-radius:8px}
-  .mgs-customize-variable-name{font-size:10px;padding:2px 6px}
-  .mgs-customize-variable-meta{gap:4px}
-  .mgs-customize-variable-count,
-  .mgs-customize-variable-source,
-  .mgs-customize-variable-type{font-size:7px;padding:1px 4px}
-  .mgs-customize-variable-select,
-  .mgs-customize-variable-input,
-  .mgs-customize-variable-other-input{min-height:44px;font-size:16px;padding:10px 10px}
-  .mgs-customize-variable-select{padding-right:28px;background-position:calc(100% - 14px) calc(50% - 2px), calc(100% - 9px) calc(50% - 2px)}
-  .mgs-customize-preview-container{gap:8px}
-  .mgs-customize-preview-box{padding:6px 8px;border-radius:8px}
-  .mgs-customize-preview-label{font-size:9px;margin-bottom:4px}
-  .mgs-customize-preview-text{padding:6px 8px;min-height:40px;max-height:120px;font-size:11px}
-  .mgs-customize-preview-text.is-negative{min-height:32px;max-height:80px;font-size:10px}
-  .mgs-customize-preview-meta{font-size:8px}
-  .mgs-customize-copy-actions{gap:6px}
-  .mgs-customize-copy-actions .mgs-customize-btn{width:100%;min-height:44px;font-size:11px;padding:10px 12px}
-  .mgs-customize-footer{padding:6px 6px 8px;gap:6px}
-  .mgs-customize-footer-actions{flex-direction:column;gap:6px;width:100%;margin-left:0}
-  .mgs-customize-footer-actions .mgs-customize-btn{width:100%;flex:1 1 auto;min-height:44px;justify-content:center;font-size:11px}
-  .mgs-customize-copy-hint,
-  .mgs-customize-placeholder{font-size:9px;padding:6px 6px}
-  .mgs-customize-char-count,
-  .mgs-customize-empty-hint{font-size:9px}
-}
-/* Desktop widths — ensure no horiz scroll, buttons accessible */
-@media(min-width:769px){
-  .mgs-customize-body{padding:18px 20px 20px}
-  .mgs-customize-header{padding:18px 20px 14px}
-  .mgs-customize-footer{padding:14px 20px 16px}
-  .mgs-customize-content{max-width:720px}
-}
-/* Ensure body scroll lock when customize open — prevent background scroll appropriately, restore exact previous */
 body.mgs-customize-no-scroll{
   overflow:hidden !important;
   padding-right:var(--mgs-customize-scrollbar-comp, 0px);
   overscroll-behavior:contain;
-  touch-action:none;
 }
-body.mgs-customize-no-scroll .mgs-customize-modal{
-  touch-action:auto;
+body.mgs-customize-no-scroll .mgs-customize-modal{touch-action:auto;}
+/* RESPONSIVE GRID */
+@media(max-width:1280px){
+  .mgs-customize-content{min-width:0; max-width:92vw;}
 }
-body.mgs-customize-no-scroll .mgs-customize-body{
-  overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;
+@media(max-width:1100px){
+  .mgs-customize-content{min-width:0; max-width:94vw;}
+  .mgs-customize-variables-list{grid-template-columns:1fr 1fr;}
 }
-/* Accessibility: ensure close button always visible even with long content */
-.mgs-customize-header{
-  position:sticky;
-  top:0;
-  background:rgba(18,18,18,.98);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+@media(max-width:768px){
+  .mgs-customize-modal{padding:0; align-items:flex-end;}
+  .mgs-customize-content{
+    min-width:0;
+    max-width:100vw;
+    width:100vw;
+    max-height:92vh;
+    border-radius:20px 20px 0 0;
+    transform:translateY(100%);
+  }
+  .mgs-customize-modal[data-open="true"] .mgs-customize-content{transform:translateY(0);}
+  .mgs-customize-header{padding:16px 20px; gap:12px;}
+  .mgs-customize-header-icon{width:40px; height:40px; border-radius:10px;}
+  .mgs-customize-title{font-size:20px;}
+  .mgs-customize-subtitle{font-size:13px;}
+  .mgs-customize-close{width:44px; height:44px; min-width:44px; min-height:44px;}
+  .mgs-customize-section{padding:20px;}
+  .mgs-customize-textarea.is-main-editor{min-height:220px; font-size:15px;}
+  .mgs-customize-textarea.is-negative-editor{min-height:120px; font-size:14px;}
+  .mgs-customize-variables-list{grid-template-columns:1fr; gap:12px;}
+  .mgs-customize-preview-box{min-height:160px;}
+  .mgs-customize-preview-text{min-height:160px; font-size:13px; padding:14px 16px;}
+  .mgs-customize-footer{padding:14px 20px; gap:10px; flex-wrap:wrap;}
+  .mgs-customize-footer-spacer{display:none;}
+  .mgs-customize-footer .mgs-customize-btn{flex:1 1 calc(50% - 5px); min-height:48px; justify-content:center;}
+  .mgs-customize-footer .mgs-customize-btn.is-primary{flex:1 1 100%; order:-2;}
+  .mgs-customize-footer .mgs-customize-btn.is-secondary{flex:1 1 100%; order:-1;}
 }
-.mgs-customize-footer{
-  position:sticky;
-  bottom:0;
-  background:rgba(18,18,18,.98);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+@media(max-width:390px){
+  .mgs-customize-header{padding:14px 16px;}
+  .mgs-customize-section{padding:16px;}
+  .mgs-customize-textarea.is-main-editor{min-height:220px;}
+  .mgs-customize-textarea.is-negative-editor{min-height:120px;}
+  .mgs-customize-preview-box{min-height:160px;}
+  .mgs-customize-preview-text{min-height:160px;}
+  .mgs-customize-footer{padding:12px 16px;}
+  .mgs-customize-footer .mgs-customize-btn{flex:1 1 100%;}
 }
-/* Touch: comfortably tappable, avoid tiny controls */
-.mgs-customize-close,
-.mgs-customize-btn,
-.mgs-customize-reset-btn,
-.mgs-customize-variable-select,
-.mgs-customize-variable-input,
-.mgs-customize-variable-other-input{
-  touch-action:manipulation;
-  -webkit-tap-highlight-color:transparent;
+@media(max-width:360px){
+  .mgs-customize-content{max-height:92vh; border-radius:16px 16px 0 0;}
+  .mgs-customize-header{padding:12px 14px;}
+  .mgs-customize-title{font-size:18px;}
+  .mgs-customize-section{padding:14px;}
 }
-/* Prevent unwanted horizontal scrolling */
-.mgs-customize-content,
-.mgs-customize-body,
-.mgs-customize-section,
-.mgs-customize-preview-box,
-.mgs-customize-preview-text,
-.mgs-customize-variables-list,
-.mgs-customize-variable-item,
-.mgs-customize-footer{
+/* REMOVE DEBUG UI — HIDE BADGES */
+.mgs-customize-badge-soon{display:none !important;}
+/* CLEANUP — NO DUPLICATE SCROLLBARS */
+.mgs-customize-content, .mgs-customize-body, .mgs-customize-section, .mgs-customize-preview-box, .mgs-customize-preview-text, .mgs-customize-variables-list, .mgs-customize-variable-item, .mgs-customize-footer{
   overflow-x:hidden;
   max-width:100%;
   box-sizing:border-box;
 }
-/* Handle long prompts — allow scrolling, preserve breaks */
-.mgs-customize-textarea,
-.mgs-customize-preview-text{
+.mgs-customize-textarea, .mgs-customize-preview-text{
   overflow-wrap:anywhere;
   word-break:break-word;
   white-space:pre-wrap;
 }
-/* Handle long variable lists — scrollable */
-.mgs-customize-variables-list{
-  scrollbar-width:thin;
+/* HIDE OLD DEBUG ELEMENTS */
+.mgs-customize-variables-debug, .mgs-customize-preview-debug, #mgsCustomizeVariablesDebug, #mgsCustomizePreviewDebug, #mgsCustomizeVariables, #mgsCustomizePreview{
+  display:none !important;
+}
+/* PREVIEW HIGHLIGHT */
+.mgs-customize-preview-text{position:relative;}
+/* FOCUS RING */
+.mgs-customize-preview-copy:focus-visible, .mgs-customize-preview-tab:focus-visible, .mgs-customize-searchable-option:focus-visible{
+  outline:2px solid #00eaff;
+  outline-offset:2px;
 }
 
-/* EXPERIMENT CSS-DEDUPE: removed leftover 768px card padding/title that overrode compact layout */
 
-.ai-card h2 a,
-.ai-card h3 a{
-  display:block;
-  color:#00eaff !important;
-  text-decoration:none !important;   
-}
-
-.ai-card h2 a:hover,
-.ai-card h3 a:hover{
-  color:#81ECFE !important;
-  text-decoration:none !important;
-}
-
-*{
-box-sizing:border-box;
-}
-
-img{
-max-width:100%;
-height:auto;
-}
-
-iframe{
-max-width:100%;
-}
-
-/* Universal-card before/after: smooth reset only when another card becomes active. */
-.universal-image-box .compare-container{
-  cursor:ew-resize;
-}
-
-.universal-image-box .compare-container.ba-resetting .img-after,
-.universal-image-box .compare-container.ba-resetting .slider-handle,
-.universal-image-box .compare-container.ba-resetting .ba-label-wrap{
-  transition:clip-path .3s ease, left .3s ease, width .3s ease;
-}
 
 /* =========================
    LIVE TRENDING BAR
@@ -13332,7 +12950,7 @@ body.item-page,.item .mgs-prompt-hero,.mgs-prompt-hero{max-width:100% !important
 </b:if> 
 
 <!-- SCRIPT -->
-<script type='text/javascript'>
+<script>
 //<![CDATA[
 
 function copyText(id, btn) {
@@ -14431,12 +14049,12 @@ function mgsCustomizeRenderVariables(preserveExisting){
 
         html+='<div class="mgs-customize-variable-other-container" style="display:'+(isOther?'block':'none')+';">'
           +'<label class="mgs-customize-variable-other-label" for="mgsCustomizeOther_'+mgsCustomizeEscAttr(v.key)+'">Other — custom value for ['+mgsCustomizeEsc(v.variableName)+']:</label>'
-          +'<input type="text" class="mgs-customize-variable-other-input" id="mgsCustomizeOther_'+mgsCustomizeEscAttr(v.key)+'" data-var-key="'+mgsCustomizeEscAttr(v.key)+'" placeholder="Enter custom value for ['+mgsCustomizeEscAttr(v.variableName)+']" value="'+mgsCustomizeEscAttr(otherVal)+'" aria-label="Custom value for '+mgsCustomizeEscAttr(v.variableName)+'"/>'
+          +'<input type="text" class="mgs-customize-variable-other-input" id="mgsCustomizeOther_'+mgsCustomizeEscAttr(v.key)+'" data-var-key="'+mgsCustomizeEscAttr(v.key)+'" placeholder="Type your custom value..." value="'+mgsCustomizeEscAttr(otherVal)+'" aria-label="Custom value for '+mgsCustomizeEscAttr(v.variableName)+'"/>'
           +'<div class="mgs-customize-variable-validation" style="display:'+(hasError?'block':'none')+';" role="alert">'+mgsCustomizeEsc(v.validationMessage||'Custom value required when Other is selected')+'</div>'
           +'</div>';
 
       }else{
-        html+='<input type="text" class="mgs-customize-variable-input" data-var-key="'+mgsCustomizeEscAttr(v.key)+'" placeholder="Enter value for ['+mgsCustomizeEscAttr(v.variableName)+']" value="'+mgsCustomizeEscAttr(currentVal)+'" aria-label="Enter value for '+mgsCustomizeEscAttr(v.variableName)+'"/>'
+        html+='<input type="text" class="mgs-customize-variable-input" data-var-key="'+mgsCustomizeEscAttr(v.key)+'" placeholder="Type your custom value..." value="'+mgsCustomizeEscAttr(currentVal)+'" aria-label="Enter value for '+mgsCustomizeEscAttr(v.variableName)+'"/>'
         html+='<div class="mgs-customize-variable-validation" style="display:'+(hasError?'block':'none')+';" role="alert">'+mgsCustomizeEsc(v.validationMessage||'Value cannot be empty')+'</div>'
         html+='<div class="mgs-customize-variable-fallback-hint">Unknown variable — manual input — plain text escaped</div>';
       }
@@ -15108,6 +14726,439 @@ document.addEventListener("DOMContentLoaded", function(){
 
 });
 
+
+
+/* =========================
+   MGS-UP-13: ENTERPRISE v2.0 UI ENHANCEMENTS
+   Auto-height editors, searchable dropdown, preview tabs, copy icons
+   No logic change — only UI polish, preserves parser, copy, reset, data flow
+========================= */
+function mgsCustomizeAutoResize(el){
+  try{
+    if(!el) return;
+    el.style.height='auto';
+    var minH = 0;
+    if(el.classList.contains('is-main-editor')){
+      minH = window.innerWidth <= 768 ? 220 : 320;
+    } else if(el.classList.contains('is-negative-editor')){
+      minH = window.innerWidth <= 768 ? 120 : 170;
+    } else {
+      minH = 48;
+    }
+    var newH = Math.max(el.scrollHeight, minH);
+    // Cap to avoid huge: main max 60vh, negative 40vh
+    var maxH = el.classList.contains('is-main-editor') ? (window.innerHeight*0.6) : (el.classList.contains('is-negative-editor') ? (window.innerHeight*0.4) : 320);
+    if(newH > maxH) newH = maxH;
+    el.style.height = newH + 'px';
+    el.style.overflowY = 'hidden';
+  }catch(e){}
+}
+function mgsCustomizeAutoResizeAll(){
+  try{
+    var mainTa = document.getElementById('mgsCustomizeMainPrompt');
+    var negTa = document.getElementById('mgsCustomizeNegativePrompt');
+    if(mainTa) mgsCustomizeAutoResize(mainTa);
+    if(negTa) mgsCustomizeAutoResize(negTa);
+  }catch(e){}
+}
+window.mgsCustomizeAutoResize = mgsCustomizeAutoResize;
+
+/* Preview Tabs — single preview system */
+function mgsCustomizeInitPreviewTabs(){
+  try{
+    var tabMain = document.getElementById('mgsCustomizeTabMain');
+    var tabNeg = document.getElementById('mgsCustomizeTabNegative');
+    var boxMain = document.getElementById('mgsCustomizePreviewBoxMain');
+    var boxNeg = document.getElementById('mgsCustomizePreviewBoxNegative');
+    if(!tabMain || !tabNeg || !boxMain || !boxNeg) return;
+    if(tabMain._mgsBound) return;
+    tabMain._mgsBound = true;
+    tabMain.addEventListener('click', function(){
+      tabMain.classList.add('is-active');
+      tabMain.setAttribute('aria-selected','true');
+      tabNeg.classList.remove('is-active');
+      tabNeg.classList.remove('is-negative');
+      tabNeg.setAttribute('aria-selected','false');
+      boxMain.style.display='flex';
+      boxNeg.style.display='none';
+    });
+    tabNeg.addEventListener('click', function(){
+      tabNeg.classList.add('is-active');
+      tabNeg.classList.add('is-negative');
+      tabNeg.setAttribute('aria-selected','true');
+      tabMain.classList.remove('is-active');
+      tabMain.setAttribute('aria-selected','false');
+      boxMain.style.display='none';
+      boxNeg.style.display='flex';
+    });
+    // Default to main
+    tabMain.classList.add('is-active');
+    tabMain.setAttribute('aria-selected','true');
+    tabNeg.classList.remove('is-active');
+    boxMain.style.display='flex';
+    boxNeg.style.display='none';
+  }catch(e){}
+}
+window.mgsCustomizeInitPreviewTabs = mgsCustomizeInitPreviewTabs;
+
+/* Copy icon inside preview */
+function mgsCustomizeInitPreviewCopy(){
+  try{
+    var copyMain = document.getElementById('mgsCustomizePreviewCopyMain');
+    var copyNeg = document.getElementById('mgsCustomizePreviewCopyNegative');
+    if(copyMain && !copyMain._mgsBound){
+      copyMain._mgsBound = true;
+      copyMain.addEventListener('click', function(e){
+        e.preventDefault();
+        var btn = document.getElementById('mgsCustomizeCopyMain') || document.getElementById('mgsCustomizeCopyMainBtn');
+        mgsCustomizeCopyMainPreview(btn);
+        copyMain.classList.add('is-copied');
+        copyMain.innerHTML = '&#10003;';
+        setTimeout(function(){ copyMain.classList.remove('is-copied'); copyMain.innerHTML = '<svg aria-hidden=\'true\' fill=\'none\' height=\'14\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.8\' viewBox=\'0 0 24 24\' width=\'14\'><rect height=\'9\' width=\'9\' x=\'9\' y=\'9\' rx=\'2\'/><path d=\'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3\'/></svg>'; }, 1800);
+      });
+    }
+    if(copyNeg && !copyNeg._mgsBound){
+      copyNeg._mgsBound = true;
+      copyNeg.addEventListener('click', function(e){
+        e.preventDefault();
+        var btn = document.getElementById('mgsCustomizeCopyNegative') || document.getElementById('mgsCustomizeCopyNegativeBtn');
+        mgsCustomizeCopyNegativePreview(btn);
+        copyNeg.classList.add('is-copied');
+        copyNeg.innerHTML = '&#10003;';
+        setTimeout(function(){ copyNeg.classList.remove('is-copied'); copyNeg.innerHTML = '<svg aria-hidden=\'true\' fill=\'none\' height=\'14\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.8\' viewBox=\'0 0 24 24\' width=\'14\'><rect height=\'9\' width=\'9\' x=\'9\' y=\'9\' rx=\'2\'/><path d=\'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3\'/></svg>'; }, 1800);
+      });
+    }
+  }catch(e){}
+}
+window.mgsCustomizeInitPreviewCopy = mgsCustomizeInitPreviewCopy;
+
+/* Searchable Dropdown — premium */
+function mgsCustomizeInitSearchableDropdowns(){
+  try{
+    var listEl = document.getElementById('mgsCustomizeVariablesList');
+    if(!listEl) return;
+    var items = listEl.querySelectorAll('.mgs-customize-variable-item');
+    for(var i=0;i<items.length;i++){
+      (function(item){
+        var select = item.querySelector('.mgs-customize-variable-select');
+        if(!select) return;
+        if(select._mgsSearchableBound) return;
+        select._mgsSearchableBound = true;
+        // Wrap select
+        var wrapper = document.createElement('div');
+        wrapper.className = 'mgs-customize-searchable-select';
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+        // Create dropdown
+        var dropdown = document.createElement('div');
+        dropdown.className = 'mgs-customize-searchable-dropdown';
+        dropdown.setAttribute('role','listbox');
+        // Search input
+        var searchWrap = document.createElement('div');
+        searchWrap.className = 'mgs-customize-searchable-search';
+        var searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.className = 'mgs-customize-searchable-search-input';
+        searchInput.placeholder = 'Search options...';
+        searchInput.setAttribute('aria-label','Search variable options');
+        searchWrap.appendChild(searchInput);
+        dropdown.appendChild(searchWrap);
+        // Options from select
+        var optionsContainer = document.createElement('div');
+        optionsContainer.className = 'mgs-customize-searchable-options';
+        for(var o=0;o<select.options.length;o++){
+          var opt = select.options[o];
+          var optDiv = document.createElement('div');
+          optDiv.className = 'mgs-customize-searchable-option';
+          optDiv.setAttribute('role','option');
+          optDiv.setAttribute('data-value', opt.value);
+          optDiv.textContent = opt.textContent;
+          if(opt.value === select.value){
+            optDiv.classList.add('is-selected');
+          }
+          optionsContainer.appendChild(optDiv);
+        }
+        dropdown.appendChild(optionsContainer);
+        wrapper.appendChild(dropdown);
+
+        var isOpen = false;
+        var highlightedIndex = -1;
+
+        function openDropdown(){
+          if(isOpen) return;
+          isOpen = true;
+          dropdown.classList.add('is-open');
+          searchInput.value = '';
+          filterOptions('');
+          // Highlight selected
+          var opts = optionsContainer.querySelectorAll('.mgs-customize-searchable-option:not(.is-hidden)');
+          for(var h=0;h<opts.length;h++){
+            if(opts[h].getAttribute('data-value') === select.value){
+              highlightedIndex = h;
+              opts[h].classList.add('is-highlighted');
+              opts[h].scrollIntoView({block:'nearest'});
+              break;
+            }
+          }
+          setTimeout(function(){ try{ searchInput.focus(); }catch(e){} }, 50);
+        }
+        function closeDropdown(){
+          if(!isOpen) return;
+          isOpen = false;
+          dropdown.classList.remove('is-open');
+          highlightedIndex = -1;
+          var all = optionsContainer.querySelectorAll('.mgs-customize-searchable-option');
+          for(var c=0;c<all.length;c++){ all[c].classList.remove('is-highlighted'); }
+        }
+        function filterOptions(q){
+          var lower = (q||'').toLowerCase();
+          var opts = optionsContainer.querySelectorAll('.mgs-customize-searchable-option');
+          var visibleCount = 0;
+          for(var f=0;f<opts.length;f++){
+            var txt = opts[f].textContent.toLowerCase();
+            if(!lower || txt.indexOf(lower) !== -1){
+              opts[f].classList.remove('is-hidden');
+              visibleCount++;
+            } else {
+              opts[f].classList.add('is-hidden');
+            }
+          }
+          highlightedIndex = -1;
+        }
+        function selectOption(value){
+          select.value = value;
+          // Update selected class
+          var opts = optionsContainer.querySelectorAll('.mgs-customize-searchable-option');
+          for(var u=0;u<opts.length;u++){
+            if(opts[u].getAttribute('data-value') === value){
+              opts[u].classList.add('is-selected');
+            } else {
+              opts[u].classList.remove('is-selected');
+            }
+          }
+          // Trigger change event for existing logic
+          var evt = document.createEvent('HTMLEvents');
+          evt.initEvent('change', true, true);
+          select.dispatchEvent(evt);
+          closeDropdown();
+        }
+        function highlightNext(dir){
+          var visible = optionsContainer.querySelectorAll('.mgs-customize-searchable-option:not(.is-hidden)');
+          if(visible.length===0) return;
+          if(highlightedIndex >=0 && visible[highlightedIndex]){
+            visible[highlightedIndex].classList.remove('is-highlighted');
+          }
+          highlightedIndex += dir;
+          if(highlightedIndex <0) highlightedIndex = visible.length-1;
+          if(highlightedIndex >= visible.length) highlightedIndex = 0;
+          visible[highlightedIndex].classList.add('is-highlighted');
+          visible[highlightedIndex].scrollIntoView({block:'nearest'});
+        }
+
+        select.addEventListener('click', function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          if(isOpen){ closeDropdown(); } else { openDropdown(); }
+        });
+        select.addEventListener('focus', function(e){
+          // Prevent native dropdown opening, show custom
+          e.preventDefault();
+          openDropdown();
+        });
+        select.addEventListener('keydown', function(e){
+          if(e.key === 'ArrowDown'){ e.preventDefault(); if(!isOpen) openDropdown(); else highlightNext(1); }
+          else if(e.key === 'ArrowUp'){ e.preventDefault(); if(!isOpen) openDropdown(); else highlightNext(-1); }
+          else if(e.key === 'Enter'){
+            if(isOpen){
+              e.preventDefault();
+              var visible = optionsContainer.querySelectorAll('.mgs-customize-searchable-option:not(.is-hidden)');
+              if(highlightedIndex >=0 && visible[highlightedIndex]){
+                selectOption(visible[highlightedIndex].getAttribute('data-value'));
+              } else if(visible.length>0){
+                selectOption(visible[0].getAttribute('data-value'));
+              }
+            }
+          } else if(e.key === 'Escape'){ if(isOpen){ e.preventDefault(); closeDropdown(); } }
+        });
+        searchInput.addEventListener('input', function(){
+          filterOptions(this.value);
+        });
+        searchInput.addEventListener('keydown', function(e){
+          if(e.key === 'ArrowDown'){ e.preventDefault(); highlightNext(1); }
+          else if(e.key === 'ArrowUp'){ e.preventDefault(); highlightNext(-1); }
+          else if(e.key === 'Enter'){
+            e.preventDefault();
+            var visible = optionsContainer.querySelectorAll('.mgs-customize-searchable-option:not(.is-hidden)');
+            if(highlightedIndex >=0 && visible[highlightedIndex]){
+              selectOption(visible[highlightedIndex].getAttribute('data-value'));
+            } else if(visible.length>0){
+              selectOption(visible[0].getAttribute('data-value'));
+            }
+          } else if(e.key === 'Escape'){ e.preventDefault(); closeDropdown(); select.focus(); }
+        });
+        optionsContainer.addEventListener('click', function(e){
+          var opt = e.target.closest('.mgs-customize-searchable-option');
+          if(opt && !opt.classList.contains('is-hidden')){
+            selectOption(opt.getAttribute('data-value'));
+          }
+        });
+        // Close on outside click
+        document.addEventListener('click', function(e){
+          if(!wrapper.contains(e.target)){
+            closeDropdown();
+          }
+        });
+        // Sync when select value changes externally
+        var observer = new MutationObserver(function(){
+          var opts = optionsContainer.querySelectorAll('.mgs-customize-searchable-option');
+          for(var m=0;m<opts.length;m++){
+            if(opts[m].getAttribute('data-value') === select.value){
+              opts[m].classList.add('is-selected');
+            } else {
+              opts[m].classList.remove('is-selected');
+            }
+          }
+        });
+        try{ observer.observe(select, {attributes:true, childList:true, subtree:true}); }catch(e){}
+      })(items[i]);
+    }
+  }catch(e){ try{console.log('[mgsCustomizeInitSearchableDropdowns] error', e);}catch(e2){} }
+}
+window.mgsCustomizeInitSearchableDropdowns = mgsCustomizeInitSearchableDropdowns;
+
+/* Other textbox smooth expand */
+function mgsCustomizeEnhanceOtherInputs(){
+  try{
+    var listEl = document.getElementById('mgsCustomizeVariablesList');
+    if(!listEl) return;
+    var containers = listEl.querySelectorAll('.mgs-customize-variable-other-container');
+    for(var i=0;i<containers.length;i++){
+      var cont = containers[i];
+      // Use is-visible class for animation instead of display block/none
+      if(cont.style.display === 'block'){
+        cont.classList.add('is-visible');
+        cont.style.display = '';
+      } else if(cont.style.display === 'none'){
+        cont.classList.remove('is-visible');
+        cont.style.display = '';
+      }
+    }
+  }catch(e){}
+}
+
+/* Enhance existing RenderVariables to auto-init searchable and auto-resize */
+(function(){
+  var originalRender = window.mgsCustomizeRenderVariables;
+  if(originalRender && !originalRender._mgsEnhanced){
+    window.mgsCustomizeRenderVariables = function(preserveExisting){
+      var result = originalRender(preserveExisting);
+      try{
+        setTimeout(function(){
+          mgsCustomizeInitSearchableDropdowns();
+          mgsCustomizeEnhanceOtherInputs();
+          mgsCustomizeAutoResizeAll();
+        }, 50);
+      }catch(e){}
+      return result;
+    };
+    window.mgsCustomizeRenderVariables._mgsEnhanced = true;
+  }
+})();
+
+/* Enhance UpdateMain/Negative to auto-resize */
+(function(){
+  var origMain = window.mgsCustomizeUpdateMainEditorState;
+  if(origMain && !origMain._mgsEnhanced){
+    window.mgsCustomizeUpdateMainEditorState = function(skipRender){
+      var res = origMain(skipRender);
+      try{ var ta=document.getElementById('mgsCustomizeMainPrompt'); if(ta) mgsCustomizeAutoResize(ta); }catch(e){}
+      return res;
+    };
+    window.mgsCustomizeUpdateMainEditorState._mgsEnhanced = true;
+  }
+  var origNeg = window.mgsCustomizeUpdateNegativeEditorState;
+  if(origNeg && !origNeg._mgsEnhanced){
+    window.mgsCustomizeUpdateNegativeEditorState = function(skipRender){
+      var res = origNeg(skipRender);
+      try{ var ta=document.getElementById('mgsCustomizeNegativePrompt'); if(ta) mgsCustomizeAutoResize(ta); }catch(e){}
+      return res;
+    };
+    window.mgsCustomizeUpdateNegativeEditorState._mgsEnhanced = true;
+  }
+})();
+
+/* Enhance Open to init tabs, copy icons, auto-resize, searchable */
+(function(){
+  var origOpen = window.mgsCustomizeOpen;
+  if(origOpen && !origOpen._mgsEnhanced){
+    window.mgsCustomizeOpen = function(btn){
+      var res = origOpen(btn);
+      try{
+        setTimeout(function(){
+          mgsCustomizeInitPreviewTabs();
+          mgsCustomizeInitPreviewCopy();
+          mgsCustomizeInitSearchableDropdowns();
+          mgsCustomizeEnhanceOtherInputs();
+          mgsCustomizeAutoResizeAll();
+          // Attach input listeners for auto-resize
+          var mainTa = document.getElementById('mgsCustomizeMainPrompt');
+          var negTa = document.getElementById('mgsCustomizeNegativePrompt');
+          if(mainTa && !mainTa._mgsAutoResizeBound){
+            mainTa._mgsAutoResizeBound = true;
+            mainTa.addEventListener('input', function(){ mgsCustomizeAutoResize(this); });
+          }
+          if(negTa && !negTa._mgsAutoResizeBound){
+            negTa._mgsAutoResizeBound = true;
+            negTa.addEventListener('input', function(){ mgsCustomizeAutoResize(this); });
+          }
+        }, 80);
+      }catch(e){}
+      return res;
+    };
+    window.mgsCustomizeOpen._mgsEnhanced = true;
+  }
+})();
+
+/* Enhance OnVariableSelectChange to handle is-visible class for Other */
+(function(){
+  var origSelect = window.mgsCustomizeOnVariableSelectChange;
+  if(origSelect && !origSelect._mgsEnhanced){
+    window.mgsCustomizeOnVariableSelectChange = function(key, selectedValue){
+      var res = origSelect(key, selectedValue);
+      try{
+        var listEl = document.getElementById('mgsCustomizeVariablesList');
+        if(listEl){
+          var item = listEl.querySelector('[data-var-key=\"'+ (window.mgsCustomizeEscAttr ? window.mgsCustomizeEscAttr(key) : key) +'\"]');
+          if(item){
+            var otherContainer = item.querySelector('.mgs-customize-variable-other-container');
+            if(otherContainer){
+              if(selectedValue === '__OTHER__'){
+                otherContainer.classList.add('is-visible');
+              } else {
+                otherContainer.classList.remove('is-visible');
+              }
+            }
+          }
+        }
+      }catch(e){}
+      return res;
+    };
+    window.mgsCustomizeOnVariableSelectChange._mgsEnhanced = true;
+  }
+})();
+
+/* Initial setup for preview tabs on DOM ready */
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', function(){
+    mgsCustomizeInitPreviewTabs();
+    mgsCustomizeInitPreviewCopy();
+  });
+} else {
+  mgsCustomizeInitPreviewTabs();
+  mgsCustomizeInitPreviewCopy();
+}
+
+
 //]]>
 </script>
 
@@ -15549,156 +15600,137 @@ How To Use This Prompt
 </div>
 
 <!-- MGS-UP-10: CUSTOMIZE PROMPT POPUP FRAMEWORK - SINGLE REUSABLE INSTANCE - MOBILE RESPONSIVE + ACCESSIBILITY -->
+
 <div aria-hidden='true' class='mgs-customize-overlay' data-open='false' id='mgsCustomizeOverlay'/>
 <div aria-describedby='mgsCustomizeBody' aria-labelledby='mgsCustomizeTitle' aria-modal='true' class='mgs-customize-modal' data-open='false' id='mgsCustomizeModal' role='dialog' tabindex='-1'>
   <div class='mgs-customize-content' role='document'>
     <div class='mgs-customize-header'>
-      <div class='mgs-customize-title' id='mgsCustomizeTitle'>
-        <span aria-hidden='true' class='mgs-customize-title-icon'>
-          <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.9' viewBox='0 0 24 24' width='16'><path d='M12 20h9'/><path d='M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z'/></svg>
+      <div class='mgs-customize-header-left'>
+        <span aria-hidden='true' class='mgs-customize-header-icon'>
+          <svg fill='none' height='20' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.9' viewBox='0 0 24 24' width='20'><path d='M12 20h9'/><path d='M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z'/></svg>
         </span>
-        Customize Prompt
-        <span class='mgs-customize-badge-soon'>STEP 10 &#8212; MOBILE + A11Y</span>
+        <div class='mgs-customize-header-text'>
+          <h2 class='mgs-customize-title' id='mgsCustomizeTitle'>Customize Prompt</h2>
+          <p class='mgs-customize-subtitle'>Customize this AI prompt for your own photo.</p>
+        </div>
       </div>
       <button aria-label='Close customize popup — press Escape to close' class='mgs-customize-close' id='mgsCustomizeClose' type='button'>&#215;</button>
     </div>
     <div class='mgs-customize-body' id='mgsCustomizeBody'>
-      <!-- Main Prompt Editor - STEP 02: Editable - Accessible -->
       <div class='mgs-customize-section' id='mgsCustomizeMainSection'>
         <div class='mgs-customize-section-header-row'>
           <div class='mgs-customize-section-label'>
-            <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z'/><path d='M14 2v6h6'/><path d='M16 13H8'/><path d='M16 17H8'/><path d='M10 9H8'/></svg>
+            <svg aria-hidden='true' fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='16'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z'/><path d='M14 2v6h6'/><path d='M16 13H8'/><path d='M16 17H8'/><path d='M10 9H8'/></svg>
             Main Prompt
-            <span class='mgs-customize-badge-soon'>EDITABLE &#8212; STEP 02</span>
-            <span aria-live='polite' class='mgs-customize-edited-badge' id='mgsCustomizeEditedBadge'>&#9679; Edited</span>
+            <span aria-live='polite' class='mgs-customize-edited-badge' id='mgsCustomizeEditedBadge'>Edited</span>
           </div>
           <div class='mgs-customize-section-actions'>
-            <button aria-label='Reset main prompt to original' class='mgs-customize-reset-btn' disabled='disabled' id='mgsCustomizeResetMain' title='Reset to original prompt' type='button'>
-              <svg aria-hidden='true' fill='none' height='12' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='12'><path d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/><path d='M3 3v5h5'/></svg>
-              Reset
-            </button>
+            <button aria-label='Reset main prompt to original' class='mgs-customize-reset-btn' disabled='disabled' id='mgsCustomizeResetMain' type='button'>Reset</button>
           </div>
         </div>
         <label class='mgs-customize-visually-hidden' for='mgsCustomizeMainPrompt'>Main Prompt &#8212; editable, preserves variables, line breaks, punctuation</label>
         <textarea aria-label='Main Prompt — editable, preserves variables like [SUBJECT TYPE], line breaks, punctuation. Original card remains unchanged.' class='mgs-customize-textarea is-main-editor' id='mgsCustomizeMainPrompt' placeholder='Main prompt will appear here — you can manually edit, preserve [VARIABLES], line breaks, punctuation. Original card remains unchanged.'/>
-        <div aria-live='polite' class='mgs-customize-char-count' id='mgsCustomizeCharCount'>0 characters</div>
+        <div aria-live='polite' class='mgs-customize-char-count' id='mgsCustomizeCharCount'>
+          <span class='mgs-customize-word-count'>0 words</span>
+          <span>0 characters</span>
+        </div>
       </div>
-      <!-- Negative Prompt Editor - STEP 03: Editable - Accessible -->
       <div class='mgs-customize-section' id='mgsCustomizeNegativeSection'>
         <div class='mgs-customize-section-header-row'>
           <div class='mgs-customize-section-label is-negative'>
-            <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><circle cx='12' cy='12' r='10'/><path d='m4.9 4.9 14.2 14.2'/></svg>
+            <svg aria-hidden='true' fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='16'><circle cx='12' cy='12' r='10'/><path d='m4.9 4.9 14.2 14.2'/></svg>
             Negative Prompt
-            <span class='mgs-customize-badge-soon'>EDITABLE &#8212; STEP 03</span>
-            <span aria-live='polite' class='mgs-customize-edited-badge is-negative' id='mgsCustomizeNegativeEditedBadge'>&#9679; Edited</span>
+            <span aria-live='polite' class='mgs-customize-edited-badge is-negative' id='mgsCustomizeNegativeEditedBadge'>Edited</span>
           </div>
           <div class='mgs-customize-section-actions'>
-            <button aria-label='Reset negative prompt to original' class='mgs-customize-reset-btn' disabled='disabled' id='mgsCustomizeResetNegative' title='Reset to original negative prompt' type='button'>
-              <svg aria-hidden='true' fill='none' height='12' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='12'><path d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/><path d='M3 3v5h5'/></svg>
-              Reset
-            </button>
+            <button aria-label='Reset negative prompt to original' class='mgs-customize-reset-btn' disabled='disabled' id='mgsCustomizeResetNegative' type='button'>Reset</button>
           </div>
         </div>
+        <p class='mgs-customize-section-hint'>Negative Prompt helps avoid unwanted AI artifacts.</p>
         <label class='mgs-customize-visually-hidden' for='mgsCustomizeNegativePrompt'>Negative Prompt &#8212; editable, preserve line breaks, punctuation</label>
-        <textarea aria-label='Negative Prompt — editable, preserve line breaks, punctuation. Leave empty if no negative needed. Original card remains unchanged.' class='mgs-customize-textarea is-negative-editor' id='mgsCustomizeNegativePrompt' placeholder='Negative prompt — editable, preserve line breaks, punctuation. Leave empty if no negative needed. Original card remains unchanged.'/>
-        <div aria-live='polite' class='mgs-customize-char-count' id='mgsCustomizeNegativeCharCount'>0 characters</div>
+        <textarea aria-label='Negative Prompt — editable, preserve line breaks, punctuation. Leave empty if no negative needed. Original card remains unchanged.' class='mgs-customize-textarea is-negative-editor' id='mgsCustomizeNegativePrompt' placeholder='Negative prompt — editable, preserve line breaks, punctuation. Leave empty if no negative needed.'/>
+        <div aria-live='polite' class='mgs-customize-char-count' id='mgsCustomizeNegativeCharCount'>
+          <span class='mgs-customize-word-count'>0 words</span>
+          <span>0 characters</span>
+        </div>
         <div class='mgs-customize-empty-hint' id='mgsCustomizeNegativeEmptyHint'>No Negative Prompt in original &#8212; clean empty state. You can add one if needed or leave empty.</div>
       </div>
-      <!-- Variables Detection Engine - STEP 04: Auto-detect [VARIABLE NAME] - Accessible + Mobile -->
       <div class='mgs-customize-section' id='mgsCustomizeVariablesSection'>
         <div class='mgs-customize-section-header-row'>
           <div class='mgs-customize-section-label is-variables'>
-            <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><path d='M12 20h9'/><path d='M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z'/></svg>
+            <svg aria-hidden='true' fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='16'><path d='M12 20h9'/><path d='M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z'/></svg>
             Customize Variables
-            <span class='mgs-customize-badge-soon'>OTHER... &#8212; STEP 10</span>
             <span aria-live='polite' class='mgs-customize-edited-badge is-variables' id='mgsCustomizeVariablesCountBadge'>0 vars</span>
           </div>
           <div class='mgs-customize-section-actions'>
-            <button aria-label='Reset variables to defaults' class='mgs-customize-reset-btn is-variables' disabled='disabled' id='mgsCustomizeResetVariables' title='Reset variables to defaults' type='button'>
-              <svg aria-hidden='true' fill='none' height='12' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='12'><path d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/><path d='M3 3v5h5'/></svg>
-              Reset Vars
-            </button>
+            <button aria-label='Reset variables to defaults' class='mgs-customize-reset-btn is-variables' disabled='disabled' id='mgsCustomizeResetVariables' type='button'>Reset Vars</button>
           </div>
         </div>
         <div aria-label='Customize variables list — dropdowns and inputs for detected variables' class='mgs-customize-variables-list' id='mgsCustomizeVariablesList' role='list'/>
         <div class='mgs-customize-placeholder' id='mgsCustomizeVariablesPlaceholder' style='display:flex'>
-          <svg aria-hidden='true' fill='none' height='20' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' viewBox='0 0 24 24' width='20'><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09A1.65 1.65 0 0 0 19.4 15z'/></svg>
-          No variables detected &#8212; add [VARIABLE NAME] like [SUBJECT TYPE], [LIGHTING FEEL], [GLOW TONE] in Main or Negative Prompt.<br/>STEP 05: Known vars &#8594; dropdown from dictionary, unknown &#8594; manual input, no fake values.
+          No variables detected &#8212; add [VARIABLE NAME] like [SUBJECT TYPE], [LIGHTING FEEL], [GLOW TONE] in Main or Negative Prompt.
         </div>
-        <div class='mgs-customize-variables-debug' id='mgsCustomizeVariablesDebug' style='display:none'/>
-        <div id='mgsCustomizeVariables' style='display:none'/>
       </div>
-      <!-- Live Preview Engine - STEP 07: Real-time replacement - Accessible + Mobile Scroll -->
       <div class='mgs-customize-section' id='mgsCustomizePreviewSection'>
         <div class='mgs-customize-section-header-row'>
           <div class='mgs-customize-section-label is-preview'>
-            <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><path d='M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z'/><circle cx='12' cy='12' r='3'/></svg>
-            Live Preview
-            <span class='mgs-customize-badge-soon'>LIVE &#8212; STEP 10</span>
+            <svg aria-hidden='true' fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='16'><path d='M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z'/><circle cx='12' cy='12' r='3'/></svg>
+            Live Prompt Preview
             <span aria-live='polite' class='mgs-customize-edited-badge is-preview is-visible' id='mgsCustomizePreviewBadge'>Live</span>
           </div>
         </div>
         <div class='mgs-customize-preview-container'>
-          <div class='mgs-customize-preview-box is-main'>
-            <div class='mgs-customize-preview-label'>
-              <svg aria-hidden='true' fill='none' height='12' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='12'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z'/><path d='M14 2v6h6'/></svg>
-              Main Preview &#8212; ALL occurrences replaced
-            </div>
-            <div aria-label='Main prompt live preview — all variable occurrences replaced, scrollable for long prompts' class='mgs-customize-preview-text' id='mgsCustomizeMainPreview' tabindex='0'>(empty)</div>
-            <div aria-live='polite' class='mgs-customize-preview-meta' id='mgsCustomizeMainPreviewMeta'>0 chars &#8226; live</div>
+          <div aria-label='Preview tabs' class='mgs-customize-preview-tabs' role='tablist'>
+            <button aria-selected='true' class='mgs-customize-preview-tab is-active' data-tab='main' id='mgsCustomizeTabMain' role='tab' type='button'>Main Prompt Preview</button>
+            <button aria-selected='false' class='mgs-customize-preview-tab' data-tab='negative' id='mgsCustomizeTabNegative' role='tab' type='button'>Negative Prompt Preview</button>
           </div>
-          <div class='mgs-customize-preview-box is-negative'>
-            <div class='mgs-customize-preview-label is-negative'>
-              <svg aria-hidden='true' fill='none' height='12' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='12'><circle cx='12' cy='12' r='10'/><path d='m4.9 4.9 14.2 14.2'/></svg>
-              Negative Preview &#8212; same replacement logic
+          <div class='mgs-customize-preview-box is-main' id='mgsCustomizePreviewBoxMain'>
+            <div class='mgs-customize-preview-box-header'>
+              <div class='mgs-customize-preview-label'>
+                <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z'/><path d='M14 2v6h6'/></svg>
+                Main Prompt Preview &#8212; ALL occurrences replaced
+              </div>
+              <button aria-label='Copy main preview' class='mgs-customize-preview-copy' id='mgsCustomizePreviewCopyMain' type='button'>
+                <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><rect height='9' rx='2' width='9' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3'/></svg>
+              </button>
             </div>
-            <div aria-label='Negative prompt live preview — scrollable for long prompts' class='mgs-customize-preview-text is-negative' id='mgsCustomizeNegativePreview' tabindex='0'>(empty - no negative)</div>
-            <div aria-live='polite' class='mgs-customize-preview-meta' id='mgsCustomizeNegativePreviewMeta'>0 chars &#8226; live</div>
+            <div aria-label='Main prompt live preview — all variable occurrences replaced' class='mgs-customize-preview-text' id='mgsCustomizeMainPreview' tabindex='0'>(empty)</div>
+            <div aria-live='polite' class='mgs-customize-preview-meta' id='mgsCustomizeMainPreviewMeta'>
+              <span>0 chars &#8226; 0 words &#8226; live</span>
+              <span class='mgs-customize-word-count'>Live replacement</span>
+            </div>
+          </div>
+          <div class='mgs-customize-preview-box is-negative' id='mgsCustomizePreviewBoxNegative' style='display:none'>
+            <div class='mgs-customize-preview-box-header'>
+              <div class='mgs-customize-preview-label is-negative'>
+                <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><circle cx='12' cy='12' r='10'/><path d='m4.9 4.9 14.2 14.2'/></svg>
+                Negative Prompt Preview
+              </div>
+              <button aria-label='Copy negative preview' class='mgs-customize-preview-copy' id='mgsCustomizePreviewCopyNegative' type='button'>
+                <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><rect height='9' rx='2' width='9' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3'/></svg>
+              </button>
+            </div>
+            <div aria-label='Negative prompt live preview' class='mgs-customize-preview-text is-negative' id='mgsCustomizeNegativePreview' tabindex='0'>(empty - no negative)</div>
+            <div aria-live='polite' class='mgs-customize-preview-meta' id='mgsCustomizeNegativePreviewMeta'>
+              <span>0 chars &#8226; live</span>
+              <span class='mgs-customize-word-count'>Live replacement</span>
+            </div>
           </div>
         </div>
-        <div class='mgs-customize-preview-debug' id='mgsCustomizePreviewDebug' style='display:none'/>
-        <div id='mgsCustomizePreview' style='display:none'/>
-      </div>
-      <!-- Copy Controls - STEP 08: Copy Customized Prompt System - Accessible -->
-      <div class='mgs-customize-section' id='mgsCustomizeCopySection'>
-        <div class='mgs-customize-section-label'>
-          <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><rect height='4' rx='1' width='8' x='8' y='2'/><path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/></svg>
-          Copy Controls
-          <span class='mgs-customize-badge-soon'>COPY &#8212; STEP 10</span>
-        </div>
-        <div class='mgs-customize-copy-actions'>
-          <button aria-label='Copy customized main prompt — copies exactly preview with all replacements, no UI text, no Before Image Prompt' class='mgs-customize-btn is-primary is-copy-main' id='mgsCustomizeCopyMainBtn' type='button'>
-            <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><rect height='9' rx='2' width='9' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3'/></svg>
-            Copy Customized Prompt
-          </button>
-          <button aria-label='Copy customized negative prompt — copies only customized negative, shows message if empty' class='mgs-customize-btn is-secondary is-copy-negative' id='mgsCustomizeCopyNegativeBtn' type='button'>
-            <svg aria-hidden='true' fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='14'><circle cx='12' cy='12' r='10'/><path d='m4.9 4.9 14.2 14.2'/></svg>
-            Copy Customized Negative Prompt
-          </button>
-        </div>
-        <div class='mgs-customize-copy-hint'>Copies exactly the current customized prompt (preview with ALL replacements). No variable labels, dropdown options, UI text, Before Image Prompt, HTML, hidden metadata. Negative shows &quot;No Negative Prompt Available&quot; if empty. Uses navigator.clipboard with fallback. Keyboard accessible, focus visible.</div>
       </div>
     </div>
     <div class='mgs-customize-footer'>
-      <div class='mgs-customize-footer-hint'>STEP 10: Mobile responsive 360/375/390/414/768/desktop &#8212; fits viewport, no horiz scroll, prompt scrolling, buttons 44px tappable, dropdowns usable, close visible, long prompts/vars handled. A11y: semantic buttons, aria-labels, focus visible, ESC close, tab order logical, aria-modal dialog role, no incorrect focus trap. Body scroll: prevent background when open, restore exact previous.</div>
-      <div class='mgs-customize-footer-actions'>
-        <button aria-label='Reset all changes to original — restores main, negative, variables, preview' class='mgs-customize-btn' id='mgsCustomizeResetAll' title='Reset all changes to original' type='button'>
-          <svg aria-hidden='true' fill='none' height='12' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='12'><path d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/><path d='M3 3v5h5'/></svg>
-          Reset Changes
-        </button>
-        <button aria-label='Cancel and close customize popup without saving' class='mgs-customize-btn' id='mgsCustomizeCancel' type='button'>Cancel</button>
-        <button aria-label='Copy customized main prompt to clipboard' class='mgs-customize-btn is-primary' id='mgsCustomizeCopyMain' type='button'>
-          <svg aria-hidden='true' fill='none' height='12' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='12'><rect height='9' rx='2' width='9' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3'/></svg>
-          Copy Prompt
-        </button>
-        <button aria-label='Copy customized negative prompt to clipboard' class='mgs-customize-btn is-secondary' id='mgsCustomizeCopyNegative' type='button'>
-          <svg aria-hidden='true' fill='none' height='12' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='12'><circle cx='12' cy='12' r='10'/><path d='m4.9 4.9 14.2 14.2'/></svg>
-          Copy Negative
-        </button>
-      </div>
+      <button aria-label='Reset all changes to original — restores main, negative, variables, preview' class='mgs-customize-btn is-ghost' id='mgsCustomizeResetAll' type='button'>Reset</button>
+      <button aria-label='Cancel and close customize popup without saving' class='mgs-customize-btn is-ghost' id='mgsCustomizeCancel' type='button'>Cancel</button>
+      <span class='mgs-customize-footer-spacer'/>
+      <button aria-label='Copy customized negative prompt — copies only customized negative, shows message if empty' class='mgs-customize-btn is-secondary' id='mgsCustomizeCopyNegative' type='button'>Copy Negative</button>
+      <button aria-label='Copy customized main prompt — copies exactly preview with all replacements, no UI text, no Before Image Prompt' class='mgs-customize-btn is-primary' id='mgsCustomizeCopyMain' type='button'>Copy Prompt</button>
+      <button aria-label='Copy customized main prompt — copies exactly preview with all replacements, no UI text, no Before Image Prompt' class='mgs-customize-btn is-primary' id='mgsCustomizeCopyMainBtn' style='display:none' type='button'>Copy Customized Prompt</button>
+      <button aria-label='Copy customized negative prompt — copies only customized negative, shows message if empty' class='mgs-customize-btn is-secondary' id='mgsCustomizeCopyNegativeBtn' style='display:none' type='button'>Copy Customized Negative Prompt</button>
     </div>
   </div>
 </div>
+
 
 
   <script>
