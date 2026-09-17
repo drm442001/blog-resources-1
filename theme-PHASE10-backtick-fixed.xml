@@ -17943,32 +17943,31 @@ function cpParseStep4(postBodyElement) {
   return variables;
 }
 
-// ===== PARSE OPTIONS STRING =====
+// ===== 1. PARSE OPTIONS STRING INTO ARRAY (Phase 10 — strips backticks) =====
 function cpParseOptions(str) {
-  str = str.trim();
-  // Remove trailing punctuation
-  str = str.replace(/[.,;]+$/, '');
+  if (!str) return [];
+  // Strip trailing punctuation & trailing backticks
+  str = str.trim().replace(/[`.,;]+$/, '');
 
   var result = [];
-
   if (str.indexOf(' or ') !== -1) {
     var orIdx = str.lastIndexOf(' or ');
     var before = str.substring(0, orIdx);
     var after = str.substring(orIdx + 4).trim();
     var beforeParts = before.split(',');
     for (var i = 0; i < beforeParts.length; i++) {
-      var p = beforeParts[i].trim();
+      var p = beforeParts[i].trim().replace(/^[`\s]+|[`\s]+$/g, '');
       if (p) result.push(p);
     }
+    after = after.replace(/^[`\s]+|[`\s]+$/g, '');
     if (after) result.push(after);
   } else {
     var parts = str.split(',');
     for (var i = 0; i < parts.length; i++) {
-      var p = parts[i].trim();
+      var p = parts[i].trim().replace(/^[`\s]+|[`\s]+$/g, '');
       if (p) result.push(p);
     }
   }
-
   return result;
 }
 
@@ -18216,7 +18215,7 @@ function cpShowToast(msg) {
   setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
-// ===== WIRING FUNCTION: OPEN CUSTOMIZE POPUP (Phase 9 — prompt-matched) =====
+// ===== 7. OPEN CUSTOMIZE POPUP (WIRING FUNCTION, Phase 10) =====
 function openCustomizePromptPopup(triggerEl) {
   var dd = triggerEl.closest ? triggerEl.closest('.copy-dropdown') : null;
   var card =
@@ -18281,16 +18280,13 @@ function openCustomizePromptPopup(triggerEl) {
     }
   }
 
-  // Close dropdowns
+  // Close open dropdowns
   if (window.closeAllCopyDropdowns) window.closeAllCopyDropdowns();
   if (window.uc2CloseAllMoreMenus) window.uc2CloseAllMoreMenus();
 
-  // Try parsing Step 4 from current document or card
-  var step4Map = {};
-  var cardText = cpGetTextFromNode(card);
-  step4Map = cpParseStep4MapFromText(cardText);
+  // Parse Step 4 map from card text or post body
+  var step4Map = cpParseStep4MapFromText(cpGetTextFromNode(card));
 
-  // If on post page, check document.body
   var postBody =
     document.querySelector('.post-body') ||
     document.querySelector('.entry-content') ||
@@ -18302,7 +18298,6 @@ function openCustomizePromptPopup(triggerEl) {
 
   var variables = cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map);
 
-  // Check if we have options for all prompt brackets
   var hasOptions = variables.length > 0 && variables.some(function(v) { return v.options && v.options.length > 0; });
 
   if (hasOptions || !postUrl) {
@@ -18310,7 +18305,7 @@ function openCustomizePromptPopup(triggerEl) {
     return;
   }
 
-  // Fallback: Fetch full post page to get Step 4 options
+  // Fetch fallback for homepage cards
   renderPopup(cpCombinePromptAndStep4(mainPrompt, negPrompt, {}));
   var loading = document.getElementById('cpVarCounter');
   if (loading) loading.textContent = 'Loading options...';
@@ -18320,7 +18315,7 @@ function openCustomizePromptPopup(triggerEl) {
   });
 }
 
-// ===== HELPER: EXTRACT BRACKETS PRESENT IN MAIN + NEGATIVE PROMPT =====
+// ===== 2. EXTRACT BRACKETS ACTUALLY USED IN MAIN/NEGATIVE PROMPT =====
 function cpExtractPromptBrackets(mainPrompt, negPrompt) {
   var fullText = (mainPrompt || '') + ' ' + (negPrompt || '');
   var regex = /\[([^\]]+)\]/g;
@@ -18335,46 +18330,40 @@ function cpExtractPromptBrackets(mainPrompt, negPrompt) {
       list.push(name);
     }
   }
-  return list; // Array of bracket names actually used in the prompt
+  return list; // Array of unique bracket names in prompt
 }
 
-// ===== HELPER: SAFE TEXT EXTRACTOR (WORKS ON LIVE DOM AND DOMPARSER) =====
-function cpGetTextFromNode(node) {
-  if (!node) return '';
-  if (node.innerText) return node.innerText;
-
-  // Fallback for DOMParser detached DOMs where innerText is undefined
-  var text = '';
-  var walk = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null, false);
-  var txtNode;
-  while ((txtNode = walk.nextNode())) {
-    text += ' ' + txtNode.nodeValue + ' ';
-  }
-  return text;
-}
-
-// ===== PARSE STEP 4 INTO A MAP { "VAR_NAME": ["opt1", "opt2"] } =====
+// ===== 3. PARSE STEP 4 TEXT INTO A MAP (STRIPPING BACKTICKS) =====
 function cpParseStep4MapFromText(text) {
   var map = {};
   if (!text) return map;
 
-  var lower = text.toLowerCase();
+  // STRIP ALL BACKTICKS & ZERO-WIDTH SPACES FIRST
+  var clean = text
+    .replace(/`/g, '')                     // Removes backticks `
+    .replace(/[\u200B-\u200D\uFEFF]/g, '') // Removes zero-width spaces
+    .replace(/\u00A0/gi, ' ');          // Replace NBSP
+
+  var lower = clean.toLowerCase();
   var start = lower.indexOf('customize these variables');
   if (start === -1) start = lower.indexOf('step 4');
   if (start === -1) start = 0;
 
   var end = lower.indexOf('step 5', start + 1);
   if (end === -1) end = lower.indexOf('expected output', start + 1);
-  if (end === -1) end = text.length;
+  if (end === -1) end = clean.length;
 
-  var searchArea = text.substring(start, end);
+  var searchArea = clean.substring(start, end);
 
-  // Normalize arrows and spacing
+  // Normalize Unicode arrows, symbols, and separators to '='
   searchArea = searchArea
-    .replace(/[→⇒⟶➔➜]/g, ' = ')
+    .replace(/[→⇒⟶➔➜]|->|=>/g, ' = ')
     .replace(/\]\s*=/g, '] = ')
     .replace(/=\s*/g, '= ');
 
+  // Regex pattern: [VAR_NAME] = option1, option2 or option3
+  // NOTE: separator class keeps ':' and '-' support from Phase 8/9 so
+  // '[VAR]: options' and '[VAR] - options' formats keep parsing too.
   var pattern = /\[([^\]]+)\]\s*[=\-:]\s*([^\n\r\[\]]+)/g;
   var match;
 
@@ -18382,7 +18371,9 @@ function cpParseStep4MapFromText(text) {
     var varName = match[1].trim();
     var optStr = match[2].trim();
 
-    optStr = optStr.replace(/\s*[→•·].*$/, '').trim().replace(/[.,;]+$/, '').trim();
+    // Clean leading equals/dashes & trailing bullets
+    optStr = optStr.replace(/^[=\-:\s]+/, '').trim();
+    optStr = optStr.replace(/\s*[→•·].*$/, '').trim();
 
     var opts = cpParseOptions(optStr);
     if (opts && opts.length > 0) {
@@ -18392,42 +18383,14 @@ function cpParseStep4MapFromText(text) {
   return map;
 }
 
-function cpParseStep4MapFromDom(root) {
-  var map = {};
-  if (!root) return map;
-
-  var codes = root.querySelectorAll('code, pre, b, strong');
-  for (var i = 0; i < codes.length; i++) {
-    var c = codes[i];
-    var bracketText = (c.textContent || '').trim();
-    var m = bracketText.match(/^\[([^\]]+)\]$/);
-    if (!m) continue;
-
-    var varName = m[1].trim();
-    var parent = c.parentElement;
-    if (!parent) continue;
-
-    var fullText = cpGetTextFromNode(parent);
-    var optStr = fullText.replace(bracketText, '').trim();
-    optStr = optStr.replace(/^[\s⇒⟶➔➜=\-:→]+/, '').trim();
-    optStr = optStr.replace(/[.,;]+$/, '').trim();
-
-    var opts = cpParseOptions(optStr);
-    if (opts && opts.length > 0) {
-      map[varName] = opts;
-    }
-  }
-  return map;
-}
-
-// ===== COMBINE PROMPT BRACKETS WITH STEP 4 OPTIONS =====
+// ===== 4. COMBINE: FILTER STEP 4 MAP AGAINST PROMPT BRACKETS =====
 function cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map) {
   var promptBrackets = cpExtractPromptBrackets(mainPrompt, negPrompt);
   var finalVars = [];
 
   for (var i = 0; i < promptBrackets.length; i++) {
     var varName = promptBrackets[i];
-    var options = step4Map[varName] || []; // Match options or empty array
+    var options = step4Map[varName] || [];
 
     finalVars.push({
       name: varName,
@@ -18439,7 +18402,20 @@ function cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map) {
   return finalVars;
 }
 
-// ===== FETCH POST HTML & PARSE STEP 4 =====
+// ===== 5. SAFE TEXT EXTRACTOR =====
+function cpGetTextFromNode(node) {
+  if (!node) return '';
+  if (node.innerText) return node.innerText;
+  var text = '';
+  var walk = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null, false);
+  var txtNode;
+  while ((txtNode = walk.nextNode())) {
+    text += ' ' + txtNode.nodeValue + ' ';
+  }
+  return text;
+}
+
+// ===== 6. FETCH POST HTML & PARSE STEP 4 =====
 function cpFetchVariablesFromPostUrl(url, mainPrompt, negPrompt, callback) {
   if (!url || typeof fetch !== 'function') {
     callback(cpCombinePromptAndStep4(mainPrompt, negPrompt, {}));
@@ -18458,13 +18434,6 @@ function cpFetchVariablesFromPostUrl(url, mainPrompt, negPrompt, callback) {
 
       var text = cpGetTextFromNode(body);
       var step4Map = cpParseStep4MapFromText(text);
-
-      var domMap = cpParseStep4MapFromDom(body);
-      for (var k in domMap) {
-        if (domMap.hasOwnProperty(k) && !step4Map[k]) {
-          step4Map[k] = domMap[k];
-        }
-      }
 
       var combined = cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map);
       callback(combined);
