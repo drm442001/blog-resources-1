@@ -8460,6 +8460,312 @@ div[id^="post-body-"]{
   border-radius:12px;
   overflow:hidden;
 }
+/* ===== CUSTOMIZE PROMPT FEATURE CSS ===== */
+
+/* Overlay */
+.customize-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  animation: cpFadeIn 0.3s ease;
+}
+.customize-overlay.active { display: flex; }
+
+@keyframes cpFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes cpSlideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Popup */
+.customize-popup {
+  background: #1a1a2e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 95vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  animation: cpSlideUp 0.3s ease;
+  overflow: hidden;
+}
+
+/* Header */
+.cp-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  background: linear-gradient(135deg, #16213e, #1a1a2e);
+}
+.cp-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cp-subtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+.cp-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.cp-close:hover {
+  background: rgba(255, 70, 70, 0.3);
+  border-color: rgba(255, 70, 70, 0.5);
+}
+
+/* Body */
+.cp-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+.cp-section { margin-bottom: 24px; }
+.cp-section-header {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e0e0ff;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cp-var-counter {
+  font-size: 12px;
+  color: #64ffda;
+  background: rgba(100, 255, 218, 0.1);
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+/* Variable Group */
+.cp-var-group {
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 14px;
+}
+.cp-var-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #bb86fc;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  font-family: 'Courier New', monospace;
+}
+.cp-var-select {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.cp-var-select:focus {
+  outline: none;
+  border-color: #bb86fc;
+}
+.cp-var-select option {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.cp-custom-wrap {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cp-custom-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+}
+.cp-custom-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+}
+.cp-custom-input:focus {
+  outline: none;
+  border-color: #64ffda;
+  border-style: solid;
+}
+
+/* Quick Fill */
+.cp-quick-fill {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, rgba(187, 134, 252, 0.15), rgba(100, 255, 218, 0.1));
+  border: 1px solid rgba(187, 134, 252, 0.25);
+  border-radius: 8px;
+  color: #bb86fc;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* Preview */
+.cp-preview-block { margin-bottom: 16px; }
+.cp-preview-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.cp-preview-text {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 250px;
+  overflow-y: auto;
+}
+.cp-bracket-filled {
+  background: rgba(100, 255, 218, 0.2);
+  color: #64ffda;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.cp-bracket-unfilled {
+  background: rgba(255, 170, 50, 0.2);
+  color: #ffaa32;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  border: 1px dashed rgba(255, 170, 50, 0.4);
+}
+
+/* Footer */
+.cp-footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: #16213e;
+}
+.cp-footer button {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.cp-btn-main {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+}
+.cp-btn-neg {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+.cp-btn-all {
+  background: linear-gradient(135deg, #64ffda, #00bfa5);
+  color: #000;
+}
+.cp-btn-reset {
+  background: rgba(255, 70, 70, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 70, 70, 0.25) !important;
+  flex: 0.5;
+}
+.cp-footer button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+/* Toast */
+.cp-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #64ffda;
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  z-index: 100000;
+  transition: transform 0.3s ease;
+  box-shadow: 0 8px 25px rgba(100, 255, 218, 0.3);
+}
+.cp-toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .customize-overlay { padding: 0; }
+  .customize-popup {
+    max-width: 100%;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+  }
+  .cp-header { padding: 16px; }
+  .cp-body { padding: 16px; }
+  .cp-footer {
+    padding: 12px 16px;
+    flex-direction: column;
+  }
+  .cp-footer button {
+    min-width: 100%;
+  }
+}
 ]]></b:skin>
   
 <!-- FINAL OPTIMIZED THEME (CLEAN + SEO + NO ERRORS) -->
@@ -8806,6 +9112,13 @@ return found;
 }
 if(parsed){card._parsedPrompt=parsed.promptText||"";card._parsedNegativePrompt=parsed.negativeText||"";card._parsedHasNegative=!!parsed.hasNegative;card._parsedIntro=parsed.introText||"";card._parsedTools=parsed.toolsText||"";card._parsedGuide=parsed.guideText||"";card._parsedExpected=parsed.expectedText||"";card._parsedTips=parsed.tipsText||"";card._parsedCover=mgsCoverSrcFrom(mgsParseSrc);}
 else{card._parsedPrompt="";card._parsedNegativePrompt="";card._parsedHasNegative=false;card._parsedIntro="";card._parsedTools="";card._parsedGuide="";card._parsedExpected="";card._parsedTips="";card._parsedCover=mgsCoverSrcFrom(mgsParseSrc);}
+/* CUSTOMIZE PROMPT (Phase 5): cache Step-4 variables + prompt texts as data-attributes */
+try{
+if(typeof cpParseStep4==="function"){card.setAttribute("data-cp-variables",JSON.stringify(cpParseStep4(mgsParseSrc)||[]));}else{card.setAttribute("data-cp-variables","[]");}
+card.setAttribute("data-cp-main",(parsed&&parsed.promptText)||card._parsedPrompt||"");
+card.setAttribute("data-cp-negative",(parsed&&parsed.negativeText)||card._parsedNegativePrompt||"");
+var cpTitleEl=card.querySelector(".universal-title");card.setAttribute("data-cp-title",cpTitleEl?(cpTitleEl.textContent||"").trim():"");
+}catch(e){}
 if(parsed&&parsed.promptHTML){pb.innerHTML=parsed.promptHTML;}
 else if(!pb.firstChild&&mgsParseSrc!==pb){pb.innerHTML=mgsParseSrc.innerHTML;}
 if(parsed&&parsed.howToHTML){
@@ -10038,6 +10351,7 @@ WEB TOOL
 <button class='copy-option' onclick='copyPromptOnly(this)'><svg fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='15' xmlns='http://www.w3.org/2000/svg'><rect height='4' rx='1' width='8' x='8' y='2'/><path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/></svg> Copy Prompt</button>
 <button class='copy-option' onclick='copyNegativePrompt(this)'><svg fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='15' xmlns='http://www.w3.org/2000/svg'><circle cx='12' cy='12' r='10'/><path d='m4.9 4.9 14.2 14.2'/></svg> Copy Negative Prompt</button>
 <button class='copy-option' onclick='copyAllPrompt(this)'><svg fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='15' xmlns='http://www.w3.org/2000/svg'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z'/><path d='M14 2v6h6'/></svg> Copy All Prompt</button>
+<button class='copy-option' onclick='openCustomizePromptPopup(this)'>&#10024; Customize Prompt</button>
 </div>
 </div>
 <div class='uc2-more-wrap'>
@@ -17489,6 +17803,465 @@ border-radius:4px;
     mgsRepairTitleLinks();
   }
 })();
+//]]>
+</script>
+
+<!-- ===== CUSTOMIZE PROMPT POPUP ===== -->
+<div class='customize-overlay' id='customizeOverlay'>
+  <div class='customize-popup'>
+
+    <div class='cp-header'>
+      <div class='cp-title'>
+        <span>&#10024;</span>
+        <span>Customize Prompt</span>
+      </div>
+      <div class='cp-subtitle' id='cpPromptTitle'>Prompt Title</div>
+      <button class='cp-close' onclick='closeCustomizePopup()' type='button'>&#10005;</button>
+    </div>
+
+    <div class='cp-body'>
+
+      <div class='cp-section'>
+        <div class='cp-section-header'>
+          <span>🎛&#65039; Customize Variables</span>
+          <span class='cp-var-counter' id='cpVarCounter'>0/0 filled</span>
+        </div>
+        <div id='cpVariablesContainer'/>
+        <button class='cp-quick-fill' onclick='quickFillAllVars()' type='button'>
+          &#9889; Fill All with First Option
+        </button>
+      </div>
+
+      <div class='cp-section'>
+        <div class='cp-section-header'>
+          <span>👁&#65039; Live Preview</span>
+        </div>
+        <div class='cp-preview-block'>
+          <div class='cp-preview-label'>📝 MAIN PROMPT</div>
+          <div class='cp-preview-text' id='cpPreviewMain'/>
+        </div>
+        <div class='cp-preview-block'>
+          <div class='cp-preview-label'>🚫 NEGATIVE PROMPT</div>
+          <div class='cp-preview-text' id='cpPreviewNegative'/>
+        </div>
+      </div>
+
+    </div>
+
+    <div class='cp-footer'>
+      <button class='cp-btn-main' onclick='copyCustomizedPrompt(&quot;main&quot;)' type='button'>
+        📋 Copy Main
+      </button>
+      <button class='cp-btn-neg' onclick='copyCustomizedPrompt(&quot;negative&quot;)' type='button'>
+        📋 Copy Negative
+      </button>
+      <button class='cp-btn-all' onclick='copyCustomizedPrompt(&quot;all&quot;)' type='button'>
+        📋 Copy All
+      </button>
+      <button class='cp-btn-reset' onclick='resetCustomizePrompt()' type='button'>
+        &#8634; Reset
+      </button>
+    </div>
+
+  </div>
+</div>
+<!-- ===== END CUSTOMIZE PROMPT POPUP ===== -->
+
+<script>
+//<![CDATA[
+/* ===== CUSTOMIZE PROMPT FEATURE JS ===== */
+
+// Global state
+var cpCurrentData = {
+  mainPrompt: '',
+  negativePrompt: '',
+  promptTitle: '',
+  variables: [],
+  selections: {}
+};
+
+// ===== PARSE STEP 4 VARIABLES FROM POST BODY =====
+function cpParseStep4(postBodyElement) {
+  var variables = [];
+  if (!postBodyElement) return variables;
+
+  // Find Step 4 heading
+  var allEls = postBodyElement.querySelectorAll('h1,h2,h3,h4,h5,h6,strong,b,p,div');
+  var step4El = null;
+
+  for (var i = 0; i < allEls.length; i++) {
+    var t = allEls[i].textContent.trim().toLowerCase();
+    if (/step\s*4/.test(t) && t.indexOf('customize') !== -1 && t.indexOf('variable') !== -1) {
+      step4El = allEls[i];
+      break;
+    }
+  }
+
+  if (!step4El) return variables;
+
+  // Collect text after Step 4 until Step 5 or end
+  var collected = [];
+  var current = step4El.nextElementSibling;
+
+  while (current) {
+    var txt = current.textContent.trim();
+    if (/step\s*5/i.test(txt)) break;
+    if (/^H[1-6]$/i.test(current.tagName) && txt.indexOf('[') === -1) break;
+    collected.push(txt);
+    current = current.nextElementSibling;
+  }
+
+  // Also check if Step 4 element itself has content after the heading text
+  var step4Text = step4El.textContent;
+  if (step4Text.indexOf('[') !== -1) {
+    collected.unshift(step4Text);
+  }
+
+  var fullText = collected.join('\n');
+
+  // Pattern: [VAR_NAME] = options  OR  [VAR_NAME] - options  OR  [VAR_NAME] : options
+  var pattern = /\[([^\]]+)\]\s*[=\-:]\s*([^\n\[]+)/g;
+  var match;
+  var found = {};
+
+  while ((match = pattern.exec(fullText)) !== null) {
+    var varName = match[1].trim();
+    if (found[varName]) continue;
+    found[varName] = true;
+
+    var optStr = match[2].trim();
+    var opts = cpParseOptions(optStr);
+
+    variables.push({
+      name: varName,
+      bracket: '[' + varName + ']',
+      options: opts
+    });
+  }
+
+  return variables;
+}
+
+// ===== PARSE OPTIONS STRING =====
+function cpParseOptions(str) {
+  str = str.trim();
+  // Remove trailing punctuation
+  str = str.replace(/[.,;]+$/, '');
+
+  var result = [];
+
+  if (str.indexOf(' or ') !== -1) {
+    var orIdx = str.lastIndexOf(' or ');
+    var before = str.substring(0, orIdx);
+    var after = str.substring(orIdx + 4).trim();
+    var beforeParts = before.split(',');
+    for (var i = 0; i < beforeParts.length; i++) {
+      var p = beforeParts[i].trim();
+      if (p) result.push(p);
+    }
+    if (after) result.push(after);
+  } else {
+    var parts = str.split(',');
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i].trim();
+      if (p) result.push(p);
+    }
+  }
+
+  return result;
+}
+
+// ===== FALLBACK: EXTRACT BRACKETS FROM PROMPT =====
+function cpExtractBrackets(promptText) {
+  var regex = /\[([^\]]+)\]/g;
+  var found = {};
+  var variables = [];
+  var match;
+
+  while ((match = regex.exec(promptText)) !== null) {
+    if (!found[match[1]]) {
+      found[match[1]] = true;
+      variables.push({
+        name: match[1],
+        bracket: '[' + match[1] + ']',
+        options: []
+      });
+    }
+  }
+  return variables;
+}
+
+// ===== ESCAPE REGEX =====
+function cpEscapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// ===== ESCAPE HTML =====
+function cpEscapeHtml(s) {
+  var div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+// ===== BUILD POPUP UI =====
+function cpBuildPopup() {
+  var titleEl = document.getElementById('cpPromptTitle');
+  if (titleEl) titleEl.textContent = cpCurrentData.promptTitle || 'Customize Your Prompt';
+
+  var container = document.getElementById('cpVariablesContainer');
+  container.innerHTML = '';
+
+  if (cpCurrentData.variables.length === 0) {
+    container.innerHTML = '<div style="color: rgba(255,255,255,0.5); text-align:center; padding: 20px;">No customizable variables found in this prompt.</div>';
+  }
+
+  for (var i = 0; i < cpCurrentData.variables.length; i++) {
+    var v = cpCurrentData.variables[i];
+    var group = document.createElement('div');
+    group.className = 'cp-var-group';
+
+    var optsHtml = '<option value="">-- Select an option --</option>';
+    for (var j = 0; j < v.options.length; j++) {
+      optsHtml += '<option value="' + cpEscapeHtml(v.options[j]) + '">' + cpEscapeHtml(v.options[j]) + '</option>';
+    }
+
+    group.innerHTML =
+      '<div class="cp-var-label">[' + cpEscapeHtml(v.name) + ']</div>' +
+      '<select class="cp-var-select" data-var="' + cpEscapeHtml(v.name) + '" onchange="cpOnSelect(this)">' + optsHtml + '</select>' +
+      '<div class="cp-custom-wrap">' +
+        '<span class="cp-custom-label">\u270f\uFE0F Custom:</span>' +
+        '<input type="text" class="cp-custom-input" data-var="' + cpEscapeHtml(v.name) + '" placeholder="Type your own value..." oninput="cpOnCustom(this)" />' +
+      '</div>';
+
+    container.appendChild(group);
+  }
+
+  cpUpdatePreview();
+  cpUpdateCounter();
+}
+
+// ===== HANDLERS =====
+function cpOnSelect(sel) {
+  var name = sel.getAttribute('data-var');
+  if (sel.value) {
+    cpCurrentData.selections[name] = sel.value;
+    var custom = sel.parentElement.querySelector('.cp-custom-input');
+    if (custom) custom.value = '';
+  } else {
+    delete cpCurrentData.selections[name];
+  }
+  cpUpdatePreview();
+  cpUpdateCounter();
+}
+
+function cpOnCustom(inp) {
+  var name = inp.getAttribute('data-var');
+  var val = inp.value.trim();
+  if (val) {
+    cpCurrentData.selections[name] = val;
+    var sel = inp.closest('.cp-var-group').querySelector('.cp-var-select');
+    if (sel) sel.value = '';
+  } else {
+    delete cpCurrentData.selections[name];
+  }
+  cpUpdatePreview();
+  cpUpdateCounter();
+}
+
+// ===== LIVE PREVIEW =====
+function cpUpdatePreview() {
+  var main = cpEscapeHtml(cpCurrentData.mainPrompt);
+
+  for (var i = 0; i < cpCurrentData.variables.length; i++) {
+    var v = cpCurrentData.variables[i];
+    var escBracket = cpEscapeHtml(v.bracket);
+    var regex = new RegExp(cpEscapeRegex(escBracket), 'g');
+
+    if (cpCurrentData.selections[v.name]) {
+      main = main.replace(regex, '<span class="cp-bracket-filled">' + cpEscapeHtml(cpCurrentData.selections[v.name]) + '</span>');
+    } else {
+      main = main.replace(regex, '<span class="cp-bracket-unfilled">' + escBracket + '</span>');
+    }
+  }
+
+  document.getElementById('cpPreviewMain').innerHTML = main;
+  document.getElementById('cpPreviewNegative').textContent = cpCurrentData.negativePrompt || '(No negative prompt)';
+}
+
+// ===== COUNTER =====
+function cpUpdateCounter() {
+  var total = cpCurrentData.variables.length;
+  var filled = 0;
+  for (var k in cpCurrentData.selections) {
+    if (cpCurrentData.selections.hasOwnProperty(k)) filled++;
+  }
+  var el = document.getElementById('cpVarCounter');
+  if (el) {
+    el.textContent = filled + '/' + total + ' filled';
+    el.style.color = (filled === total && total > 0) ? '#64ffda' : '#ffaa32';
+  }
+}
+
+// ===== QUICK FILL =====
+function quickFillAllVars() {
+  for (var i = 0; i < cpCurrentData.variables.length; i++) {
+    var v = cpCurrentData.variables[i];
+    if (v.options.length > 0 && !cpCurrentData.selections[v.name]) {
+      cpCurrentData.selections[v.name] = v.options[0];
+    }
+  }
+  var selects = document.querySelectorAll('.cp-var-select');
+  for (var i = 0; i < selects.length; i++) {
+    var name = selects[i].getAttribute('data-var');
+    if (cpCurrentData.selections[name]) selects[i].value = cpCurrentData.selections[name];
+  }
+  cpUpdatePreview();
+  cpUpdateCounter();
+}
+
+// ===== COPY =====
+function copyCustomizedPrompt(type) {
+  var main = cpCurrentData.mainPrompt;
+  for (var i = 0; i < cpCurrentData.variables.length; i++) {
+    var v = cpCurrentData.variables[i];
+    var regex = new RegExp(cpEscapeRegex(v.bracket), 'g');
+    var val = cpCurrentData.selections[v.name] || '';
+    main = main.replace(regex, val);
+  }
+  main = main.replace(/\s{2,}/g, ' ').trim();
+
+  var text = '';
+  if (type === 'main') text = main;
+  else if (type === 'negative') text = cpCurrentData.negativePrompt;
+  else text = 'PROMPT:\n' + main + '\n\nNEGATIVE PROMPT:\n' + cpCurrentData.negativePrompt;
+
+  var unfilled = 0;
+  for (var i = 0; i < cpCurrentData.variables.length; i++) {
+    if (!cpCurrentData.selections[cpCurrentData.variables[i].name]) unfilled++;
+  }
+
+  if (unfilled > 0 && type !== 'negative') {
+    if (!confirm('\u26A0\uFE0F ' + unfilled + ' variable(s) are still empty.\n\nCopy anyway?')) return;
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      cpShowToast('\u2705 Prompt copied!');
+    }).catch(function() {
+      cpFallbackCopy(text);
+    });
+  } else {
+    cpFallbackCopy(text);
+  }
+}
+
+function cpFallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    cpShowToast('\u2705 Prompt copied!');
+  } catch(e) {
+    cpShowToast('\u274C Copy failed');
+  }
+  document.body.removeChild(ta);
+}
+
+// ===== RESET =====
+function resetCustomizePrompt() {
+  cpCurrentData.selections = {};
+  var selects = document.querySelectorAll('.cp-var-select');
+  for (var i = 0; i < selects.length; i++) selects[i].value = '';
+  var inputs = document.querySelectorAll('.cp-custom-input');
+  for (var i = 0; i < inputs.length; i++) inputs[i].value = '';
+  cpUpdatePreview();
+  cpUpdateCounter();
+  cpShowToast('\u21BA Reset done');
+}
+
+// ===== CLOSE =====
+function closeCustomizePopup() {
+  document.getElementById('customizeOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Backdrop click
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'customizeOverlay') closeCustomizePopup();
+});
+
+// ESC key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' || e.keyCode === 27) {
+    var overlay = document.getElementById('customizeOverlay');
+    if (overlay && overlay.classList.contains('active')) closeCustomizePopup();
+  }
+});
+
+// ===== TOAST =====
+function cpShowToast(msg) {
+  var t = document.querySelector('.cp-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.className = 'cp-toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+// ===== OPEN CUSTOMIZE POPUP (Phase 6) =====
+function openCustomizePromptPopup(triggerEl) {
+  // FIX A: open .copy-dropdown lives in document.body — resolve via dd._card first
+  var dd = triggerEl.closest ? triggerEl.closest('.copy-dropdown') : null;
+  var card = (dd && dd._card) || triggerEl.closest('.universal-card, .mgs-related-card, [data-cp-variables]');
+  if (!card) {
+    alert('Card not found');
+    return;
+  }
+
+  // Read data from card attributes (Phase 5)
+  var mainPrompt = card.getAttribute('data-cp-main') || '';
+  var negPrompt = card.getAttribute('data-cp-negative') || '';
+  var title = card.getAttribute('data-cp-title') || '';
+  var variables = [];
+
+  try {
+    var vd = card.getAttribute('data-cp-variables');
+    if (vd) variables = JSON.parse(vd);
+  } catch(e) {
+    console.warn('CP: Failed to parse variables', e);
+  }
+
+  // Fallback: extract brackets from prompt if no variables data
+  if (variables.length === 0 && mainPrompt && typeof cpExtractBrackets === 'function') {
+    variables = cpExtractBrackets(mainPrompt);
+  }
+
+  // Set global state
+  cpCurrentData = {
+    mainPrompt: mainPrompt,
+    negativePrompt: negPrompt,
+    promptTitle: title,
+    variables: variables,
+    selections: {}
+  };
+
+  // FIX B: close dropdowns via theme API *before* showing overlay
+  if (window.closeAllCopyDropdowns) { window.closeAllCopyDropdowns(); }
+  if (window.uc2CloseAllMoreMenus) { window.uc2CloseAllMoreMenus(); }
+
+  // Build and show
+  cpBuildPopup();
+  document.getElementById('customizeOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
 //]]>
 </script>
 
