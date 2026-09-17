@@ -9112,12 +9112,13 @@ return found;
 }
 if(parsed){card._parsedPrompt=parsed.promptText||"";card._parsedNegativePrompt=parsed.negativeText||"";card._parsedHasNegative=!!parsed.hasNegative;card._parsedIntro=parsed.introText||"";card._parsedTools=parsed.toolsText||"";card._parsedGuide=parsed.guideText||"";card._parsedExpected=parsed.expectedText||"";card._parsedTips=parsed.tipsText||"";card._parsedCover=mgsCoverSrcFrom(mgsParseSrc);}
 else{card._parsedPrompt="";card._parsedNegativePrompt="";card._parsedHasNegative=false;card._parsedIntro="";card._parsedTools="";card._parsedGuide="";card._parsedExpected="";card._parsedTips="";card._parsedCover=mgsCoverSrcFrom(mgsParseSrc);}
-/* CUSTOMIZE PROMPT (Phase 5): cache Step-4 variables + prompt texts as data-attributes */
+/* CUSTOMIZE PROMPT (Phase 5+8): cache Step-4 variables + prompt texts + post URL as data-attributes */
 try{
 if(typeof cpParseStep4==="function"){card.setAttribute("data-cp-variables",JSON.stringify(cpParseStep4(mgsParseSrc)||[]));}else{card.setAttribute("data-cp-variables","[]");}
 card.setAttribute("data-cp-main",(parsed&&parsed.promptText)||card._parsedPrompt||"");
 card.setAttribute("data-cp-negative",(parsed&&parsed.negativeText)||card._parsedNegativePrompt||"");
 var cpTitleEl=card.querySelector(".universal-title");card.setAttribute("data-cp-title",cpTitleEl?(cpTitleEl.textContent||"").trim():"");
+var cpLinkEl=card.querySelector(".universal-title a");card.setAttribute("data-cp-url",card.getAttribute("data-url")||(cpLinkEl&&cpLinkEl.href)||"");
 }catch(e){}
 if(parsed&&parsed.promptHTML){pb.innerHTML=parsed.promptHTML;}
 else if(!pb.firstChild&&mgsParseSrc!==pb){pb.innerHTML=mgsParseSrc.innerHTML;}
@@ -18215,129 +18216,261 @@ function cpShowToast(msg) {
   setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
-// ===== WIRING FUNCTION: OPEN CUSTOMIZE POPUP (UPDATED — robust extraction) =====
+// ===== WIRING FUNCTION: OPEN CUSTOMIZE POPUP (Phase 8 — fetch fallback) =====
 function openCustomizePromptPopup(triggerEl) {
-  // Card resolution: an open .copy-dropdown is detached to document.body,
-  // so resolve via dd._card first (Phase 6 Fix A — required for popup to open).
   var dd = triggerEl.closest ? triggerEl.closest('.copy-dropdown') : null;
-  var card = (dd && dd._card) || triggerEl.closest('.universal-card, .mgs-related-card, [data-cp-variables], .post-card, .blog-post, .post, .item-content, article');
+  var card =
+    (dd && dd._card) ||
+    (triggerEl.closest
+      ? triggerEl.closest(
+          '.universal-card, .mgs-related-card, [data-cp-variables], .post-card, .blog-post, .post, .item-content, article'
+        )
+      : null);
   if (!card) {
     console.error('CP: Card container not found.');
     return;
   }
 
-  // Read basic prompts
   var mainPrompt = card.getAttribute('data-cp-main') || '';
   var negPrompt = card.getAttribute('data-cp-negative') || '';
   var title = card.getAttribute('data-cp-title') || '';
 
   if (!mainPrompt) {
-    var mainEl = card.querySelector('.main-prompt-text, .prompt-text, [data-prompt-main], .copy-text');
+    var mainEl = card.querySelector(
+      '.main-prompt-text, .prompt-text, [data-prompt-main], .copy-text'
+    );
     if (mainEl) mainPrompt = mainEl.textContent.trim();
   }
   if (!negPrompt) {
-    var negEl = card.querySelector('.neg-prompt-text, .negative-prompt-text, [data-prompt-neg]');
+    var negEl = card.querySelector(
+      '.neg-prompt-text, .negative-prompt-text, [data-prompt-neg]'
+    );
     if (negEl) negPrompt = negEl.textContent.trim();
   }
   if (!title) {
-    var titleEl = card.querySelector('.post-title, .card-title, h2, h3');
+    var titleEl = card.querySelector('.post-title, .card-title, h2, h3, a[href]');
     if (titleEl) title = titleEl.textContent.trim();
   }
 
+  // Resolve post URL for fetch fallback
+  var postUrl =
+    card.getAttribute('data-cp-url') ||
+    card.getAttribute('data-post-url') ||
+    '';
+  if (!postUrl) {
+    var link =
+      card.querySelector('a.cp-post-link, a.post-link, h2 a, h3 a, .post-title a, a[href*="/20"]') ||
+      card.querySelector('a[href]');
+    if (link && link.href && link.href.indexOf('blogger.com') === -1) {
+      postUrl = link.href;
+    }
+  }
+
+  function showWithVariables(variables) {
+    if (!variables || !variables.length) {
+      variables = cpExtractBrackets(mainPrompt);
+    }
+    cpCurrentData = {
+      mainPrompt: mainPrompt,
+      negativePrompt: negPrompt,
+      promptTitle: title,
+      variables: variables || [],
+      selections: {}
+    };
+    if (typeof cpBuildPopup === 'function') cpBuildPopup();
+    var overlay = document.getElementById('customizeOverlay');
+    if (overlay) {
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  // Close dropdowns first (Fix B — z-index)
+  if (window.closeAllCopyDropdowns) window.closeAllCopyDropdowns();
+  if (window.uc2CloseAllMoreMenus) window.uc2CloseAllMoreMenus();
+
   var variables = [];
 
-  // Method 1: Try reading from data attribute (if Phase 5 worked)
+  // Method 1: data attribute from card build
   try {
     var vd = card.getAttribute('data-cp-variables');
     if (vd) variables = JSON.parse(vd);
-  } catch(e) {}
+  } catch (e) {}
 
-  // Method 2: ROBUST FALLBACK - Extract directly from card's raw text content
-  if (!variables || variables.length === 0) {
-    var cardText = card.textContent || card.innerText || "";
+  // Method 2: parse any text currently on the card
+  if (!variables || !variables.length) {
+    var cardText = card.innerText || card.textContent || '';
     variables = cpRobustExtractVariables(cardText);
+    if (!variables.length) variables = cpParseStep4FromDom(card);
   }
 
-  // Method 3: WEAK FALLBACK - Just extract brackets from main prompt (no options)
-  if (!variables || variables.length === 0) {
-    variables = cpExtractBrackets(mainPrompt);
+  // Method 2b: on individual post page, full article is in the document
+  if (!variables || !variables.length) {
+    var postBody =
+      document.querySelector('.post-body') ||
+      document.querySelector('.entry-content') ||
+      document.querySelector('[itemprop="articleBody"]');
+    if (postBody) {
+      variables = cpRobustExtractVariables(postBody.innerText || postBody.textContent || '');
+      if (!variables.length) variables = cpParseStep4FromDom(postBody);
+    }
   }
 
-  // Update state & build UI
-  cpCurrentData = {
-    mainPrompt: mainPrompt,
-    negativePrompt: negPrompt,
-    promptTitle: title,
-    variables: variables,
-    selections: {}
-  };
+  // If we already have options, open immediately
+  var hasOptions =
+    variables &&
+    variables.length &&
+    variables.some(function (v) {
+      return v.options && v.options.length;
+    });
 
-  // Close open menus via theme API *before* showing overlay (Phase 6 Fix B —
-  // open dropdown z-100002 would float above the overlay at z-99999).
-  if (window.closeAllCopyDropdowns) { window.closeAllCopyDropdowns(); }
-  if (window.uc2CloseAllMoreMenus) { window.uc2CloseAllMoreMenus(); }
+  if (hasOptions) {
+    showWithVariables(variables);
+    return;
+  }
 
-  cpBuildPopup();
-  document.getElementById('customizeOverlay').classList.add('active');
-  document.body.style.overflow = 'hidden';
+  // Method 3: FETCH full post (homepage cards only have excerpts)
+  if (postUrl) {
+    // Show popup immediately with brackets-only so UI isn't blank while loading
+    showWithVariables(cpExtractBrackets(mainPrompt));
+    var loading = document.getElementById('cpVarCounter');
+    if (loading) loading.textContent = 'Loading options…';
+
+    cpFetchVariablesFromPostUrl(postUrl, function (fetched) {
+      if (fetched && fetched.length) {
+        cpCurrentData.variables = fetched;
+        cpCurrentData.selections = {};
+        if (typeof cpBuildPopup === 'function') cpBuildPopup();
+      }
+    });
+    return;
+  }
+
+  // Method 4: brackets only
+  showWithVariables(variables);
 }
 
-// ===== SMART TEXT PARSER (HTML-INDEPENDENT) =====
+// ===== SMART TEXT PARSER (HTML-INDEPENDENT, Phase 8 — arrow-normalizing) =====
 function cpRobustExtractVariables(text) {
   var variables = [];
   if (!text) return variables;
 
-  // Narrow down search area to Step 4 to avoid false positives
   var lowerText = text.toLowerCase();
   var startIndex = lowerText.indexOf('customize these variables');
   if (startIndex === -1) startIndex = lowerText.indexOf('step 4');
+  if (startIndex === -1) startIndex = 0;
 
-  var searchArea = startIndex !== -1 ? text.substring(startIndex) : text;
+  var endIndex = lowerText.indexOf('step 5', startIndex + 1);
+  if (endIndex === -1) endIndex = lowerText.indexOf('expected output', startIndex + 1);
+  if (endIndex === -1) endIndex = text.length;
 
-  // Stop at Step 5 so the last variable can't swallow the next section
-  // (in textContent there is no separator between the last <li> and the Step 5 heading).
-  if (startIndex !== -1) {
-    var endRel = searchArea.toLowerCase().indexOf('step 5');
-    if (endRel !== -1) searchArea = searchArea.substring(0, endRel);
-  }
+  var searchArea = text.substring(startIndex, endIndex);
 
-  // Pattern: [VAR_NAME] = option1, option2
-  // Matches: Bracket -> Spaces -> = or : or - -> Spaces -> Text until next [ or newline.
-  // NOTE: options group excludes '[' so back-to-back <li> definitions (no newline
-  // in textContent between them) each match instead of only the first per line.
-  var pattern = /\[([^\]]+)\]\s*[=\-:]\s*([^\n\r\[]+)/g;
+  // Normalize unicode arrows and spacing so all formats match
+  // → ⇒ ⟶ etc. become " = "
+  searchArea = searchArea
+    .replace(/[→⇒⟶➔➜]/g, ' = ')
+    .replace(/\]\s*=/g, '] = ')
+    .replace(/=\s*/g, '= ');
+
+  // [VAR] = options   |  [VAR]: options  |  [VAR] - options
+  var pattern = /\[([^\]]+)\]\s*[=\-:]\s*([^\n\r\[\]]+)/g;
   var match;
   var found = {};
 
   while ((match = pattern.exec(searchArea)) !== null) {
     var varName = match[1].trim();
-
-    // Prevent duplicate variables
-    if (found[varName]) continue;
+    if (!varName || found[varName]) continue;
 
     var optStr = match[2].trim();
+    // Stop at next variable arrow residue or bullet
+    optStr = optStr.replace(/\s*[→•·].*$/, '').trim();
+    optStr = optStr.replace(/[.,;]+$/, '').trim();
 
-    // Clean up if regex captured too much (e.g. a trailing arrow)
-    var cutOff = optStr.search(/[\[→]/);
-    if (cutOff > 0) {
-      optStr = optStr.substring(0, cutOff).trim();
-    }
+    // Prefer lists with comma or " or "; still allow 2+ short tokens
+    var opts = cpParseOptions(optStr);
+    if (opts.length === 0) continue;
+    // Skip garbage that is clearly not an option list (too long single blob)
+    if (opts.length === 1 && opts[0].length > 80) continue;
 
-    // Make sure it actually looks like an options list (has commas or 'or')
-    if (optStr.indexOf(',') !== -1 || optStr.indexOf(' or ') !== -1) {
-      var opts = cpParseOptions(optStr);
-
-      if (opts.length > 0) {
-        found[varName] = true;
-        variables.push({
-          name: varName,
-          bracket: '[' + varName + ']',
-          options: opts
-        });
-      }
-    }
+    found[varName] = true;
+    variables.push({
+      name: varName,
+      bracket: '[' + varName + ']',
+      options: opts
+    });
   }
+  return variables;
+}
 
+// ===== FETCH FULL POST FOR STEP 4 (homepage cards only carry excerpts) =====
+function cpFetchVariablesFromPostUrl(url, callback) {
+  if (!url) { callback([]); return; }
+  if (typeof fetch !== 'function') { callback([]); return; }
+  // Same-origin blogger URLs only
+  try {
+    var a = document.createElement('a');
+    a.href = url;
+    if (a.hostname && a.hostname !== window.location.hostname) {
+      callback([]); return;
+    }
+  } catch (e) { callback([]); return; }
+
+  fetch(url, { credentials: 'same-origin' })
+    .then(function (r) { return r.text(); })
+    .then(function (html) {
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var body =
+        doc.querySelector('.post-body') ||
+        doc.querySelector('.entry-content') ||
+        doc.querySelector('[itemprop="articleBody"]') ||
+        doc.querySelector('.post-body.entry-content') ||
+        doc.body;
+      var text = body ? (body.innerText || body.textContent || '') : '';
+      var vars = cpRobustExtractVariables(text);
+      if (!vars.length) {
+        // Also try walking code tags inside Step 4 lists (exact live HTML)
+        vars = cpParseStep4FromDom(body);
+      }
+      callback(vars || []);
+    })
+    .catch(function () { callback([]); });
+}
+
+// Live structure: li > code + text after arrow
+function cpParseStep4FromDom(root) {
+  var variables = [];
+  if (!root) return variables;
+  var found = {};
+  var codes = root.querySelectorAll('code, pre');
+  for (var i = 0; i < codes.length; i++) {
+    var c = codes[i];
+    var bracketText = (c.textContent || '').trim();
+    var m = bracketText.match(/^\[([^\]]+)\]$/);
+    if (!m) continue;
+    var varName = m[1].trim();
+    if (found[varName]) continue;
+
+    // Options live in parent <li> text after the code element
+    var parent = c.parentElement;
+    if (!parent) continue;
+    var full = (parent.innerText || parent.textContent || '').trim();
+    // Remove the bracket itself
+    var optStr = full.replace(bracketText, '').trim();
+    optStr = optStr.replace(/^[\s⇒⟶➔➜=\-:→]+/, '').trim();
+    optStr = optStr.replace(/[.,;]+$/, '').trim();
+
+    var opts = cpParseOptions(optStr);
+    if (opts.length === 0) continue;
+    if (opts.length === 1 && opts[0].length > 80) continue;
+
+    found[varName] = true;
+    variables.push({
+      name: varName,
+      bracket: '[' + varName + ']',
+      options: opts
+    });
+  }
   return variables;
 }
 
