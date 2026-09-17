@@ -18215,35 +18215,55 @@ function cpShowToast(msg) {
   setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
-// ===== OPEN CUSTOMIZE POPUP (Phase 6) =====
+// ===== WIRING FUNCTION: OPEN CUSTOMIZE POPUP (UPDATED — robust extraction) =====
 function openCustomizePromptPopup(triggerEl) {
-  // FIX A: open .copy-dropdown lives in document.body — resolve via dd._card first
+  // Card resolution: an open .copy-dropdown is detached to document.body,
+  // so resolve via dd._card first (Phase 6 Fix A — required for popup to open).
   var dd = triggerEl.closest ? triggerEl.closest('.copy-dropdown') : null;
-  var card = (dd && dd._card) || triggerEl.closest('.universal-card, .mgs-related-card, [data-cp-variables]');
+  var card = (dd && dd._card) || triggerEl.closest('.universal-card, .mgs-related-card, [data-cp-variables], .post-card, .blog-post, .post, .item-content, article');
   if (!card) {
-    alert('Card not found');
+    console.error('CP: Card container not found.');
     return;
   }
 
-  // Read data from card attributes (Phase 5)
+  // Read basic prompts
   var mainPrompt = card.getAttribute('data-cp-main') || '';
   var negPrompt = card.getAttribute('data-cp-negative') || '';
   var title = card.getAttribute('data-cp-title') || '';
+
+  if (!mainPrompt) {
+    var mainEl = card.querySelector('.main-prompt-text, .prompt-text, [data-prompt-main], .copy-text');
+    if (mainEl) mainPrompt = mainEl.textContent.trim();
+  }
+  if (!negPrompt) {
+    var negEl = card.querySelector('.neg-prompt-text, .negative-prompt-text, [data-prompt-neg]');
+    if (negEl) negPrompt = negEl.textContent.trim();
+  }
+  if (!title) {
+    var titleEl = card.querySelector('.post-title, .card-title, h2, h3');
+    if (titleEl) title = titleEl.textContent.trim();
+  }
+
   var variables = [];
 
+  // Method 1: Try reading from data attribute (if Phase 5 worked)
   try {
     var vd = card.getAttribute('data-cp-variables');
     if (vd) variables = JSON.parse(vd);
-  } catch(e) {
-    console.warn('CP: Failed to parse variables', e);
+  } catch(e) {}
+
+  // Method 2: ROBUST FALLBACK - Extract directly from card's raw text content
+  if (!variables || variables.length === 0) {
+    var cardText = card.textContent || card.innerText || "";
+    variables = cpRobustExtractVariables(cardText);
   }
 
-  // Fallback: extract brackets from prompt if no variables data
-  if (variables.length === 0 && mainPrompt && typeof cpExtractBrackets === 'function') {
+  // Method 3: WEAK FALLBACK - Just extract brackets from main prompt (no options)
+  if (!variables || variables.length === 0) {
     variables = cpExtractBrackets(mainPrompt);
   }
 
-  // Set global state
+  // Update state & build UI
   cpCurrentData = {
     mainPrompt: mainPrompt,
     negativePrompt: negPrompt,
@@ -18252,14 +18272,73 @@ function openCustomizePromptPopup(triggerEl) {
     selections: {}
   };
 
-  // FIX B: close dropdowns via theme API *before* showing overlay
+  // Close open menus via theme API *before* showing overlay (Phase 6 Fix B —
+  // open dropdown z-100002 would float above the overlay at z-99999).
   if (window.closeAllCopyDropdowns) { window.closeAllCopyDropdowns(); }
   if (window.uc2CloseAllMoreMenus) { window.uc2CloseAllMoreMenus(); }
 
-  // Build and show
   cpBuildPopup();
   document.getElementById('customizeOverlay').classList.add('active');
   document.body.style.overflow = 'hidden';
+}
+
+// ===== SMART TEXT PARSER (HTML-INDEPENDENT) =====
+function cpRobustExtractVariables(text) {
+  var variables = [];
+  if (!text) return variables;
+
+  // Narrow down search area to Step 4 to avoid false positives
+  var lowerText = text.toLowerCase();
+  var startIndex = lowerText.indexOf('customize these variables');
+  if (startIndex === -1) startIndex = lowerText.indexOf('step 4');
+
+  var searchArea = startIndex !== -1 ? text.substring(startIndex) : text;
+
+  // Stop at Step 5 so the last variable can't swallow the next section
+  // (in textContent there is no separator between the last <li> and the Step 5 heading).
+  if (startIndex !== -1) {
+    var endRel = searchArea.toLowerCase().indexOf('step 5');
+    if (endRel !== -1) searchArea = searchArea.substring(0, endRel);
+  }
+
+  // Pattern: [VAR_NAME] = option1, option2
+  // Matches: Bracket -> Spaces -> = or : or - -> Spaces -> Text until next [ or newline.
+  // NOTE: options group excludes '[' so back-to-back <li> definitions (no newline
+  // in textContent between them) each match instead of only the first per line.
+  var pattern = /\[([^\]]+)\]\s*[=\-:]\s*([^\n\r\[]+)/g;
+  var match;
+  var found = {};
+
+  while ((match = pattern.exec(searchArea)) !== null) {
+    var varName = match[1].trim();
+
+    // Prevent duplicate variables
+    if (found[varName]) continue;
+
+    var optStr = match[2].trim();
+
+    // Clean up if regex captured too much (e.g. a trailing arrow)
+    var cutOff = optStr.search(/[\[→]/);
+    if (cutOff > 0) {
+      optStr = optStr.substring(0, cutOff).trim();
+    }
+
+    // Make sure it actually looks like an options list (has commas or 'or')
+    if (optStr.indexOf(',') !== -1 || optStr.indexOf(' or ') !== -1) {
+      var opts = cpParseOptions(optStr);
+
+      if (opts.length > 0) {
+        found[varName] = true;
+        variables.push({
+          name: varName,
+          bracket: '[' + varName + ']',
+          options: opts
+        });
+      }
+    }
+  }
+
+  return variables;
 }
 
 //]]>
