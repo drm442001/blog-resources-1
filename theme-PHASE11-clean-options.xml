@@ -17943,10 +17943,20 @@ function cpParseStep4(postBodyElement) {
   return variables;
 }
 
-// ===== 1. PARSE OPTIONS STRING INTO ARRAY (Phase 10 — strips backticks) =====
+// ===== 1. CLEAN OPTION STRING HELPER (Phase 11) =====
+function cpCleanOptionText(str) {
+  if (!str) return '';
+  // Strip leading/trailing equals, dashes, colons, arrows, backticks, and whitespace
+  return str.trim()
+    .replace(/^[\s=\-:`→⇒⟶➔➜]+/, '')
+    .replace(/[\s=\-:`→⇒⟶➔➜]+$/, '')
+    .trim();
+}
+
+// ===== 2. PARSE OPTIONS STRING INTO CLEAN ARRAY (Phase 11) =====
 function cpParseOptions(str) {
   if (!str) return [];
-  // Strip trailing punctuation & trailing backticks
+  // Clean raw input
   str = str.trim().replace(/[`.,;]+$/, '');
 
   var result = [];
@@ -17956,15 +17966,15 @@ function cpParseOptions(str) {
     var after = str.substring(orIdx + 4).trim();
     var beforeParts = before.split(',');
     for (var i = 0; i < beforeParts.length; i++) {
-      var p = beforeParts[i].trim().replace(/^[`\s]+|[`\s]+$/g, '');
+      var p = cpCleanOptionText(beforeParts[i]);
       if (p) result.push(p);
     }
-    after = after.replace(/^[`\s]+|[`\s]+$/g, '');
+    after = cpCleanOptionText(after);
     if (after) result.push(after);
   } else {
     var parts = str.split(',');
     for (var i = 0; i < parts.length; i++) {
-      var p = parts[i].trim().replace(/^[`\s]+|[`\s]+$/g, '');
+      var p = cpCleanOptionText(parts[i]);
       if (p) result.push(p);
     }
   }
@@ -18333,16 +18343,16 @@ function cpExtractPromptBrackets(mainPrompt, negPrompt) {
   return list; // Array of unique bracket names in prompt
 }
 
-// ===== 3. PARSE STEP 4 TEXT INTO A MAP (STRIPPING BACKTICKS) =====
+// ===== 3. PARSE STEP 4 TEXT INTO A MAP (Phase 11 — cleans separators) =====
 function cpParseStep4MapFromText(text) {
   var map = {};
   if (!text) return map;
 
-  // STRIP ALL BACKTICKS & ZERO-WIDTH SPACES FIRST
+  // Strip backticks & zero-width spaces
   var clean = text
-    .replace(/`/g, '')                     // Removes backticks `
-    .replace(/[\u200B-\u200D\uFEFF]/g, '') // Removes zero-width spaces
-    .replace(/\u00A0/gi, ' ');          // Replace NBSP
+    .replace(/`/g, '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/\u00A0/gi, ' ');
 
   var lower = clean.toLowerCase();
   var start = lower.indexOf('customize these variables');
@@ -18355,14 +18365,13 @@ function cpParseStep4MapFromText(text) {
 
   var searchArea = clean.substring(start, end);
 
-  // Normalize Unicode arrows, symbols, and separators to '='
+  // Normalize arrows
   searchArea = searchArea
-    .replace(/[→⇒⟶➔➜]|->|=>/g, ' = ')
-    .replace(/\]\s*=/g, '] = ')
-    .replace(/=\s*/g, '= ');
+    .replace(/[\u2192\u21D2\u27F6\u2794\u279C\uFFEB]|->|=>/g, ' = ')
+    .replace(/\]\s*=/g, '] = ');
 
-  // Regex pattern: [VAR_NAME] = option1, option2 or option3
-  // NOTE: separator class keeps ':' and '-' support from Phase 8/9 so
+  // Regex pattern.
+  // NOTE (carried from Phase 10): separator class keeps ':' and '-' so
   // '[VAR]: options' and '[VAR] - options' formats keep parsing too.
   var pattern = /\[([^\]]+)\]\s*[=\-:]\s*([^\n\r\[\]]+)/g;
   var match;
@@ -18371,9 +18380,8 @@ function cpParseStep4MapFromText(text) {
     var varName = match[1].trim();
     var optStr = match[2].trim();
 
-    // Clean leading equals/dashes & trailing bullets
-    optStr = optStr.replace(/^[=\-:\s]+/, '').trim();
-    optStr = optStr.replace(/\s*[→•·].*$/, '').trim();
+    // Clean trailing bullet/arrows before splitting
+    optStr = optStr.replace(/\s*[\u2192\u21D2\u27F6\u2794\u279C\uFFEB=→•·].*$/, '').trim();
 
     var opts = cpParseOptions(optStr);
     if (opts && opts.length > 0) {
