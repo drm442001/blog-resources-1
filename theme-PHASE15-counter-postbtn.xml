@@ -8460,312 +8460,110 @@ div[id^="post-body-"]{
   border-radius:12px;
   overflow:hidden;
 }
-/* ===== CUSTOMIZE PROMPT FEATURE CSS ===== */
-
-/* Overlay */
+/* ===== CUSTOMIZE PROMPT FEATURE CSS (PRO UI) ===== */
 .customize-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 99999;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  animation: cpFadeIn 0.3s ease;
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(10, 10, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  z-index: 99999; display: none; justify-content: center; align-items: center; padding: 20px;
+  animation: cpFadeIn 0.3s ease; box-sizing: border-box;
 }
 .customize-overlay.active { display: flex; }
+.customize-overlay * { box-sizing: border-box; }
+@keyframes cpFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cpSlideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-@keyframes cpFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes cpSlideUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-/* Popup */
 .customize-popup {
-  background: #1a1a2e;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  width: 100%;
-  max-width: 800px;
-  max-height: 95vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-  animation: cpSlideUp 0.3s ease;
-  overflow: hidden;
+  background: #0f1219; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
+  width: 95vw; max-width: 1400px; height: 90vh; max-height: 900px;
+  display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+  animation: cpSlideUp 0.3s ease; overflow: hidden; font-family: system-ui, -apple-system, sans-serif;
 }
 
 /* Header */
-.cp-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  background: linear-gradient(135deg, #16213e, #1a1a2e);
-}
-.cp-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.cp-subtitle {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 4px;
-}
-.cp-close {
-  position: absolute;
-  top: 16px; right: 16px;
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-.cp-close:hover {
-  background: rgba(255, 70, 70, 0.3);
-  border-color: rgba(255, 70, 70, 0.5);
-}
+.cp-header { padding: 16px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, #161b22, #0f1219); }
+.cp-title { font-size: 18px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
+.cp-title svg { color: #bb86fc; }
+.cp-subtitle { font-size: 13px; color: rgba(255, 255, 255, 0.5); margin-top: 4px; padding-left: 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 500px; }
+.cp-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+.cp-close:hover { background: rgba(255, 70, 70, 0.1); color: #ff6b6b; border-color: rgba(255, 70, 70, 0.2); }
 
-/* Body */
-.cp-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px 24px;
-}
-.cp-section { margin-bottom: 24px; }
-.cp-section-header {
-  font-size: 15px;
-  font-weight: 600;
-  color: #e0e0ff;
-  margin-bottom: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.cp-var-counter {
-  font-size: 12px;
-  color: #64ffda;
-  background: rgba(100, 255, 218, 0.1);
-  padding: 3px 10px;
-  border-radius: 12px;
-}
+/* Body Layout */
+.cp-body { display: flex; flex: 1; overflow: hidden; background: #0b0d13; }
 
-/* Variable Group */
-.cp-var-group {
-  margin-bottom: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  padding: 14px;
-}
-.cp-var-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #bb86fc;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
-  font-family: 'Courier New', monospace;
-}
-.cp-var-select {
-  width: 100%;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-.cp-var-select:focus {
-  outline: none;
-  border-color: #bb86fc;
-}
-.cp-var-select option {
-  background: #1a1a2e;
-  color: #fff;
-}
+/* Left Panel */
+.cp-panel-left { width: 380px; min-width: 380px; background: #12151e; border-right: 1px solid rgba(255, 255, 255, 0.05); display: flex; flex-direction: column; }
+.cp-section-header { padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.03); }
+.cp-section-title { font-size: 14px; font-weight: 600; color: #e0e0ff; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.cp-section-title svg { color: #64ffda; }
+.cp-var-counter { font-size: 12px; font-weight: 600; color: #000; background: #64ffda; padding: 2px 8px; border-radius: 12px; }
 
-.cp-custom-wrap {
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.cp-custom-label {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
-  white-space: nowrap;
-}
-.cp-custom-input {
-  flex: 1;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
-  color: #fff;
-  font-size: 13px;
-}
-.cp-custom-input:focus {
-  outline: none;
-  border-color: #64ffda;
-  border-style: solid;
-}
+.cp-variables-scroll { flex: 1; overflow-y: auto; padding: 20px 24px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
+.cp-variables-scroll::-webkit-scrollbar { width: 6px; }
+.cp-variables-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
-/* Quick Fill */
-.cp-quick-fill {
-  width: 100%;
-  padding: 10px;
-  background: linear-gradient(135deg, rgba(187, 134, 252, 0.15), rgba(100, 255, 218, 0.1));
-  border: 1px solid rgba(187, 134, 252, 0.25);
-  border-radius: 8px;
-  color: #bb86fc;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 8px;
-}
+.cp-var-group { margin-bottom: 20px; }
+.cp-var-label { font-size: 12px; font-weight: 600; color: #bb86fc; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; display: inline-block; background: rgba(187,134,252,0.1); padding: 4px 8px; border-radius: 4px; }
+.cp-var-select { width: 100%; padding: 10px 12px; background: #0f1219; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; color: #fff; font-size: 14px; cursor: pointer; transition: all 0.2s; outline: none; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+.cp-var-select:focus { border-color: #64ffda; box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.15); }
+.cp-var-select option { background: #161b22; color: #fff; }
 
-/* Preview */
-.cp-preview-block { margin-bottom: 16px; }
-.cp-preview-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-.cp-preview-text {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  padding: 16px;
-  font-size: 13px;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.8);
-  white-space: pre-wrap;
-  word-break: break-word;
-  max-height: 250px;
-  overflow-y: auto;
-}
-.cp-bracket-filled {
-  background: rgba(100, 255, 218, 0.2);
-  color: #64ffda;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-weight: 600;
-}
-.cp-bracket-unfilled {
-  background: rgba(255, 170, 50, 0.2);
-  color: #ffaa32;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-weight: 600;
-  border: 1px dashed rgba(255, 170, 50, 0.4);
-}
+.cp-custom-wrap { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
+.cp-custom-label { font-size: 12px; color: rgba(255, 255, 255, 0.4); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.cp-custom-input { flex: 1; padding: 8px 10px; background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.2); border-radius: 6px; color: #fff; font-size: 13px; outline: none; transition: border-color 0.2s; }
+.cp-custom-input:focus { border-color: #bb86fc; border-style: solid; background: rgba(187, 134, 252, 0.05); }
+
+.cp-quick-fill { width: 100%; padding: 14px; background: transparent; border: none; border-top: 1px solid rgba(255, 255, 255, 0.05); color: #8b949e; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.cp-quick-fill:hover { color: #64ffda; background: rgba(100, 255, 218, 0.05); }
+
+/* Right Panel */
+.cp-panel-right { flex: 1; display: flex; flex-direction: column; background: #0b0d13; }
+.cp-preview-scroll { flex: 1; overflow-y: auto; padding: 24px; scrollbar-width: thin; }
+.cp-preview-block { margin-bottom: 24px; }
+.cp-preview-label { font-size: 12px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.cp-preview-label svg { color: #667eea; }
+.cp-label-neg svg { color: #ff6b6b; }
+.cp-preview-text { background: #12151e; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 20px; font-size: 14px; line-height: 1.8; color: rgba(255, 255, 255, 0.85); box-shadow: inset 0 2px 10px rgba(0,0,0,0.2); }
+
+.cp-bracket-filled { background: rgba(100, 255, 218, 0.15); color: #64ffda; padding: 2px 6px; border-radius: 4px; font-weight: 600; border: 1px solid rgba(100,255,218,0.3); }
+.cp-bracket-unfilled { background: rgba(255, 170, 50, 0.1); color: #ffaa32; padding: 2px 6px; border-radius: 4px; font-weight: 500; border: 1px dashed rgba(255, 170, 50, 0.4); }
 
 /* Footer */
-.cp-footer {
-  padding: 16px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  background: #16213e;
-}
-.cp-footer button {
-  flex: 1;
-  min-width: 120px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
-}
-.cp-btn-main {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: #fff;
-}
-.cp-btn-neg {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-}
-.cp-btn-all {
-  background: linear-gradient(135deg, #64ffda, #00bfa5);
-  color: #000;
-}
-.cp-btn-reset {
-  background: rgba(255, 70, 70, 0.15);
-  color: #ff6b6b;
-  border: 1px solid rgba(255, 70, 70, 0.25) !important;
-  flex: 0.5;
-}
-.cp-footer button:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.1);
-}
+.cp-footer { padding: 16px 24px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; gap: 12px; background: #161b22; justify-content: flex-end; }
+.cp-btn { padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+.cp-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+.cp-btn-main { background: #3b82f6; color: #fff; }
+.cp-btn-neg { background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); }
+.cp-btn-all { background: #10b981; color: #fff; }
+.cp-btn-reset { background: transparent; color: #ff6b6b; margin-right: auto; }
+.cp-btn-reset:hover { background: rgba(255, 107, 107, 0.1); }
 
 /* Toast */
-.cp-toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: #64ffda;
-  color: #000;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  z-index: 100000;
-  transition: transform 0.3s ease;
-  box-shadow: 0 8px 25px rgba(100, 255, 218, 0.3);
-}
-.cp-toast.show {
-  transform: translateX(-50%) translateY(0);
-}
+.cp-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #fff; color: #000; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; z-index: 100000; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; }
+.cp-toast.show { transform: translateX(-50%) translateY(0); }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .customize-overlay { padding: 0; }
-  .customize-popup {
-    max-width: 100%;
-    max-height: 100vh;
-    height: 100vh;
-    border-radius: 0;
-  }
-  .cp-header { padding: 16px; }
-  .cp-body { padding: 16px; }
-  .cp-footer {
-    padding: 12px 16px;
-    flex-direction: column;
-  }
-  .cp-footer button {
-    min-width: 100%;
-  }
+  .customize-popup { width: 100vw; height: 100vh; max-height: 100vh; max-width: 100vw; border-radius: 0; border: none; }
+  .cp-body { flex-direction: column; }
+  .cp-panel-left { width: 100%; min-width: 100%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); flex: 0 0 50%; max-height: 50vh; }
+  .cp-footer { flex-wrap: wrap; justify-content: center; }
+  .cp-btn { flex: 1; min-width: calc(50% - 6px); justify-content: center; }
+  .cp-btn-reset { margin-right: 0; min-width: 100%; border: 1px solid rgba(255,107,107,0.3); }
 }
+/* Post Page Customize Button */
+.post-customize-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, rgba(187, 134, 252, 0.1), rgba(187, 134, 252, 0.05));
+  border: 1px solid rgba(187, 134, 252, 0.3);
+  color: #bb86fc; padding: 10px 18px; border-radius: 8px;
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  margin-top: 10px; margin-left: 10px;
+}
+.post-customize-btn:hover {
+  background: rgba(187, 134, 252, 0.15); border-color: #bb86fc; transform: translateY(-2px);
+}
+.post-customize-btn svg { color: #bb86fc; }
 ]]></b:skin>
   
 <!-- FINAL OPTIMIZED THEME (CLEAN + SEO + NO ERRORS) -->
@@ -10352,7 +10150,7 @@ WEB TOOL
 <button class='copy-option' onclick='copyPromptOnly(this)'><svg fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='15' xmlns='http://www.w3.org/2000/svg'><rect height='4' rx='1' width='8' x='8' y='2'/><path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/></svg> Copy Prompt</button>
 <button class='copy-option' onclick='copyNegativePrompt(this)'><svg fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='15' xmlns='http://www.w3.org/2000/svg'><circle cx='12' cy='12' r='10'/><path d='m4.9 4.9 14.2 14.2'/></svg> Copy Negative Prompt</button>
 <button class='copy-option' onclick='copyAllPrompt(this)'><svg fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='15' xmlns='http://www.w3.org/2000/svg'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z'/><path d='M14 2v6h6'/></svg> Copy All Prompt</button>
-<button class='copy-option' onclick='openCustomizePromptPopup(this)'>✨ Customize Prompt</button>
+<button class='copy-option' onclick='openCustomizePromptPopup(this)'>&#10024; Customize Prompt</button>
 </div>
 </div>
 <div class='uc2-more-wrap'>
@@ -10452,6 +10250,10 @@ body.item-page,.item .mgs-prompt-hero,.mgs-prompt-hero{max-width:100% !important
     <div class='mgs-hero-actions'>
       <button class='mgs-hero-btn mgs-hero-save' data-mgs-hero='save' type='button'><svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.9' viewBox='0 0 24 24' width='16'><path d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'/></svg><span>Save Collection</span></button>
       <button class='mgs-hero-btn mgs-hero-use' data-mgs-hero='use' type='button'><svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.9' viewBox='0 0 24 24' width='16'><path d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/><path d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'/></svg><span>Use Guide</span></button>
+      <button class='post-customize-btn' onclick='openCustomizePromptPopup(this)' type='button'>
+        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><path d='m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z'/></svg>
+        Customize Prompt
+      </button>
     </div>
     <div class='mgs-hero-share'>
       <span class='mgs-hero-share-label'>Share</span>
@@ -17807,60 +17609,77 @@ border-radius:4px;
 //]]>
 </script>
 
-<!-- ===== CUSTOMIZE PROMPT POPUP ===== -->
+<!-- ===== CUSTOMIZE PROMPT POPUP (PRO UI) ===== -->
 <div class='customize-overlay' id='customizeOverlay'>
   <div class='customize-popup'>
 
     <div class='cp-header'>
-      <div class='cp-title'>
-        <span>✨</span>
-        <span>Customize Prompt</span>
+      <div class='cp-header-content'>
+        <div class='cp-title'>
+          <svg fill='none' height='20' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='20'><path d='m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z'/></svg>
+          Customize Prompt
+        </div>
+        <div class='cp-subtitle' id='cpPromptTitle'>Prompt Title</div>
       </div>
-      <div class='cp-subtitle' id='cpPromptTitle'>Prompt Title</div>
-      <button class='cp-close' onclick='closeCustomizePopup()' type='button'>✕</button>
+      <button aria-label='Close' class='cp-close' onclick='closeCustomizePopup()' type='button'>
+        <svg fill='none' height='20' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='20'><line x1='18' x2='6' y1='6' y2='18'/><line x1='6' x2='18' y1='6' y2='18'/></svg>
+      </button>
     </div>
 
     <div class='cp-body'>
-
-      <div class='cp-section'>
+      <div class='cp-panel-left'>
         <div class='cp-section-header'>
-          <span>🎛️ Customize Variables</span>
+          <div class='cp-section-title'>
+            <svg fill='none' height='18' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='18'><line x1='4' x2='4' y1='21' y2='14'/><line x1='4' x2='4' y1='10' y2='3'/><line x1='12' x2='12' y1='21' y2='12'/><line x1='12' x2='12' y1='8' y2='3'/><line x1='20' x2='20' y1='21' y2='16'/><line x1='20' x2='20' y1='12' y2='3'/><line x1='1' x2='7' y1='14' y2='14'/><line x1='9' x2='15' y1='8' y2='8'/><line x1='17' x2='23' y1='16' y2='16'/></svg>
+            Variables
+          </div>
           <span class='cp-var-counter' id='cpVarCounter'>0/0 filled</span>
         </div>
-        <div id='cpVariablesContainer'></div>
+        <div class='cp-variables-scroll' id='cpVariablesContainer'/>
         <button class='cp-quick-fill' onclick='quickFillAllVars()' type='button'>
-          ⚡ Fill All with First Option
+          <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><polygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/></svg>
+          Fill All Defaults
         </button>
       </div>
 
-      <div class='cp-section'>
+      <div class='cp-panel-right'>
         <div class='cp-section-header'>
-          <span>👁️ Live Preview</span>
+          <div class='cp-section-title'>
+            <svg fill='none' height='18' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='18'><path d='M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z'/><circle cx='12' cy='12' r='3'/></svg>
+            Live Preview
+          </div>
         </div>
-        <div class='cp-preview-block'>
-          <div class='cp-preview-label'>📝 MAIN PROMPT</div>
-          <div class='cp-preview-text' id='cpPreviewMain'></div>
-        </div>
-        <div class='cp-preview-block'>
-          <div class='cp-preview-label'>🚫 NEGATIVE PROMPT</div>
-          <div class='cp-preview-text' id='cpPreviewNegative'></div>
+        <div class='cp-preview-scroll'>
+          <div class='cp-preview-block'>
+            <div class='cp-preview-label'>
+              <svg fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='14'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><polyline points='14 2 14 8 20 8'/><line x1='16' x2='8' y1='13' y2='13'/><line x1='16' x2='8' y1='17' y2='17'/><polyline points='10 9 9 9 8 9'/></svg>
+              Main Prompt
+            </div>
+            <div class='cp-preview-text' id='cpPreviewMain'/>
+          </div>
+          <div class='cp-preview-block'>
+            <div class='cp-preview-label cp-label-neg'>
+              <svg fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='14'><circle cx='12' cy='12' r='10'/><line x1='4.93' x2='19.07' y1='4.93' y2='19.07'/></svg>
+              Negative Prompt
+            </div>
+            <div class='cp-preview-text' id='cpPreviewNegative'/>
+          </div>
         </div>
       </div>
-
     </div>
 
     <div class='cp-footer'>
-      <button class='cp-btn-main' onclick='copyCustomizedPrompt(&quot;main&quot;)' type='button'>
-        📋 Copy Main
+      <button class='cp-btn cp-btn-main' onclick='copyCustomizedPrompt(&quot;main&quot;)' type='button'>
+        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><rect height='13' rx='2' ry='2' width='13' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/></svg> Copy Main
       </button>
-      <button class='cp-btn-neg' onclick='copyCustomizedPrompt(&quot;negative&quot;)' type='button'>
-        📋 Copy Negative
+      <button class='cp-btn cp-btn-neg' onclick='copyCustomizedPrompt(&quot;negative&quot;)' type='button'>
+        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><rect height='13' rx='2' ry='2' width='13' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/></svg> Copy Negative
       </button>
-      <button class='cp-btn-all' onclick='copyCustomizedPrompt(&quot;all&quot;)' type='button'>
-        📋 Copy All
+      <button class='cp-btn cp-btn-all' onclick='copyCustomizedPrompt(&quot;all&quot;)' type='button'>
+        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><rect height='13' rx='2' ry='2' width='13' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/></svg> Copy All
       </button>
-      <button class='cp-btn-reset' onclick='resetCustomizePrompt()' type='button'>
-        ↺ Reset
+      <button class='cp-btn cp-btn-reset' onclick='resetCustomizePrompt()' type='button'>
+        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><path d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/><polyline points='3 3 3 8 8 8'/></svg> Reset
       </button>
     </div>
 
@@ -18039,7 +17858,7 @@ function cpBuildPopup() {
       '<div class="cp-var-label">[' + cpEscapeHtml(v.name) + ']</div>' +
       '<select class="cp-var-select" data-var="' + cpEscapeHtml(v.name) + '" onchange="cpOnSelect(this)">' + optsHtml + '</select>' +
       '<div class="cp-custom-wrap">' +
-        '<span class="cp-custom-label">\u270f\uFE0F Custom:</span>' +
+        '<span class="cp-custom-label"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Custom:</span>' +
         '<input type="text" class="cp-custom-input" data-var="' + cpEscapeHtml(v.name) + '" placeholder="Type your own value..." oninput="cpOnCustom(this)" />' +
       '</div>';
 
@@ -18098,7 +17917,7 @@ function cpUpdatePreview() {
   document.getElementById('cpPreviewNegative').textContent = cpCurrentData.negativePrompt || '(No negative prompt)';
 }
 
-// ===== COUNTER =====
+// ===== COUNTER (Fixed Colors) =====
 function cpUpdateCounter() {
   var total = cpCurrentData.variables.length;
   var filled = 0;
@@ -18108,7 +17927,15 @@ function cpUpdateCounter() {
   var el = document.getElementById('cpVarCounter');
   if (el) {
     el.textContent = filled + '/' + total + ' filled';
-    el.style.color = (filled === total && total > 0) ? '#64ffda' : '#ffaa32';
+    if (filled === total && total > 0) {
+      el.style.background = 'rgba(100, 255, 218, 0.15)';
+      el.style.color = '#64ffda';
+      el.style.border = '1px solid rgba(100, 255, 218, 0.3)';
+    } else {
+      el.style.background = 'rgba(255, 170, 50, 0.1)';
+      el.style.color = '#ffaa32';
+      el.style.border = '1px dashed rgba(255, 170, 50, 0.4)';
+    }
   }
 }
 
@@ -18130,6 +17957,16 @@ function quickFillAllVars() {
 }
 
 // ===== COPY =====
+// ===== TRACK COPY (theme-native counter + analytics) =====
+function cpTrackCopy() {
+  var card = cpCurrentData.cardElement;
+  if (!card) return;
+  // Visual .counter-num + cc_<id> persistence (same call the card copy buttons make)
+  if (typeof updateCopyCounter === 'function') { updateCopyCounter(card); }
+  // Engagement/popularity analytics (same call the hero copy flow makes)
+  if (window.uc2TrackCopy) { window.uc2TrackCopy(card); }
+}
+
 function copyCustomizedPrompt(type) {
   var main = cpCurrentData.mainPrompt;
   for (var i = 0; i < cpCurrentData.variables.length; i++) {
@@ -18154,10 +17991,15 @@ function copyCustomizedPrompt(type) {
     if (!confirm('\u26A0\uFE0F ' + unfilled + ' variable(s) are still empty.\n\nCopy anyway?')) return;
   }
 
+  function onSuccess() {
+    cpShowToast('\u2705 Prompt copied!');
+
+    // Theme-native copy tracking (visual counter + persistence + analytics)
+    cpTrackCopy();
+  }
+
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(function() {
-      cpShowToast('\u2705 Prompt copied!');
-    }).catch(function() {
+    navigator.clipboard.writeText(text).then(onSuccess).catch(function() {
       cpFallbackCopy(text);
     });
   } else {
@@ -18175,6 +18017,7 @@ function cpFallbackCopy(text) {
   try {
     document.execCommand('copy');
     cpShowToast('\u2705 Prompt copied!');
+    cpTrackCopy();
   } catch(e) {
     cpShowToast('\u274C Copy failed');
   }
@@ -18235,6 +18078,9 @@ function openCustomizePromptPopup(triggerEl) {
           '.universal-card, .mgs-related-card, [data-cp-variables], .post-card, .blog-post, .post, .item-content, article'
         )
       : null);
+  // Page-level fallback: hero/post-page buttons live outside any card — use the
+  // page's (possibly hidden) universal card, mirroring the hero copy flow.
+  if (!card) { card = document.querySelector('.ai-wrap .universal-card') || document.querySelector('.universal-card'); }
   if (!card) {
     console.error('CP: Card container not found.');
     return;
@@ -18276,6 +18122,7 @@ function openCustomizePromptPopup(triggerEl) {
 
   function renderPopup(variables) {
     cpCurrentData = {
+      cardElement: card, // NEW: Save card element for copy counting
       mainPrompt: mainPrompt,
       negativePrompt: negPrompt,
       promptTitle: title,
