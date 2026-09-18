@@ -10150,7 +10150,7 @@ WEB TOOL
 <button class='copy-option' onclick='copyPromptOnly(this)'><svg fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='15' xmlns='http://www.w3.org/2000/svg'><rect height='4' rx='1' width='8' x='8' y='2'/><path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/></svg> Copy Prompt</button>
 <button class='copy-option' onclick='copyNegativePrompt(this)'><svg fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='15' xmlns='http://www.w3.org/2000/svg'><circle cx='12' cy='12' r='10'/><path d='m4.9 4.9 14.2 14.2'/></svg> Copy Negative Prompt</button>
 <button class='copy-option' onclick='copyAllPrompt(this)'><svg fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' viewBox='0 0 24 24' width='15' xmlns='http://www.w3.org/2000/svg'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z'/><path d='M14 2v6h6'/></svg> Copy All Prompt</button>
-<button class='copy-option' onclick='openCustomizePromptPopup(this)'>&#10024; Customize Prompt</button>
+<button class='copy-option' onclick='openCustomizePromptPopup(this)'>✨ Customize Prompt</button>
 </div>
 </div>
 <div class='uc2-more-wrap'>
@@ -10251,7 +10251,7 @@ body.item-page,.item .mgs-prompt-hero,.mgs-prompt-hero{max-width:100% !important
       <button class='mgs-hero-btn mgs-hero-save' data-mgs-hero='save' type='button'><svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.9' viewBox='0 0 24 24' width='16'><path d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'/></svg><span>Save Collection</span></button>
       <button class='mgs-hero-btn mgs-hero-use' data-mgs-hero='use' type='button'><svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.9' viewBox='0 0 24 24' width='16'><path d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/><path d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'/></svg><span>Use Guide</span></button>
       <button class='post-customize-btn' onclick='openCustomizePromptPopup(this)' type='button'>
-        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><path d='m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z'/></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
         Customize Prompt
       </button>
     </div>
@@ -17616,13 +17616,13 @@ border-radius:4px;
     <div class='cp-header'>
       <div class='cp-header-content'>
         <div class='cp-title'>
-          <svg fill='none' height='20' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='20'><path d='m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z'/></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
           Customize Prompt
         </div>
         <div class='cp-subtitle' id='cpPromptTitle'>Prompt Title</div>
       </div>
-      <button aria-label='Close' class='cp-close' onclick='closeCustomizePopup()' type='button'>
-        <svg fill='none' height='20' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='20'><line x1='18' x2='6' y1='6' y2='18'/><line x1='6' x2='18' y1='6' y2='18'/></svg>
+      <button class='cp-close' onclick='closeCustomizePopup()' type='button' aria-label="Close">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
@@ -17630,14 +17630,14 @@ border-radius:4px;
       <div class='cp-panel-left'>
         <div class='cp-section-header'>
           <div class='cp-section-title'>
-            <svg fill='none' height='18' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='18'><line x1='4' x2='4' y1='21' y2='14'/><line x1='4' x2='4' y1='10' y2='3'/><line x1='12' x2='12' y1='21' y2='12'/><line x1='12' x2='12' y1='8' y2='3'/><line x1='20' x2='20' y1='21' y2='16'/><line x1='20' x2='20' y1='12' y2='3'/><line x1='1' x2='7' y1='14' y2='14'/><line x1='9' x2='15' y1='8' y2='8'/><line x1='17' x2='23' y1='16' y2='16'/></svg>
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
             Variables
           </div>
           <span class='cp-var-counter' id='cpVarCounter'>0/0 filled</span>
         </div>
-        <div class='cp-variables-scroll' id='cpVariablesContainer'/>
+        <div class='cp-variables-scroll' id='cpVariablesContainer'></div>
         <button class='cp-quick-fill' onclick='quickFillAllVars()' type='button'>
-          <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><polygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/></svg>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           Fill All Defaults
         </button>
       </div>
@@ -17645,41 +17645,41 @@ border-radius:4px;
       <div class='cp-panel-right'>
         <div class='cp-section-header'>
           <div class='cp-section-title'>
-            <svg fill='none' height='18' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='18'><path d='M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z'/><circle cx='12' cy='12' r='3'/></svg>
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
             Live Preview
           </div>
         </div>
         <div class='cp-preview-scroll'>
           <div class='cp-preview-block'>
             <div class='cp-preview-label'>
-              <svg fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='14'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><polyline points='14 2 14 8 20 8'/><line x1='16' x2='8' y1='13' y2='13'/><line x1='16' x2='8' y1='17' y2='17'/><polyline points='10 9 9 9 8 9'/></svg>
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
               Main Prompt
             </div>
-            <div class='cp-preview-text' id='cpPreviewMain'/>
+            <div class='cp-preview-text' id='cpPreviewMain'></div>
           </div>
           <div class='cp-preview-block'>
             <div class='cp-preview-label cp-label-neg'>
-              <svg fill='none' height='14' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='14'><circle cx='12' cy='12' r='10'/><line x1='4.93' x2='19.07' y1='4.93' y2='19.07'/></svg>
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
               Negative Prompt
             </div>
-            <div class='cp-preview-text' id='cpPreviewNegative'/>
+            <div class='cp-preview-text' id='cpPreviewNegative'></div>
           </div>
         </div>
       </div>
     </div>
 
     <div class='cp-footer'>
-      <button class='cp-btn cp-btn-main' onclick='copyCustomizedPrompt(&quot;main&quot;)' type='button'>
-        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><rect height='13' rx='2' ry='2' width='13' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/></svg> Copy Main
+      <button class='cp-btn cp-btn-main' onclick='copyCustomizedPrompt("main")' type='button'>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Main
       </button>
-      <button class='cp-btn cp-btn-neg' onclick='copyCustomizedPrompt(&quot;negative&quot;)' type='button'>
-        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><rect height='13' rx='2' ry='2' width='13' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/></svg> Copy Negative
+      <button class='cp-btn cp-btn-neg' onclick='copyCustomizedPrompt("negative")' type='button'>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Negative
       </button>
-      <button class='cp-btn cp-btn-all' onclick='copyCustomizedPrompt(&quot;all&quot;)' type='button'>
-        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><rect height='13' rx='2' ry='2' width='13' x='9' y='9'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/></svg> Copy All
+      <button class='cp-btn cp-btn-all' onclick='copyCustomizedPrompt("all")' type='button'>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy All
       </button>
       <button class='cp-btn cp-btn-reset' onclick='resetCustomizePrompt()' type='button'>
-        <svg fill='none' height='16' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='16'><path d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/><polyline points='3 3 3 8 8 8'/></svg> Reset
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg> Reset
       </button>
     </div>
 
@@ -18106,6 +18106,30 @@ function openCustomizePromptPopup(triggerEl) {
     var titleEl = card.querySelector('.post-title, .card-title, h2, h3, a[href]');
     if (titleEl) title = titleEl.textContent.trim();
   }
+
+  // ===== NEW: POST PAGE RAW TEXT FALLBACK =====
+  // If mainPrompt is still empty, we are likely on the individual post page where text is unstructured.
+  if (!mainPrompt) {
+    var postBody = document.querySelector('.post-body') || document.querySelector('.entry-content') || card;
+    if (postBody) {
+      var rawText = postBody.innerText || postBody.textContent || '';
+
+      // Extract Main Prompt using Regex
+      var pMatch = rawText.match(/PROMPT:\s*([\s\S]*?)(?=NEGATIVE PROMPT:|COMPATIBLE AI TOOLS:|HOW TO USE THIS PROMPT:|$)/i);
+      if (pMatch) mainPrompt = pMatch[1].trim();
+
+      // Extract Negative Prompt using Regex
+      var nMatch = rawText.match(/NEGATIVE PROMPT:\s*([\s\S]*?)(?=COMPATIBLE AI TOOLS:|HOW TO USE THIS PROMPT:|$)/i);
+      if (nMatch) negPrompt = nMatch[1].trim();
+    }
+
+    // Ensure we grab the correct main post title, not a related post
+    var mainTitle = document.querySelector('h1.post-title, .post-title, h1.title');
+    if (mainTitle) {
+      title = mainTitle.textContent.trim();
+    }
+  }
+  // ============================================
 
   var postUrl =
     card.getAttribute('data-cp-url') ||
