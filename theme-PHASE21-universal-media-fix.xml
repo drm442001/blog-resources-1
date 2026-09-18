@@ -8524,8 +8524,8 @@ div[id^="post-body-"]{
 .cp-label-neg svg { color: #ff6b6b; }
 .cp-preview-text { background: #12151e; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 20px; font-size: 14px; line-height: 1.8; color: rgba(255, 255, 255, 0.85); box-shadow: inset 0 2px 10px rgba(0,0,0,0.2); }
 
-.cp-bracket-filled { background: rgba(100, 255, 218, 0.15); color: #64ffda; padding: 2px 6px; border-radius: 4px; font-weight: 600; border: 1px solid rgba(100,255,218,0.3); }
-.cp-bracket-unfilled { background: rgba(255, 170, 50, 0.1); color: #ffaa32; padding: 2px 6px; border-radius: 4px; font-weight: 500; border: 1px dashed rgba(255, 170, 50, 0.4); }
+.cp-bracket-filled, .cp-hl-filled { background: rgba(100, 255, 218, 0.15); color: #64ffda; padding: 2px 6px; border-radius: 4px; font-weight: 600; border: 1px solid rgba(100,255,218,0.3); }
+.cp-bracket-unfilled, .cp-hl-unfilled { background: rgba(255, 170, 50, 0.1); color: #ffaa32; padding: 2px 6px; border-radius: 4px; font-weight: 500; border: 1px dashed rgba(255, 170, 50, 0.4); }
 
 /* Footer */
 .cp-footer { padding: 16px 24px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; gap: 12px; background: #161b22; justify-content: flex-end; }
@@ -17907,9 +17907,9 @@ function cpUpdatePreview() {
     var regex = new RegExp(cpEscapeRegex(escBracket), 'g');
 
     if (cpCurrentData.selections[v.name]) {
-      main = main.replace(regex, '<span class="cp-bracket-filled">' + cpEscapeHtml(cpCurrentData.selections[v.name]) + '</span>');
+      main = main.replace(regex, '<span class="cp-bracket-filled cp-hl-filled">' + cpEscapeHtml(cpCurrentData.selections[v.name]) + '</span>');
     } else {
-      main = main.replace(regex, '<span class="cp-bracket-unfilled">' + escBracket + '</span>');
+      main = main.replace(regex, '<span class="cp-bracket-unfilled cp-hl-unfilled">' + escBracket + '</span>');
     }
   }
 
@@ -17975,6 +17975,8 @@ function copyCustomizedPrompt(type) {
     var val = cpCurrentData.selections[v.name] || '';
     main = main.replace(regex, val);
   }
+  // Bracket removal on copy for any remaining unfilled bracket tags
+  main = main.replace(/\[[A-Z0-9_\-\s]{2,40}\]/g, '');
   main = main.replace(/\s{2,}/g, ' ').trim();
 
   var text = '';
@@ -18068,132 +18070,264 @@ function cpShowToast(msg) {
   setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
-// ===== 7. OPEN CUSTOMIZE POPUP (WIRING FUNCTION, Phase 10) =====
-function openCustomizePromptPopup(triggerEl) {
-  var dd = triggerEl.closest ? triggerEl.closest('.copy-dropdown') : null;
-  var card =
-    (dd && dd._card) ||
-    (triggerEl.closest
-      ? triggerEl.closest(
-          '.universal-card, .mgs-related-card, [data-cp-variables], .post-card, .blog-post, .post, .item-content, article'
-        )
-      : null);
-  // Page-level fallback: hero/post-page buttons live outside any card — use the
-  // page's (possibly hidden) universal card, mirroring the hero copy flow.
-  if (!card) { card = document.querySelector('.ai-wrap .universal-card') || document.querySelector('.universal-card'); }
-  if (!card) {
-    console.error('CP: Card container not found.');
-    return;
-  }
-
-  var mainPrompt = card.getAttribute('data-cp-main') || '';
-  var negPrompt = card.getAttribute('data-cp-negative') || '';
-  var title = card.getAttribute('data-cp-title') || '';
-
-  if (!mainPrompt) {
-    var mainEl = card.querySelector(
-      '.main-prompt-text, .prompt-text, [data-prompt-main], .copy-text'
-    );
-    if (mainEl) mainPrompt = mainEl.textContent.trim();
-  }
-  if (!negPrompt) {
-    var negEl = card.querySelector(
-      '.neg-prompt-text, .negative-prompt-text, [data-prompt-neg]'
-    );
-    if (negEl) negPrompt = negEl.textContent.trim();
-  }
-  if (!title) {
-    var titleEl = card.querySelector('.post-title, .card-title, h2, h3, a[href]');
-    if (titleEl) title = titleEl.textContent.trim();
-  }
-
-  // ===== NEW: POST PAGE RAW TEXT FALLBACK =====
-  // If mainPrompt is still empty, we are likely on the individual post page where text is unstructured.
-  if (!mainPrompt) {
-    var postBody = document.querySelector('.post-body') || document.querySelector('.entry-content') || card;
-    if (postBody) {
-      var rawText = postBody.innerText || postBody.textContent || '';
-
-      // Extract Main Prompt using Regex
-      var pMatch = rawText.match(/PROMPT:\s*([\s\S]*?)(?=NEGATIVE PROMPT:|COMPATIBLE AI TOOLS:|HOW TO USE THIS PROMPT:|$)/i);
-      if (pMatch) mainPrompt = pMatch[1].trim();
-
-      // Extract Negative Prompt using Regex
-      var nMatch = rawText.match(/NEGATIVE PROMPT:\s*([\s\S]*?)(?=COMPATIBLE AI TOOLS:|HOW TO USE THIS PROMPT:|$)/i);
-      if (nMatch) negPrompt = nMatch[1].trim();
-    }
-
-    // Ensure we grab the correct main post title, not a related post
-    var mainTitle = document.querySelector('h1.post-title, .post-title, h1.title');
-    if (mainTitle) {
-      title = mainTitle.textContent.trim();
-    }
-  }
-  // ============================================
-
-  var postUrl =
-    card.getAttribute('data-cp-url') ||
-    card.getAttribute('data-post-url') ||
-    '';
-  if (!postUrl) {
-    var link =
-      card.querySelector('a.cp-post-link, a.post-link, h2 a, h3 a, .post-title a, a[href*="/20"]') ||
-      card.querySelector('a[href]');
-    if (link && link.href && link.href.indexOf('blogger.com') === -1) {
-      postUrl = link.href;
-    }
-  }
-
-  function renderPopup(variables) {
-    cpCurrentData = {
-      cardElement: card, // NEW: Save card element for copy counting
-      mainPrompt: mainPrompt,
-      negativePrompt: negPrompt,
-      promptTitle: title,
-      variables: variables || [],
-      selections: {}
-    };
-    if (typeof cpBuildPopup === 'function') cpBuildPopup();
-    var overlay = document.getElementById('customizeOverlay');
-    if (overlay) {
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-  }
-
-  // Close open dropdowns
-  if (window.closeAllCopyDropdowns) window.closeAllCopyDropdowns();
-  if (window.uc2CloseAllMoreMenus) window.uc2CloseAllMoreMenus();
-
-  // Parse Step 4 map from card text or post body
-  var step4Map = cpParseStep4MapFromText(cpGetTextFromNode(card));
-
+// ===== ULTRA-ROBUST MAIN POST DATA EXTRACTOR (PHASE 21 UNIVERSAL MEDIA FIX) =====
+function cpGetMainPostData() {
+  // 1. Post Container Selector Hierarchy: Prioritize .universal-media over standard Blogger selectors
   var postBody =
+    document.querySelector('.universal-media') ||
     document.querySelector('.post-body') ||
     document.querySelector('.entry-content') ||
-    document.querySelector('[itemprop="articleBody"]');
-  if (postBody) {
-    var pageMap = cpParseStep4MapFromText(cpGetTextFromNode(postBody));
-    for (var k in pageMap) { if (pageMap.hasOwnProperty(k)) step4Map[k] = pageMap[k]; }
+    document.querySelector('article:not(.mgs-prompt-hero) .post-body') ||
+    document.querySelector('article:not(.mgs-prompt-hero)') ||
+    document.querySelector('#main .post') ||
+    document.querySelector('.ai-wrap .universal-card') ||
+    document.querySelector('.universal-card') ||
+    document.body;
+
+  if (!postBody) return null;
+
+  // 1. Get Title (H1 chain + hero title + document.title)
+  var title = '';
+  var titleEl =
+    document.querySelector('h1.post-title, h1.entry-title, .post-title h1, .mgs-hero-title, .entry-title, h1');
+  if (titleEl) {
+    title = titleEl.textContent.trim();
+  }
+  if (!title || title.length < 3) {
+    title = document.title ? document.title.split('-')[0].split('|')[0].trim() : 'Customize Prompt';
+  }
+
+  // 2. Clean Raw Text
+  var rawText = cpGetTextFromNode(postBody);
+  var cleanText = rawText
+    .replace(/`/g, '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/\u00A0/g, ' ')
+    .replace(/ {2,}/g, ' ');
+
+  var mainPrompt = '';
+  var negPrompt = '';
+
+  // --- LAYER 1: DOM Tree Element Walker ---
+  var allNodes = postBody.querySelectorAll ? postBody.querySelectorAll('p, div, h1, h2, h3, h4, h5, h6, blockquote, section, li') : [];
+  var captureMain = false;
+  var captureNeg = false;
+  var mainParts = [];
+  var negParts = [];
+
+  for (var i = 0; i < allNodes.length; i++) {
+    var nodeTxt = (allNodes[i].textContent || '').trim();
+    var upperNode = nodeTxt.toUpperCase();
+    var cleanHeader = upperNode.replace(/^[^A-Z]+/, '');
+
+    if (cleanHeader === 'PROMPT:' || cleanHeader === 'PROMPT' || cleanHeader === 'MAIN PROMPT:' || cleanHeader === 'MAIN PROMPT') {
+      captureMain = true;
+      captureNeg = false;
+      continue;
+    }
+    if (cleanHeader === 'NEGATIVE PROMPT:' || cleanHeader === 'NEGATIVE PROMPT') {
+      captureMain = false;
+      captureNeg = true;
+      continue;
+    }
+    // Stop capture when reaching any subsequent section header
+    if (cleanHeader.indexOf('COMPATIBLE AI') === 0 || cleanHeader.indexOf('HOW TO USE') === 0 || cleanHeader.indexOf('EXPECTED OUTPUT') === 0 || cleanHeader.indexOf('TIPS') === 0 || cleanHeader.indexOf('STEP 1') === 0) {
+      captureMain = false;
+      captureNeg = false;
+    }
+
+    if (captureMain && nodeTxt && nodeTxt.indexOf('PROMPT:') === -1) {
+      if (allNodes[i].children.length === 0 || allNodes[i].tagName === 'P') {
+        mainParts.push(nodeTxt);
+      }
+    }
+    if (captureNeg && nodeTxt && nodeTxt.indexOf('NEGATIVE PROMPT:') === -1) {
+      if (allNodes[i].children.length === 0 || allNodes[i].tagName === 'P') {
+        negParts.push(nodeTxt);
+      }
+    }
+  }
+
+  if (mainParts.length > 0) mainPrompt = mainParts.join('\n').trim();
+  if (negParts.length > 0) negPrompt = negParts.join('\n').trim();
+
+  // --- LAYER 2: Flexible Anchor-Independent Regex Fallback ---
+  if (!mainPrompt) {
+    var pMatch = cleanText.match(/(?:^|\n|>|\r|\.|\s)(?:MAIN\s+)?PROMPT\s*:\s*([\s\S]*?)(?=(?:^|\n|\r|\.|\s)(?:NEGATIVE\s+PROMPT|COMPATIBLE\s+AI|HOW\s+TO\s+USE|EXPECTED\s+OUTPUT|TIPS)|$)/i);
+    if (pMatch && pMatch[1]) {
+      mainPrompt = pMatch[1].trim();
+    }
+  }
+
+  if (!negPrompt) {
+    var nMatch = cleanText.match(/(?:^|\n|>|\r|\.|\s)NEGATIVE\s+PROMPT\s*:\s*([\s\S]*?)(?=(?:^|\n|\r|\.|\s)(?:COMPATIBLE\s+AI|HOW\s+TO\s+USE|EXPECTED\s+OUTPUT|TIPS|STEP\s*1)|$)/i);
+    if (nMatch && nMatch[1]) {
+      negPrompt = nMatch[1].trim();
+    }
+  }
+
+  // --- LAYER 3: Bracket-Block Auto-Discovery (Ultimate Fallback) ---
+  if (!mainPrompt) {
+    var bracketElements = postBody.querySelectorAll ? postBody.querySelectorAll('p, div, blockquote') : [];
+    for (var k = 0; k < bracketElements.length; k++) {
+      var elTxt = (bracketElements[k].textContent || '').trim();
+      if (elTxt.indexOf('[') !== -1 && elTxt.indexOf(']') !== -1 && elTxt.indexOf('Step 4') === -1 && (bracketElements[k].children.length === 0 || bracketElements[k].tagName === 'P') && elTxt.length < 2000) {
+        mainPrompt = elTxt;
+        break;
+      }
+    }
+  }
+
+  // --- LAYER 4: Direct Prompt Boxes / Hero Elements Fallback ---
+  if (!mainPrompt && postBody) {
+    var promptBoxes = postBody.querySelectorAll ? postBody.querySelectorAll('.prompttextbox, .prompt-text, [data-prompt-main]') : [];
+    if (promptBoxes.length > 0 && promptBoxes[0].textContent.trim()) {
+      mainPrompt = promptBoxes[0].textContent.trim();
+      if (promptBoxes.length > 1 && promptBoxes[1].textContent.trim()) {
+        negPrompt = promptBoxes[1].textContent.trim();
+      }
+    }
+  }
+
+  if (!mainPrompt) {
+    var heroP = document.querySelector('[data-mgs-hero="prompt"]');
+    if (heroP && heroP.textContent.trim()) {
+      mainPrompt = heroP.textContent.trim();
+    }
+  }
+  if (!negPrompt) {
+    var heroN = document.querySelector('[data-mgs-hero="negative"]');
+    if (heroN && heroN.textContent.trim()) {
+      negPrompt = heroN.textContent.trim();
+    }
+  }
+
+  // Parse Step 4 variables
+  var step4Map = cpParseStep4MapFromText(cleanText);
+  // NOTE: cpParseStep4MapFromDom was removed in Phase 10 — guarded so this never throws.
+  var domMap = (typeof cpParseStep4MapFromDom === 'function') ? cpParseStep4MapFromDom(postBody) : {};
+  for (var key in domMap) {
+    if (domMap.hasOwnProperty(key) && !step4Map[key]) {
+      step4Map[key] = domMap[key];
+    }
   }
 
   var variables = cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map);
 
-  var hasOptions = variables.length > 0 && variables.some(function(v) { return v.options && v.options.length > 0; });
+  return {
+    title: title,
+    mainPrompt: mainPrompt,
+    negativePrompt: negPrompt,
+    variables: variables,
+    postBody: postBody,
+    rawText: cleanText
+  };
+}
 
-  if (hasOptions || !postUrl) {
-    renderPopup(variables);
-    return;
+// ===== OPEN CUSTOMIZE POPUP (WIRING FUNCTION) =====
+function openCustomizePromptPopup(triggerEl) {
+  if (window.closeAllCopyDropdowns) window.closeAllCopyDropdowns();
+  if (window.uc2CloseAllMoreMenus) window.uc2CloseAllMoreMenus();
+
+  var mainPrompt = '';
+  var negPrompt = '';
+  var title = '';
+  var variables = [];
+  var card = null;
+  var usedMainPost = false;
+
+  // 1. Universal Card check (Homepage / Grid)
+  var dd = triggerEl && triggerEl.closest ? triggerEl.closest('.copy-dropdown') : null;
+  card = (dd && dd._card) || (triggerEl && triggerEl.closest ? triggerEl.closest('.universal-card, .post-card, [data-cp-variables]') : null);
+
+  if (card) {
+    mainPrompt = card.getAttribute('data-cp-main') || '';
+    negPrompt = card.getAttribute('data-cp-negative') || '';
+    title = card.getAttribute('data-cp-title') || '';
+
+    if (!mainPrompt) {
+      var mainEl = card.querySelector('.main-prompt-text, .prompt-text, [data-prompt-main], .copy-text, .prompttextbox');
+      if (mainEl) mainPrompt = mainEl.textContent.trim();
+    }
+    if (!negPrompt) {
+      var negEl = card.querySelector('.neg-prompt-text, .negative-prompt-text, [data-prompt-neg]');
+      if (negEl) negPrompt = negEl.textContent.trim();
+    }
+    if (!title) {
+      var titleEl = card.querySelector('.post-title, .card-title, .universal-title, h2, h3');
+      if (titleEl) title = titleEl.textContent.trim();
+    }
+
+    try {
+      var vd = card.getAttribute('data-cp-variables');
+      if (vd) variables = JSON.parse(vd);
+    } catch(e) {}
+
+    if (!variables || !variables.length) {
+      var cardText = cpGetTextFromNode(card);
+      var step4Map = cpParseStep4MapFromText(cardText);
+      variables = cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map);
+    }
   }
 
-  // Fetch fallback for homepage cards
-  renderPopup(cpCombinePromptAndStep4(mainPrompt, negPrompt, {}));
-  var loading = document.getElementById('cpVarCounter');
-  if (loading) loading.textContent = 'Loading options...';
+  // 2. Single Post Page / Standalone Button Extractor (Decoupled Title & Prompt Assignments)
+  if (!card || !mainPrompt) {
+    var mainData = cpGetMainPostData();
+    if (mainData) {
+      if (mainData.title && (!title || !card || title === 'Prompt Customizer' || title === 'Customize Prompt')) {
+        title = mainData.title;
+      }
+      if (!mainPrompt && mainData.mainPrompt) {
+        mainPrompt = mainData.mainPrompt;
+      }
+      if (!negPrompt && mainData.negativePrompt) {
+        negPrompt = mainData.negativePrompt;
+      }
+      if (mainData.variables && mainData.variables.length > 0) {
+        variables = mainData.variables;
+      }
+      if (!card) card = mainData.postBody;
+      usedMainPost = true;
+    }
+  }
 
-  cpFetchVariablesFromPostUrl(postUrl, mainPrompt, negPrompt, function(fetchedVars) {
-    renderPopup(fetchedVars);
-  });
+  // 3. Render Popup Immediately
+  cpCurrentData = {
+    cardElement: card || document.body,
+    mainPrompt: mainPrompt,
+    negativePrompt: negPrompt,
+    promptTitle: title || 'Professional High-End Skin Retouching',
+    variables: variables || [],
+    selections: {}
+  };
+
+  if (typeof cpBuildPopup === 'function') cpBuildPopup();
+
+  var overlay = document.getElementById('customizeOverlay');
+  if (overlay) {
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // 4. Fetch fallback for Homepage cards if variables still empty
+  var postUrl = card && card.getAttribute ? (card.getAttribute('data-cp-url') || card.getAttribute('data-post-url') || '') : '';
+  if (!postUrl && card && card.querySelector) {
+    var link = card.querySelector('a.cp-post-link, a.post-link, h2 a, h3 a, a[href*="/20"]');
+    if (link && link.href && link.href.indexOf('blogger.com') === -1) postUrl = link.href;
+  }
+  var hasOptions = variables && variables.length > 0 && variables.some(function(v) { return v.options && v.options.length > 0; });
+
+  if (!hasOptions && postUrl && !usedMainPost && typeof cpFetchVariablesFromPostUrl === 'function') {
+    var loading = document.getElementById('cpVarCounter');
+    if (loading) loading.textContent = 'Loading options...';
+
+    cpFetchVariablesFromPostUrl(postUrl, mainPrompt, negPrompt, function(fetchedVars) {
+      if (fetchedVars && fetchedVars.length > 0) {
+        cpCurrentData.variables = fetchedVars;
+        if (typeof cpBuildPopup === 'function') cpBuildPopup();
+      }
+    });
+  }
 }
 
 // ===== 2. EXTRACT BRACKETS ACTUALLY USED IN MAIN/NEGATIVE PROMPT =====
