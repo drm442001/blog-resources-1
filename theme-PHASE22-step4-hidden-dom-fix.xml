@@ -8881,6 +8881,221 @@ return{promptHTML:boxHTML||newHTML||null,howToHTML:guideHTML||"",promptText:prom
 }
 
 window.uc2Public=window.uc2Public||{};window.uc2Public.parsePromptBox=parsePromptBox;
+/* =====================================================================
+   PHASE 22 HOISTED: STEP 4 HIDDEN DOM & MEMORY EXTRACTION FUNCTIONS
+   Must be declared BEFORE mgsInitCardCore so data-cp-variables is populated.
+   ===================================================================== */
+function cpGetTextFromNode(node) {
+  if (!node) return '';
+  if (typeof node === 'string') return node.replace(/\s+/g, ' ').trim();
+  try {
+    var clone = node.cloneNode(true);
+    var removeSel = clone.querySelectorAll ? clone.querySelectorAll('script, style, noscript') : [];
+    for (var i = 0; i < removeSel.length; i++) {
+      if (removeSel[i].parentNode) removeSel[i].parentNode.removeChild(removeSel[i]);
+    }
+    return (clone.textContent || clone.innerText || '').replace(/\s+/g, ' ').trim();
+  } catch (e) {
+    return (node.textContent || node.innerText || '').replace(/\s+/g, ' ').trim();
+  }
+}
+window.cpGetTextFromNode = cpGetTextFromNode;
+
+function cpGetRawStep4Text(cardEl) {
+  var rawStep4 = '';
+
+  if (!cardEl) {
+    cardEl = document.querySelector('.universal-card, .post-card');
+  }
+
+  // Source 1: JS Memory Object on Card
+  if (cardEl && cardEl._parsedGuide) {
+    var s1 = typeof cardEl._parsedGuide === 'string' ? cardEl._parsedGuide : JSON.stringify(cardEl._parsedGuide);
+    if (s1 && s1.trim()) return s1.trim();
+  }
+
+  // Source 2: Hidden Guide DIV inside Card (.textContent)
+  if (cardEl) {
+    var guideEl = cardEl.querySelector('.use-guide-data');
+    if (guideEl && (guideEl.textContent || '').trim()) {
+      return (guideEl.textContent || '').trim();
+    }
+  }
+
+  // Source 3: Page-wide Hidden Guide DIV or Popup Content (.textContent)
+  var globalGuide = document.querySelector('.use-guide-data, [data-mgs-hero="guide"]');
+  if (globalGuide && (globalGuide.textContent || '').trim()) {
+    return (globalGuide.textContent || '').trim();
+  }
+  var usePopup = document.getElementById('usePopupContent');
+  if (usePopup && (usePopup.textContent || '').trim()) {
+    return (usePopup.textContent || '').trim();
+  }
+
+  // Source 4: Card HTML attributes / dataset
+  if (cardEl) {
+    var vAttr = cardEl.getAttribute('data-cp-variables') || '';
+    if (vAttr && vAttr.trim() && vAttr !== '[]') {
+      return vAttr.trim();
+    }
+  }
+
+  // Source 5: Raw Post Body / Universal Media Text (Fallback)
+  var postBody = document.querySelector('.universal-media, .post-body, .entry-content, article:not(.mgs-prompt-hero)');
+  if (postBody) {
+    rawStep4 = cpGetTextFromNode(postBody);
+    if (rawStep4 && rawStep4.trim()) return rawStep4.trim();
+  }
+
+  return rawStep4;
+}
+window.cpGetRawStep4Text = cpGetRawStep4Text;
+
+function cpExtractPromptBrackets(mainPrompt, negPrompt) {
+  var fullText = (mainPrompt || '') + ' ' + (negPrompt || '');
+  var regex = /\[([A-Za-z0-9_\-\s]{2,40})\]/g;
+  var found = {};
+  var list = [];
+  var match;
+
+  while ((match = regex.exec(fullText)) !== null) {
+    var rawName = match[1].trim();
+    var upperName = rawName.toUpperCase();
+    if (upperName && !found[upperName]) {
+      found[upperName] = true;
+      list.push(rawName);
+    }
+  }
+  return list;
+}
+window.cpExtractPromptBrackets = cpExtractPromptBrackets;
+
+function cpParseStep4MapFromText(text) {
+  var map = {};
+  if (!text) return map;
+
+  var cleanText = text
+    .replace(/`/g, '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/&rarr;/gi, '→')
+    .replace(/&#8594;/gi, '→')
+    .replace(/&gt;/gi, '>')
+    .replace(/&lt;/gi, '<');
+
+  var s4Match = cleanText.match(/(?:STEP\s*4|CUSTOMIZE\s+THESE\s+VARIABLES)\s*:?([\s\S]*?)(?=(?:STEP\s*5|HOW\s+TO\s+USE|TIPS\s*&|TIPS\s*:|EXPECTED\s+OUTPUT|$))/i);
+  var parseArea = s4Match && s4Match[1] ? s4Match[1] : cleanText;
+
+  var lineRegex = /\[([A-Za-z0-9_\-\s]{2,40})\]\s*[=\-:→]\s*([^\[]+)/gi;
+  var match;
+
+  while ((match = lineRegex.exec(parseArea)) !== null) {
+    var rawName = match[1].trim();
+    var upperName = rawName.toUpperCase();
+    var varKey = '[' + upperName + ']';
+    var rawOptions = match[2].trim();
+
+    rawOptions = rawOptions.replace(/<[^>]*>?/gm, '');
+
+    var optionsArray = rawOptions.split(/[,|]|\bor\b/gi)
+      .map(function(opt) {
+        return opt
+          .replace(/&#8594;|&rarr;|&#x2192;|&amp;/gi, '')
+          .replace(/[\u2192\u21D2\u27F6\u2794\u279C\uFFEB→•·]/g, '')
+          .replace(/^[`\s=\-:→•·]+|[`\s=\-:→•·\.\r\n]+$/g, '')
+          .replace(/[\r\n]+[•\*\-\s]*/g, ' ')
+          .trim();
+      })
+      .filter(function(opt) { return opt.length > 0; });
+
+    if (optionsArray.length > 0) {
+      map[varKey] = optionsArray;
+      map[upperName] = optionsArray;
+      map[rawName] = optionsArray;
+      map['[' + rawName + ']'] = optionsArray;
+    }
+  }
+
+  return map;
+}
+window.cpParseStep4MapFromText = cpParseStep4MapFromText;
+window.extractStep4Options = cpParseStep4MapFromText;
+
+function cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map) {
+  var promptBrackets = cpExtractPromptBrackets(mainPrompt, negPrompt);
+  var finalVars = [];
+
+  for (var i = 0; i < promptBrackets.length; i++) {
+    var varName = promptBrackets[i];
+    var bracketKey = '[' + varName + ']';
+    var upperName = varName.toUpperCase();
+    var upperBracketKey = '[' + upperName + ']';
+
+    var options = (step4Map && (
+      step4Map[bracketKey] ||
+      step4Map[upperBracketKey] ||
+      step4Map[varName] ||
+      step4Map[upperName]
+    )) || [];
+
+    finalVars.push({
+      name: varName,
+      bracket: bracketKey,
+      options: options
+    });
+  }
+
+  return finalVars;
+}
+window.cpCombinePromptAndStep4 = cpCombinePromptAndStep4;
+
+function cpParseStep4(postBodyElement) {
+  var variables = [];
+  if (!postBodyElement) return variables;
+
+  var rawText = (typeof postBodyElement === 'string') ? postBodyElement : cpGetTextFromNode(postBodyElement);
+  if (!rawText) return variables;
+
+  var step4Map = cpParseStep4MapFromText(rawText);
+
+  var mainPrompt = '';
+  var negPrompt = '';
+  if (postBodyElement.getAttribute) {
+    mainPrompt = postBodyElement.getAttribute('data-cp-main') || '';
+    negPrompt = postBodyElement.getAttribute('data-cp-negative') || '';
+  }
+  if (!mainPrompt && postBodyElement.closest) {
+    var card = postBodyElement.closest('.universal-card');
+    if (card) {
+      mainPrompt = card.getAttribute('data-cp-main') || (card._parsedPrompt || '');
+      negPrompt = card.getAttribute('data-cp-negative') || (card._parsedNegativePrompt || '');
+    }
+  }
+  if (!mainPrompt) {
+    var pMatch = rawText.match(/(?:MAIN\s+)?PROMPT\s*:\s*([\s\S]*?)(?=(?:NEGATIVE\s+PROMPT|COMPATIBLE\s+AI|HOW\s+TO\s+USE|STEP\s*1)|$)/i);
+    if (pMatch && pMatch[1]) mainPrompt = pMatch[1].trim();
+  }
+
+  if (mainPrompt) {
+    variables = cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map);
+  }
+
+  if ((!variables || variables.length === 0) && step4Map) {
+    for (var k in step4Map) {
+      if (step4Map.hasOwnProperty(k) && k.indexOf('[') === 0) {
+        var cleanName = k.replace(/[\[\]]/g, '');
+        variables.push({
+          name: cleanName,
+          bracket: k,
+          options: step4Map[k]
+        });
+      }
+    }
+  }
+
+  return variables;
+}
+window.cpParseStep4 = cpParseStep4;
+
 window.mgsInitCardCore=function(card){
 if(card.getAttribute("data-mgs-core")==="true"){return;}
 card.setAttribute("data-mgs-core","true");
@@ -17775,27 +17990,22 @@ function cpCleanOptionText(str) {
 // ===== 2. PARSE OPTIONS STRING INTO CLEAN ARRAY (Phase 11) =====
 function cpParseOptions(str) {
   if (!str) return [];
-  // Clean raw input
-  str = str.trim().replace(/[`.,;]+$/, '');
+  // Clean HTML tags, entities, arrows & backticks
+  var clean = str
+    .replace(/<[^>]*>?/gm, '')
+    .replace(/&#8594;|&rarr;|&#x2192;|&amp;/gi, '')
+    .replace(/[\u2192\u21D2\u27F6\u2794\u279C\uFFEB→•·]/g, '')
+    .replace(/`/g, '')
+    .trim()
+    .replace(/[`.,;]+$/, '');
 
+  // Split by Pipe (|), Comma (,), or standalone word "or"
+  var parts = clean.split(/[,|]|\bor\b/gi);
   var result = [];
-  if (str.indexOf(' or ') !== -1) {
-    var orIdx = str.lastIndexOf(' or ');
-    var before = str.substring(0, orIdx);
-    var after = str.substring(orIdx + 4).trim();
-    var beforeParts = before.split(',');
-    for (var i = 0; i < beforeParts.length; i++) {
-      var p = cpCleanOptionText(beforeParts[i]);
-      if (p) result.push(p);
-    }
-    after = cpCleanOptionText(after);
-    if (after) result.push(after);
-  } else {
-    var parts = str.split(',');
-    for (var i = 0; i < parts.length; i++) {
-      var p = cpCleanOptionText(parts[i]);
-      if (p) result.push(p);
-    }
+
+  for (var i = 0; i < parts.length; i++) {
+    var p = cpCleanOptionText(parts[i]);
+    if (p && p.length > 0) result.push(p);
   }
   return result;
 }
@@ -18070,7 +18280,7 @@ function cpShowToast(msg) {
   setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
-// ===== ULTRA-ROBUST MAIN POST DATA EXTRACTOR (PHASE 21 UNIVERSAL MEDIA FIX) =====
+// ===== ULTRA-ROBUST MAIN POST DATA EXTRACTOR (PHASE 22 STEP 4 HIDDEN DOM & MEMORY EXTRACTION FIX) =====
 function cpGetMainPostData() {
   // 1. Post Container Selector Hierarchy: Prioritize .universal-media over standard Blogger selectors
   var postBody =
@@ -18202,9 +18412,11 @@ function cpGetMainPostData() {
     }
   }
 
-  // Parse Step 4 variables
-  var step4Map = cpParseStep4MapFromText(cleanText);
-  // NOTE: cpParseStep4MapFromDom was removed in Phase 10 — guarded so this never throws.
+  // Multi-Tiered Step 4 Raw Text Extraction (Phase 22)
+  var cardEl = (postBody && postBody.closest ? postBody.closest('.universal-card') : null) || document.querySelector('.universal-card, .post-card');
+  var rawStep4Text = cpGetRawStep4Text(cardEl);
+  var step4Map = cpParseStep4MapFromText(rawStep4Text || cleanText);
+
   var domMap = (typeof cpParseStep4MapFromDom === 'function') ? cpParseStep4MapFromDom(postBody) : {};
   for (var key in domMap) {
     if (domMap.hasOwnProperty(key) && !step4Map[key]) {
@@ -18262,12 +18474,6 @@ function openCustomizePromptPopup(triggerEl) {
       var vd = card.getAttribute('data-cp-variables');
       if (vd) variables = JSON.parse(vd);
     } catch(e) {}
-
-    if (!variables || !variables.length) {
-      var cardText = cpGetTextFromNode(card);
-      var step4Map = cpParseStep4MapFromText(cardText);
-      variables = cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map);
-    }
   }
 
   // 2. Single Post Page / Standalone Button Extractor (Decoupled Title & Prompt Assignments)
@@ -18291,16 +18497,52 @@ function openCustomizePromptPopup(triggerEl) {
     }
   }
 
-  // 3. Render Popup Immediately
+  // 3. Multi-Tiered Step 4 Fallback & Options Enrichment (Phase 22)
+  var activeCardEl = card || document.querySelector('.universal-card, .post-card');
+  var hasOptions = variables && variables.length > 0 && variables.some(function(v) { return v.options && v.options.length > 0; });
+
+  if (!hasOptions) {
+    var rawStep4Text = cpGetRawStep4Text(activeCardEl);
+    var step4Map = cpParseStep4MapFromText(rawStep4Text);
+    var combined = cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map);
+    if (combined && combined.length > 0) {
+      variables = combined;
+    } else if (variables && variables.length > 0) {
+      // Enrich existing variables with options from step4Map
+      variables.forEach(function(v) {
+        if (!v.options || v.options.length === 0) {
+          var bKey = v.bracket || ('[' + v.name + ']');
+          var uKey = bKey.toUpperCase();
+          var nKey = (v.name || '').toUpperCase();
+          v.options = (step4Map && (step4Map[bKey] || step4Map[uKey] || step4Map[v.name] || step4Map[nKey])) || [];
+        }
+      });
+    }
+  }
+
+  // Map vars by bracket for convenience & strict matching
+  var varsMap = {};
+  for (var vi = 0; vi < variables.length; vi++) {
+    var vItem = variables[vi];
+    var bKey = vItem.bracket || ('[' + vItem.name + ']');
+    varsMap[bKey] = vItem;
+    varsMap[vItem.name] = vItem;
+  }
+
+  // 4. State & Active Card assignment
   cpCurrentData = {
     cardElement: card || document.body,
+    activeCardEl: activeCardEl,
     mainPrompt: mainPrompt,
     negativePrompt: negPrompt,
     promptTitle: title || 'Professional High-End Skin Retouching',
     variables: variables || [],
+    vars: varsMap,
     selections: {}
   };
+  window.cpActiveState = cpCurrentData;
 
+  // 5. Render Popup Immediately
   if (typeof cpBuildPopup === 'function') cpBuildPopup();
 
   var overlay = document.getElementById('customizeOverlay');
@@ -18309,13 +18551,13 @@ function openCustomizePromptPopup(triggerEl) {
     document.body.style.overflow = 'hidden';
   }
 
-  // 4. Fetch fallback for Homepage cards if variables still empty
+  // 6. Fetch fallback for Homepage cards if variables still empty
   var postUrl = card && card.getAttribute ? (card.getAttribute('data-cp-url') || card.getAttribute('data-post-url') || '') : '';
   if (!postUrl && card && card.querySelector) {
     var link = card.querySelector('a.cp-post-link, a.post-link, h2 a, h3 a, a[href*="/20"]');
     if (link && link.href && link.href.indexOf('blogger.com') === -1) postUrl = link.href;
   }
-  var hasOptions = variables && variables.length > 0 && variables.some(function(v) { return v.options && v.options.length > 0; });
+  hasOptions = variables && variables.length > 0 && variables.some(function(v) { return v.options && v.options.length > 0; });
 
   if (!hasOptions && postUrl && !usedMainPost && typeof cpFetchVariablesFromPostUrl === 'function') {
     var loading = document.getElementById('cpVarCounter');
@@ -18324,108 +18566,19 @@ function openCustomizePromptPopup(triggerEl) {
     cpFetchVariablesFromPostUrl(postUrl, mainPrompt, negPrompt, function(fetchedVars) {
       if (fetchedVars && fetchedVars.length > 0) {
         cpCurrentData.variables = fetchedVars;
+        var vm = {};
+        for (var fi = 0; fi < fetchedVars.length; fi++) {
+          var fItem = fetchedVars[fi];
+          var fbKey = fItem.bracket || ('[' + fItem.name + ']');
+          vm[fbKey] = fItem;
+          vm[fItem.name] = fItem;
+        }
+        cpCurrentData.vars = vm;
+        window.cpActiveState = cpCurrentData;
         if (typeof cpBuildPopup === 'function') cpBuildPopup();
       }
     });
   }
-}
-
-// ===== 2. EXTRACT BRACKETS ACTUALLY USED IN MAIN/NEGATIVE PROMPT =====
-function cpExtractPromptBrackets(mainPrompt, negPrompt) {
-  var fullText = (mainPrompt || '') + ' ' + (negPrompt || '');
-  var regex = /\[([^\]]+)\]/g;
-  var found = {};
-  var list = [];
-  var match;
-
-  while ((match = regex.exec(fullText)) !== null) {
-    var name = match[1].trim();
-    if (name && !found[name]) {
-      found[name] = true;
-      list.push(name);
-    }
-  }
-  return list; // Array of unique bracket names in prompt
-}
-
-// ===== 3. PARSE STEP 4 TEXT INTO A MAP (Phase 11 — cleans separators) =====
-function cpParseStep4MapFromText(text) {
-  var map = {};
-  if (!text) return map;
-
-  // Strip backticks & zero-width spaces
-  var clean = text
-    .replace(/`/g, '')
-    .replace(/[\u200B-\u200D\uFEFF]/g, '')
-    .replace(/\u00A0/gi, ' ');
-
-  var lower = clean.toLowerCase();
-  var start = lower.indexOf('customize these variables');
-  if (start === -1) start = lower.indexOf('step 4');
-  if (start === -1) start = 0;
-
-  var end = lower.indexOf('step 5', start + 1);
-  if (end === -1) end = lower.indexOf('expected output', start + 1);
-  if (end === -1) end = clean.length;
-
-  var searchArea = clean.substring(start, end);
-
-  // Normalize arrows
-  searchArea = searchArea
-    .replace(/[\u2192\u21D2\u27F6\u2794\u279C\uFFEB]|->|=>/g, ' = ')
-    .replace(/\]\s*=/g, '] = ');
-
-  // Regex pattern.
-  // NOTE (carried from Phase 10): separator class keeps ':' and '-' so
-  // '[VAR]: options' and '[VAR] - options' formats keep parsing too.
-  var pattern = /\[([^\]]+)\]\s*[=\-:]\s*([^\n\r\[\]]+)/g;
-  var match;
-
-  while ((match = pattern.exec(searchArea)) !== null) {
-    var varName = match[1].trim();
-    var optStr = match[2].trim();
-
-    // Clean trailing bullet/arrows before splitting
-    optStr = optStr.replace(/\s*[\u2192\u21D2\u27F6\u2794\u279C\uFFEB=→•·].*$/, '').trim();
-
-    var opts = cpParseOptions(optStr);
-    if (opts && opts.length > 0) {
-      map[varName] = opts;
-    }
-  }
-  return map;
-}
-
-// ===== 4. COMBINE: FILTER STEP 4 MAP AGAINST PROMPT BRACKETS =====
-function cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map) {
-  var promptBrackets = cpExtractPromptBrackets(mainPrompt, negPrompt);
-  var finalVars = [];
-
-  for (var i = 0; i < promptBrackets.length; i++) {
-    var varName = promptBrackets[i];
-    var options = step4Map[varName] || [];
-
-    finalVars.push({
-      name: varName,
-      bracket: '[' + varName + ']',
-      options: options
-    });
-  }
-
-  return finalVars;
-}
-
-// ===== 5. SAFE TEXT EXTRACTOR =====
-function cpGetTextFromNode(node) {
-  if (!node) return '';
-  if (node.innerText) return node.innerText;
-  var text = '';
-  var walk = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null, false);
-  var txtNode;
-  while ((txtNode = walk.nextNode())) {
-    text += ' ' + txtNode.nodeValue + ' ';
-  }
-  return text;
 }
 
 // ===== 6. FETCH POST HTML & PARSE STEP 4 =====
@@ -18440,12 +18593,13 @@ function cpFetchVariablesFromPostUrl(url, mainPrompt, negPrompt, callback) {
     .then(function (html) {
       var doc = new DOMParser().parseFromString(html, 'text/html');
       var body =
+        doc.querySelector('.universal-media') ||
         doc.querySelector('.post-body') ||
         doc.querySelector('.entry-content') ||
         doc.querySelector('[itemprop="articleBody"]') ||
         doc.body;
 
-      var text = cpGetTextFromNode(body);
+      var text = cpGetRawStep4Text(doc) || cpGetTextFromNode(body);
       var step4Map = cpParseStep4MapFromText(text);
 
       var combined = cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map);
