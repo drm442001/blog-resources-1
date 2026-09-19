@@ -8524,6 +8524,90 @@ div[id^="post-body-"]{
 .cp-label-neg svg { color: #ff6b6b; }
 .cp-preview-text { background: #12151e; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 20px; font-size: 14px; line-height: 1.8; color: rgba(255, 255, 255, 0.85); box-shadow: inset 0 2px 10px rgba(0,0,0,0.2); }
 
+/* Phase 24: Security UI - Disable Selection & Dragging on Live Preview */
+.cp-preview-box, .cp-preview-box *,
+.cp-preview-text, .cp-preview-text *,
+#cpPreviewMain, #cpPreviewMain *,
+#cpPreviewNegative, #cpPreviewNegative *,
+#cpMainPreview, #cpMainPreview *,
+#cpNegPreview, #cpNegPreview * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  pointer-events: none; /* Prevents selection dragging, but allows scrolling if applied to inner wrap */
+}
+/* Allow pointer events only on the scrollable container, not text */
+.cp-preview-box, .cp-preview-text, #cpPreviewMain, #cpPreviewNegative, #cpMainPreview, #cpNegPreview {
+  pointer-events: auto;
+}
+
+/* Phase 25: Custom Scrollbar for Modal Panels and Preview Boxes (Matching Universal Card Theme) */
+.cp-modal-body,
+.cp-body,
+.cp-panel-left,
+.cp-panel-right,
+.cp-variables-scroll,
+.cp-preview-scroll,
+.cp-preview-box,
+.cp-preview-text {
+  scrollbar-width: thin;
+  scrollbar-color: #00c7de #111;
+}
+
+.cp-modal-body ::-webkit-scrollbar,
+.cp-body ::-webkit-scrollbar,
+.customize-popup ::-webkit-scrollbar,
+.cp-preview-box::-webkit-scrollbar,
+.cp-preview-text::-webkit-scrollbar,
+.cp-panel-left::-webkit-scrollbar,
+.cp-panel-right::-webkit-scrollbar,
+.cp-preview-scroll::-webkit-scrollbar,
+.cp-variables-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.cp-modal-body ::-webkit-scrollbar-track,
+.cp-body ::-webkit-scrollbar-track,
+.customize-popup ::-webkit-scrollbar-track,
+.cp-preview-box::-webkit-scrollbar-track,
+.cp-preview-text::-webkit-scrollbar-track,
+.cp-panel-left::-webkit-scrollbar-track,
+.cp-panel-right::-webkit-scrollbar-track,
+.cp-preview-scroll::-webkit-scrollbar-track,
+.cp-variables-scroll::-webkit-scrollbar-track {
+  background: #111;
+  border-radius: 20px;
+}
+
+.cp-modal-body ::-webkit-scrollbar-thumb,
+.cp-body ::-webkit-scrollbar-thumb,
+.customize-popup ::-webkit-scrollbar-thumb,
+.cp-preview-box::-webkit-scrollbar-thumb,
+.cp-preview-text::-webkit-scrollbar-thumb,
+.cp-panel-left::-webkit-scrollbar-thumb,
+.cp-panel-right::-webkit-scrollbar-thumb,
+.cp-preview-scroll::-webkit-scrollbar-thumb,
+.cp-variables-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00c7de, #0094ff);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cp-modal-body ::-webkit-scrollbar-thumb:hover,
+.cp-body ::-webkit-scrollbar-thumb:hover,
+.customize-popup ::-webkit-scrollbar-thumb:hover,
+.cp-preview-box::-webkit-scrollbar-thumb:hover,
+.cp-preview-text::-webkit-scrollbar-thumb:hover,
+.cp-panel-left::-webkit-scrollbar-thumb:hover,
+.cp-panel-right::-webkit-scrollbar-thumb:hover,
+.cp-preview-scroll::-webkit-scrollbar-thumb:hover,
+.cp-variables-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00e0ff, #00a2ff);
+}
+
 .cp-bracket-filled, .cp-hl-filled { background: rgba(100, 255, 218, 0.15); color: #64ffda; padding: 2px 6px; border-radius: 4px; font-weight: 600; border: 1px solid rgba(100,255,218,0.3); }
 .cp-bracket-unfilled, .cp-hl-unfilled { background: rgba(255, 170, 50, 0.1); color: #ffaa32; padding: 2px 6px; border-radius: 4px; font-weight: 500; border: 1px dashed rgba(255, 170, 50, 0.4); }
 
@@ -8882,7 +8966,7 @@ return{promptHTML:boxHTML||newHTML||null,howToHTML:guideHTML||"",promptText:prom
 
 window.uc2Public=window.uc2Public||{};window.uc2Public.parsePromptBox=parsePromptBox;
 /* =====================================================================
-   PHASE 22 HOISTED: STEP 4 HIDDEN DOM & MEMORY EXTRACTION FUNCTIONS
+   PHASE 26 HOISTED: UNIFIED CORE ARCHITECTURE & LOGIC FUNCTIONS
    Must be declared BEFORE mgsInitCardCore so data-cp-variables is populated.
    ===================================================================== */
 function cpGetTextFromNode(node) {
@@ -9095,6 +9179,128 @@ function cpParseStep4(postBodyElement) {
   return variables;
 }
 window.cpParseStep4 = cpParseStep4;
+
+function cpResolveTargetCard() {
+  if (typeof cpActiveState !== 'undefined' && cpActiveState && cpActiveState.activeCardEl) {
+    var aCard = cpActiveState.activeCardEl;
+    if (aCard.classList && aCard.classList.contains('universal-card')) return aCard;
+    if (aCard.closest) {
+      var foundCard = aCard.closest('.universal-card');
+      if (foundCard) return foundCard;
+    }
+  }
+  if (typeof cpCurrentData !== 'undefined' && cpCurrentData && cpCurrentData.cardElement) {
+    var cCard = cpCurrentData.cardElement;
+    if (cCard.classList && cCard.classList.contains('universal-card')) return cCard;
+    if (cCard.closest) {
+      var foundCard2 = cCard.closest('.universal-card');
+      if (foundCard2) return foundCard2;
+    }
+  }
+  var postCard = document.querySelector('#main .universal-card') || document.querySelector('.universal-card');
+  return postCard || null;
+}
+window.cpResolveTargetCard = cpResolveTargetCard;
+
+function cpIncrementCardCopyCount(cardEl) {
+  if (!cardEl) return;
+
+  var updated = false;
+
+  // 1. Theme-native persistence & formatting (localStorage key cc_<pid> + .counter-num text)
+  if (typeof updateCopyCounter === 'function' || typeof window.updateCopyCounter === 'function') {
+    try {
+      var fn = typeof updateCopyCounter === 'function' ? updateCopyCounter : window.updateCopyCounter;
+      var ce = cardEl.querySelector('.counter-num');
+      var prevText = ce ? (ce.textContent || '').trim() : null;
+      fn(cardEl);
+      if (ce && (ce.textContent || '').trim() !== prevText) {
+        updated = true;
+        ce.setAttribute('data-copy-count', (ce.textContent || '').trim());
+      }
+    } catch(e) {}
+  }
+
+  // 2. Direct DOM counter increment across all theme selector variants if native update did not execute
+  if (!updated) {
+    var countEl = cardEl.querySelector('.counter-num, [data-copy-count], .copy-count-badge, .copy-count, .cnt');
+    if (!countEl) {
+      var cc = cardEl.querySelector('.copy-counter');
+      if (cc) countEl = cc.querySelector('.counter-num') || cc;
+    }
+    if (countEl) {
+      var raw = countEl.getAttribute('data-copy-count') || countEl.innerText || countEl.textContent || '0';
+      var current = parseInt(String(raw).replace(/[^0-9]/g, ''), 10) || 0;
+      var newCount = current + 1;
+      countEl.setAttribute('data-copy-count', newCount);
+      countEl.innerText = newCount;
+    }
+  }
+
+  // 3. Theme analytics
+  if (window.uc2TrackCopy) {
+    try { window.uc2TrackCopy(cardEl); } catch(e) {}
+  }
+}
+window.cpIncrementCardCopyCount = cpIncrementCardCopyCount;
+
+// ===== UNIFIED DATA AGGREGATION FUNCTION (Phase 26) =====
+function cpExtractUnifiedData(triggerEl) {
+  // 1. Resolve Target Context
+  var isHeroButton = triggerEl && triggerEl.closest ? triggerEl.closest('.mgs-prompt-hero') : null;
+  var dd = triggerEl && triggerEl.closest ? triggerEl.closest('.copy-dropdown') : null;
+  var targetCard = (dd && dd._card) || (triggerEl && triggerEl.closest ? triggerEl.closest('.universal-card, .post-card') : null);
+
+  if (isHeroButton && !targetCard) {
+    targetCard = document.querySelector('#main .universal-card') || document.querySelector('.universal-card');
+  }
+  if (!targetCard) {
+    targetCard = document.querySelector('#main .universal-card') || document.querySelector('.universal-card');
+  }
+
+  var data = { title: '', main: '', neg: '', rawStep4: '', cardRef: targetCard };
+
+  // 2. Fetch Title
+  if (targetCard) {
+    var cardTitle = targetCard.querySelector('.universal-title, .card-title, .post-title, h2, h3');
+    if (cardTitle) data.title = cardTitle.textContent.trim();
+  }
+  if (!data.title) {
+    var h1 = document.querySelector('h1.post-title, h1.entry-title, .post-title h1, .mgs-hero-title, .entry-title, h1');
+    if (h1) data.title = h1.textContent.trim();
+  }
+  if (!data.title && document.title) {
+    data.title = document.title.split('-')[0].split('|')[0].trim();
+  }
+
+  // 3. Fetch Prompts (Prioritize Target Card, fallback to global DOM)
+  if (targetCard) {
+    data.main = targetCard.getAttribute('data-cp-main') || targetCard.getAttribute('data-prompt-main') || '';
+    data.neg = targetCard.getAttribute('data-cp-negative') || targetCard.getAttribute('data-prompt-negative') || '';
+    if (!data.main && targetCard._parsedPrompt) data.main = targetCard._parsedPrompt;
+    if (!data.neg && targetCard._parsedNegativePrompt) data.neg = targetCard._parsedNegativePrompt;
+
+    var boxes = targetCard.querySelectorAll ? targetCard.querySelectorAll('.prompttextbox, .main-prompt-text, .prompt-text, [data-prompt-main], .copy-text') : [];
+    if (!data.main && boxes[0]) data.main = (boxes[0].textContent || '').trim();
+    if (!data.neg && boxes[1]) data.neg = (boxes[1].textContent || '').trim();
+  }
+
+  // Fallback to global extraction if card lacks prompt
+  if (!data.main) {
+    var globalData = typeof cpGetMainPostData === 'function' ? cpGetMainPostData() : null;
+    if (globalData) {
+      data.main = globalData.mainPrompt || '';
+      data.neg = globalData.negativePrompt || '';
+      if (!data.title && globalData.title) data.title = globalData.title;
+    }
+  }
+
+  // 4. Fetch Step 4 via Phase 22 Fallbacks
+  data.rawStep4 = typeof cpGetRawStep4Text === 'function' ? cpGetRawStep4Text(targetCard) : '';
+
+  return data;
+}
+window.cpExtractUnifiedData = cpExtractUnifiedData;
 
 window.mgsInitCardCore=function(card){
 if(card.getAttribute("data-mgs-core")==="true"){return;}
@@ -17870,14 +18076,14 @@ border-radius:4px;
               <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
               Main Prompt
             </div>
-            <div class='cp-preview-text' id='cpPreviewMain'></div>
+            <div class='cp-preview-text cp-preview-box' id='cpPreviewMain' oncontextmenu='return false;' onselectstart='return false;' ondragstart='return false;'></div>
           </div>
           <div class='cp-preview-block'>
             <div class='cp-preview-label cp-label-neg'>
               <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
               Negative Prompt
             </div>
-            <div class='cp-preview-text' id='cpPreviewNegative'></div>
+            <div class='cp-preview-text cp-preview-box' id='cpPreviewNegative' oncontextmenu='return false;' onselectstart='return false;' ondragstart='return false;'></div>
           </div>
         </div>
       </div>
@@ -18166,16 +18372,79 @@ function quickFillAllVars() {
   cpUpdateCounter();
 }
 
-// ===== COPY =====
-// ===== TRACK COPY (theme-native counter + analytics) =====
-function cpTrackCopy() {
-  var card = cpCurrentData.cardElement;
-  if (!card) return;
-  // Visual .counter-num + cc_<id> persistence (same call the card copy buttons make)
-  if (typeof updateCopyCounter === 'function') { updateCopyCounter(card); }
-  // Engagement/popularity analytics (same call the hero copy flow makes)
-  if (window.uc2TrackCopy) { window.uc2TrackCopy(card); }
+// ===== COPY (Phase 23 Copy Counter Sync) =====
+// ===== 1. RESOLVE TARGET UNIVERSAL CARD =====
+function cpResolveTargetCard() {
+  if (typeof cpActiveState !== 'undefined' && cpActiveState && cpActiveState.activeCardEl) {
+    var aCard = cpActiveState.activeCardEl;
+    if (aCard.classList && aCard.classList.contains('universal-card')) return aCard;
+    if (aCard.closest) {
+      var foundCard = aCard.closest('.universal-card');
+      if (foundCard) return foundCard;
+    }
+  }
+  if (typeof cpCurrentData !== 'undefined' && cpCurrentData && cpCurrentData.cardElement) {
+    var cCard = cpCurrentData.cardElement;
+    if (cCard.classList && cCard.classList.contains('universal-card')) return cCard;
+    if (cCard.closest) {
+      var foundCard2 = cCard.closest('.universal-card');
+      if (foundCard2) return foundCard2;
+    }
+  }
+  var postCard = document.querySelector('#main .universal-card') || document.querySelector('.universal-card');
+  return postCard || null;
 }
+window.cpResolveTargetCard = cpResolveTargetCard;
+
+// ===== 2. COUNTER INCREMENT LOGIC =====
+function cpIncrementCardCopyCount(cardEl) {
+  if (!cardEl) return;
+
+  var updated = false;
+
+  // 1. Theme-native persistence & formatting (localStorage key cc_<pid> + .counter-num text)
+  if (typeof updateCopyCounter === 'function' || typeof window.updateCopyCounter === 'function') {
+    try {
+      var fn = typeof updateCopyCounter === 'function' ? updateCopyCounter : window.updateCopyCounter;
+      var ce = cardEl.querySelector('.counter-num');
+      var prevText = ce ? (ce.textContent || '').trim() : null;
+      fn(cardEl);
+      if (ce && (ce.textContent || '').trim() !== prevText) {
+        updated = true;
+        ce.setAttribute('data-copy-count', (ce.textContent || '').trim());
+      }
+    } catch(e) {}
+  }
+
+  // 2. Direct DOM counter increment across all theme selector variants if native update did not execute
+  if (!updated) {
+    var countEl = cardEl.querySelector('.counter-num, [data-copy-count], .copy-count-badge, .copy-count, .cnt');
+    if (!countEl) {
+      var cc = cardEl.querySelector('.copy-counter');
+      if (cc) countEl = cc.querySelector('.counter-num') || cc;
+    }
+    if (countEl) {
+      var raw = countEl.getAttribute('data-copy-count') || countEl.innerText || countEl.textContent || '0';
+      var current = parseInt(String(raw).replace(/[^0-9]/g, ''), 10) || 0;
+      var newCount = current + 1;
+      countEl.setAttribute('data-copy-count', newCount);
+      countEl.innerText = newCount;
+    }
+  }
+
+  // 3. Theme analytics
+  if (window.uc2TrackCopy) {
+    try { window.uc2TrackCopy(cardEl); } catch(e) {}
+  }
+}
+window.cpIncrementCardCopyCount = cpIncrementCardCopyCount;
+
+// ===== 3. TRACK COPY (theme-native counter + analytics) =====
+function cpTrackCopy() {
+  var targetCard = cpResolveTargetCard();
+  cpIncrementCardCopyCount(targetCard);
+}
+window.cpTrackCopy = cpTrackCopy;
 
 function copyCustomizedPrompt(type) {
   var main = cpCurrentData.mainPrompt;
@@ -18205,9 +18474,8 @@ function copyCustomizedPrompt(type) {
 
   function onSuccess() {
     cpShowToast('\u2705 Prompt copied!');
-
-    // Theme-native copy tracking (visual counter + persistence + analytics)
-    cpTrackCopy();
+    var targetCard = cpResolveTargetCard();
+    cpIncrementCardCopyCount(targetCard);
   }
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -18229,7 +18497,8 @@ function cpFallbackCopy(text) {
   try {
     document.execCommand('copy');
     cpShowToast('\u2705 Prompt copied!');
-    cpTrackCopy();
+    var targetCard = cpResolveTargetCard();
+    cpIncrementCardCopyCount(targetCard);
   } catch(e) {
     cpShowToast('\u274C Copy failed');
   }
@@ -18266,6 +18535,36 @@ document.addEventListener('keydown', function(e) {
     if (overlay && overlay.classList.contains('active')) closeCustomizePopup();
   }
 });
+
+// ===== PHASE 24: SECURITY UI - DISABLE SELECTION & CONTEXT MENU ON PREVIEW =====
+document.addEventListener('contextmenu', function(e) {
+  if (e.target && e.target.closest && e.target.closest('.cp-preview-box, .cp-preview-text, #cpPreviewMain, #cpPreviewNegative, #cpMainPreview, #cpNegPreview')) {
+    e.preventDefault();
+    return false;
+  }
+});
+document.addEventListener('selectstart', function(e) {
+  if (e.target && e.target.closest && e.target.closest('.cp-preview-box, .cp-preview-text, #cpPreviewMain, #cpPreviewNegative, #cpMainPreview, #cpNegPreview')) {
+    e.preventDefault();
+    return false;
+  }
+});
+document.addEventListener('dragstart', function(e) {
+  if (e.target && e.target.closest && e.target.closest('.cp-preview-box, .cp-preview-text, #cpPreviewMain, #cpPreviewNegative, #cpMainPreview, #cpNegPreview')) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+// Alias support if cpMainPreview or cpNegPreview is queried
+try {
+  var _origGetById = document.getElementById.bind(document);
+  document.getElementById = function(id) {
+    if (id === 'cpMainPreview') return _origGetById('cpPreviewMain');
+    if (id === 'cpNegPreview') return _origGetById('cpPreviewNegative');
+    return _origGetById(id);
+  };
+} catch(e) {}
 
 // ===== TOAST =====
 function cpShowToast(msg) {
@@ -18436,75 +18735,40 @@ function cpGetMainPostData() {
   };
 }
 
-// ===== OPEN CUSTOMIZE POPUP (WIRING FUNCTION) =====
+// ===== OPEN CUSTOMIZE POPUP (UNIFIED ARCHITECTURE - PHASE 26) =====
 function openCustomizePromptPopup(triggerEl) {
   if (window.closeAllCopyDropdowns) window.closeAllCopyDropdowns();
   if (window.uc2CloseAllMoreMenus) window.uc2CloseAllMoreMenus();
 
-  var mainPrompt = '';
-  var negPrompt = '';
-  var title = '';
+  // 1. Extract Unified Data (Single Source of Truth)
+  var unifiedData = cpExtractUnifiedData(triggerEl);
+  var targetCard = unifiedData.cardRef;
+  var title = unifiedData.title || 'Professional High-End Skin Retouching';
+  var mainPrompt = unifiedData.main || '';
+  var negPrompt = unifiedData.neg || '';
   var variables = [];
-  var card = null;
-  var usedMainPost = false;
 
-  // 1. Universal Card check (Homepage / Grid)
-  var dd = triggerEl && triggerEl.closest ? triggerEl.closest('.copy-dropdown') : null;
-  card = (dd && dd._card) || (triggerEl && triggerEl.closest ? triggerEl.closest('.universal-card, .post-card, [data-cp-variables]') : null);
-
-  if (card) {
-    mainPrompt = card.getAttribute('data-cp-main') || '';
-    negPrompt = card.getAttribute('data-cp-negative') || '';
-    title = card.getAttribute('data-cp-title') || '';
-
-    if (!mainPrompt) {
-      var mainEl = card.querySelector('.main-prompt-text, .prompt-text, [data-prompt-main], .copy-text, .prompttextbox');
-      if (mainEl) mainPrompt = mainEl.textContent.trim();
-    }
-    if (!negPrompt) {
-      var negEl = card.querySelector('.neg-prompt-text, .negative-prompt-text, [data-prompt-neg]');
-      if (negEl) negPrompt = negEl.textContent.trim();
-    }
-    if (!title) {
-      var titleEl = card.querySelector('.post-title, .card-title, .universal-title, h2, h3');
-      if (titleEl) title = titleEl.textContent.trim();
-    }
-
+  // Check cached data-cp-variables on target card if available
+  if (targetCard && targetCard.getAttribute) {
     try {
-      var vd = card.getAttribute('data-cp-variables');
-      if (vd) variables = JSON.parse(vd);
+      var vd = targetCard.getAttribute('data-cp-variables');
+      if (vd) {
+        var parsedVd = JSON.parse(vd);
+        if (Array.isArray(parsedVd) && parsedVd.length > 0) {
+          variables = parsedVd;
+        }
+      }
     } catch(e) {}
   }
 
-  // 2. Single Post Page / Standalone Button Extractor (Decoupled Title & Prompt Assignments)
-  if (!card || !mainPrompt) {
-    var mainData = cpGetMainPostData();
-    if (mainData) {
-      if (mainData.title && (!title || !card || title === 'Prompt Customizer' || title === 'Customize Prompt')) {
-        title = mainData.title;
-      }
-      if (!mainPrompt && mainData.mainPrompt) {
-        mainPrompt = mainData.mainPrompt;
-      }
-      if (!negPrompt && mainData.negativePrompt) {
-        negPrompt = mainData.negativePrompt;
-      }
-      if (mainData.variables && mainData.variables.length > 0) {
-        variables = mainData.variables;
-      }
-      if (!card) card = mainData.postBody;
-      usedMainPost = true;
-    }
-  }
+  // 2. Parse Step 4 Options via Unified Parser
+  var rawStep4Text = unifiedData.rawStep4 || (typeof cpGetRawStep4Text === 'function' ? cpGetRawStep4Text(targetCard) : '');
+  var step4Map = typeof cpParseStep4MapFromText === 'function' ? cpParseStep4MapFromText(rawStep4Text) : {};
 
-  // 3. Multi-Tiered Step 4 Fallback & Options Enrichment (Phase 22)
-  var activeCardEl = card || document.querySelector('.universal-card, .post-card');
   var hasOptions = variables && variables.length > 0 && variables.some(function(v) { return v.options && v.options.length > 0; });
 
   if (!hasOptions) {
-    var rawStep4Text = cpGetRawStep4Text(activeCardEl);
-    var step4Map = cpParseStep4MapFromText(rawStep4Text);
-    var combined = cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map);
+    var combined = typeof cpCombinePromptAndStep4 === 'function' ? cpCombinePromptAndStep4(mainPrompt, negPrompt, step4Map) : [];
     if (combined && combined.length > 0) {
       variables = combined;
     } else if (variables && variables.length > 0) {
@@ -18529,20 +18793,23 @@ function openCustomizePromptPopup(triggerEl) {
     varsMap[vItem.name] = vItem;
   }
 
-  // 4. State & Active Card assignment
+  // 3. Populate Unified Active State & Current Data
   cpCurrentData = {
-    cardElement: card || document.body,
-    activeCardEl: activeCardEl,
+    cardElement: targetCard || document.body,
+    activeCardEl: targetCard,
+    title: title,
+    promptTitle: title,
+    rawMainPrompt: mainPrompt,
+    rawNegPrompt: negPrompt,
     mainPrompt: mainPrompt,
     negativePrompt: negPrompt,
-    promptTitle: title || 'Professional High-End Skin Retouching',
     variables: variables || [],
     vars: varsMap,
     selections: {}
   };
   window.cpActiveState = cpCurrentData;
 
-  // 5. Render Popup Immediately
+  // 4. Render Popup Immediately
   if (typeof cpBuildPopup === 'function') cpBuildPopup();
 
   var overlay = document.getElementById('customizeOverlay');
@@ -18551,15 +18818,15 @@ function openCustomizePromptPopup(triggerEl) {
     document.body.style.overflow = 'hidden';
   }
 
-  // 6. Fetch fallback for Homepage cards if variables still empty
-  var postUrl = card && card.getAttribute ? (card.getAttribute('data-cp-url') || card.getAttribute('data-post-url') || '') : '';
-  if (!postUrl && card && card.querySelector) {
-    var link = card.querySelector('a.cp-post-link, a.post-link, h2 a, h3 a, a[href*="/20"]');
+  // 5. Fetch fallback for Homepage cards if variables still empty
+  var postUrl = targetCard && targetCard.getAttribute ? (targetCard.getAttribute('data-cp-url') || targetCard.getAttribute('data-post-url') || '') : '';
+  if (!postUrl && targetCard && targetCard.querySelector) {
+    var link = targetCard.querySelector('a.cp-post-link, a.post-link, h2 a, h3 a, a[href*="/20"]');
     if (link && link.href && link.href.indexOf('blogger.com') === -1) postUrl = link.href;
   }
   hasOptions = variables && variables.length > 0 && variables.some(function(v) { return v.options && v.options.length > 0; });
 
-  if (!hasOptions && postUrl && !usedMainPost && typeof cpFetchVariablesFromPostUrl === 'function') {
+  if (!hasOptions && postUrl && typeof cpFetchVariablesFromPostUrl === 'function') {
     var loading = document.getElementById('cpVarCounter');
     if (loading) loading.textContent = 'Loading options...';
 
